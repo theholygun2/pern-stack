@@ -1,0 +1,5 @@
+# Ignore env files in both frontend and backend
+frontend/.env
+.env
+node_modules
+package-lock.json
