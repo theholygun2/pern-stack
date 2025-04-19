@@ -73,9 +73,13 @@ export const useProductStore = create((set, get) => ({
     set({ loading: true });
     try {
       const response = await axios.get(`${BASE_URL}/api/products/${id}`);
+      console.log("Fetched product response:", response.data);
+  
+      const product = response.data.data; // <- correct key
+  
       set({
-        currentProduct: response.data.data,
-        formData: response.data.data, // pre-fill form with current product data
+        currentProduct: product,
+        formData: product,
         error: null,
       });
     } catch (error) {
@@ -85,6 +89,7 @@ export const useProductStore = create((set, get) => ({
       set({ loading: false });
     }
   },
+  
 
   updateProduct: async (id) => {
     set({ loading: true });

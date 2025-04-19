@@ -21,7 +21,14 @@ export const getProduct = async (req,res) => {
         SELECT * FROM products
         WHERE id = ${id}`
 
-        res.status(200).json({ success:true, message: product[0]})
+        if (product.length === 0) {
+            // Product not found
+            return res
+              .status(404)
+              .json({ success: false, message: "Product not found" });
+          }
+
+        res.status(200).json({ success:true, data: product[0]})
     } catch (error) {
         console.log("Error in getProduct function", error)
         res.status(500).json({ success: false, message: "Internal Server Error"})

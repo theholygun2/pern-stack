@@ -32,9 +32,8 @@ const HomePage = () => {
 
   return (
     <Container>
-      <NameForm/>
       <AddProductModal></AddProductModal>
-      <SimpleGrid columns={[1, 2, 3]} spacing={8}>
+      <SimpleGrid columns={3} gap="40px" >
         {products.map((product) => (
           <ProductCard key={product.id} product = {product}/>
         )
