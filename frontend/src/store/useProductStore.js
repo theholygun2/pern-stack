@@ -8,6 +8,7 @@ const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000
 export const useProductStore = create((set, get) => ({
   // products state
   products: [],
+  categories: [],
   loading: false,
   error: null,
   currentProduct: null,
@@ -17,6 +18,7 @@ export const useProductStore = create((set, get) => ({
     name: "",
     price: "",
     image: "",
+    category_id: ""
   },
 
   setFormData: (formData) => set({ formData }),
@@ -89,8 +91,6 @@ export const useProductStore = create((set, get) => ({
       set({ loading: false });
     }
   },
-  
-
   updateProduct: async (id) => {
     set({ loading: true });
     try {
@@ -101,6 +101,19 @@ export const useProductStore = create((set, get) => ({
     } catch (error) {
       toast.error("Something went wrong");
       console.log("Error in updateProduct function", error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  fetchCategories: async () => {
+    set({ loading: true });
+    try {
+      const response = await axios.get(`${BASE_URL}/api/categories`);
+      set({ categories: response.data.data, error: null });
+    } catch (err) {
+      if (err.status == 429) set({ error: "Rate limit exceeded", categories: [] });
+      else set({ error: "Something went wrong", categories: [] });
     } finally {
       set({ loading: false });
     }

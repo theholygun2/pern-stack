@@ -12,10 +12,12 @@ function Navbar() {
     <Box px={4} py={2}>
       <Box maxW={"7xl"} mx={"auto"}>
         <Flex justify={"space-between"}>
-        <HStack>
+          <Link to={`/`}>
+          <HStack>
           <ShoppingCartIcon/>
           <Text>PERN SHOP</Text>
           </HStack>
+          </Link>
           <Flex justify={"flex-end"}>
             <HStack>
             <ColorModeButton/>

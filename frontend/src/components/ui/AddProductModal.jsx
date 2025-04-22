@@ -1,9 +1,10 @@
-import { Button, Dialog, Stack, Input, Fieldset, Portal, DialogPositioner, Field  } from "@chakra-ui/react";
+import { Button, Dialog, Stack, Input, Fieldset, Portal, Field, Select } from "@chakra-ui/react";
 import { useProductStore } from "@/store/useProductStore";
+import { useEffect } from "react";
 
 function AddProductModal() {
 
-    const { addProduct, formData, setFormData, loading } = useProductStore()
+    const { addProduct, formData, setFormData, loading, categories, error } = useProductStore()
 
   return (
     <Dialog.Root placement="center">
@@ -48,6 +49,17 @@ function AddProductModal() {
                                             <Field.Label>Image URL</Field.Label>
                                             <Input type="text" placeholder="https://example.com/image.jpg" value={formData.image} onChange={(e) => setFormData({...formData, image: e.target.value})}/>
                                         </Field.Root>
+
+                                        <Field.Root>
+                                            <Field.Label>Category</Field.Label>
+                                            <Select.Root placeholder="Select category" value={formData.category_id} onChange={(e) => setFormData({ ...formData, category_id: e.target.value })} >
+                                                {categories.map((cat) => (
+                                                <option key={cat.id} value={cat.id}>
+                                                    {cat.name}
+                                                </option>
+                                                ))}
+                                            </Select.Root>
+                                            </Field.Root>
                                     </Stack>
                                 </Fieldset.Content>
                             </Fieldset.Root>

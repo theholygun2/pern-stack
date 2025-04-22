@@ -6,11 +6,12 @@ import AddProductModal from "@/components/ui/AddProductModal";
 import NameForm from "@/components/ui/NameForm";
 const HomePage = () => {
   
-  const {products, loading, error, fetchProducts} = useProductStore()
+  const {products, loading, error, fetchProducts, fetchCategories} = useProductStore()
   
   useEffect(() => {
-    fetchProducts()
-  }, [fetchProducts])
+    fetchProducts();
+    fetchCategories(); // Fetch categories as well if not already done
+  }, [fetchProducts, fetchCategories]);
 
   if (loading) {
     return (
@@ -32,7 +33,7 @@ const HomePage = () => {
 
   return (
     <Container>
-      <AddProductModal></AddProductModal>
+      <AddProductModal />
       <SimpleGrid columns={3} gap="40px" >
         {products.map((product) => (
           <ProductCard key={product.id} product = {product}/>

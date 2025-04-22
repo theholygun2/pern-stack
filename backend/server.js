@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import path from "path";
 
 import productRoutes from "./routes/productRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 import { sql } from "./config/db.js";
 import { aj } from "./lib/arcjet.js";
 
@@ -59,6 +60,7 @@ if( process.env.NODE_ENV === "production") {
 }
 
 app.use("/api/products", productRoutes);
+app.use("/api/categories", categoryRoutes)
 
 if (process.env.NODE_ENV === "production") {
   // server our react app
@@ -68,7 +70,7 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
   });
 }
-
+//Todo add Category here
 async function initDB() {
   try {
     await sql`

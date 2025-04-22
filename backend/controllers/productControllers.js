@@ -1,4 +1,5 @@
 import { sql } from "../config/db.js"
+
 export const getProducts = async (req,res) => {
     try{
         const products = await sql`
@@ -99,3 +100,18 @@ export const deleteProduct = async (req,res) => {
         res.status(500).json({ success: false, message: "Internal Server Error"})
     }
 }
+
+export const getProductsByCategory = async (req, res) => {
+    const { category_id } = req.params;
+    try {
+        const products = await sql`
+        SELECT * FROM products
+        WHERE category_id = ${category_id}
+        ORDER BY created_at DESC`;
+
+        res.status(200).json({ success: true, data: products });
+    } catch (error) {
+        console.error("Error in getProductsByCategory", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+};
