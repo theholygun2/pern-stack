@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { createListCollection } from "@chakra-ui/react";
 
 // base url will be dynamic depending on the environment
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
@@ -9,6 +10,7 @@ export const useProductStore = create((set, get) => ({
   // products state
   products: [],
   categories: [],
+  categoryList: null,
   loading: false,
   error: null,
   currentProduct: null,
@@ -22,7 +24,7 @@ export const useProductStore = create((set, get) => ({
   },
 
   setFormData: (formData) => set({ formData }),
-  resetForm: () => set({ formData: { name: "", price: "", image: "" } }),
+  resetForm: () => set({ formData: { name: "", price: "", image: "", category_id: "" } }),
 
   addProduct: async (e) => {
     e.preventDefault();
@@ -30,6 +32,7 @@ export const useProductStore = create((set, get) => ({
 
     try {
       const { formData } = get();
+      console.log(`form`, formData)
       await axios.post(`${BASE_URL}/api/products`, formData);
       await get().fetchProducts();
       get().resetForm();
@@ -110,7 +113,14 @@ export const useProductStore = create((set, get) => ({
     set({ loading: true });
     try {
       const response = await axios.get(`${BASE_URL}/api/categories`);
-      set({ categories: response.data.data, error: null });
+      const categories = response.data.data;
+      const categoryList = createListCollection({
+        items: categories.map((cat) => ({
+          label: cat.name,
+          value: cat.id.toString(),
+        }))
+      })
+      set({ categories, categoryList, error: null });
     } catch (err) {
       if (err.status == 429) set({ error: "Rate limit exceeded", categories: [] });
       else set({ error: "Something went wrong", categories: [] });

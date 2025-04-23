@@ -1,5 +1,5 @@
 import { useProductStore } from '@/store/useProductStore';
-import { Button, Container, HStack, Image, Spinner, Box, Input, Flex, Center, Grid, GridItem, Heading, Fieldset, Field } from '@chakra-ui/react';
+import { Button, Container, Select, Image, Spinner, Box, Input, Flex, Center, Grid, GridItem, Heading, Fieldset, Field } from '@chakra-ui/react';
 import { ArrowLeftIcon, SaveIcon, Trash2Icon } from 'lucide-react'; // Assuming all icons are from lucide-react
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,6 +8,8 @@ function ProductPage() {
   const {
     currentProduct,
     formData,
+    categoryList,
+    fetchCategories,
     setFormData,
     loading,
     error,
@@ -23,6 +25,13 @@ function ProductPage() {
   useEffect(() => {
     fetchProduct(id);
   }, [fetchProduct, id]);
+
+  useEffect(() => {
+    if (!categoryList || categoryList.items.length === 0) {
+      fetchCategories(); // your function to get categories
+    }
+  }, []);
+  
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this product?')) {
@@ -104,9 +113,37 @@ function ProductPage() {
                     <Field.Label>Image URL</Field.Label>
                     <Input type="text" placeholder="https://example.com/image.jpg" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })}/>
                   </Field.Root>
+                  
                 </Fieldset.Content>
               </Fieldset.Root>
 
+              {categoryList && (
+                  <Select.Root 
+                  collection={categoryList} 
+                  value={[formData.category_id.toString()]}
+                  onValueChange={(key) => 
+                  {console.log("Selected category key", key); 
+                  setFormData({...formData, category_id: key.value[0]})} }>
+                  <Select.HiddenSelect />
+                  <Select.Label>Select category</Select.Label>
+                  <Select.Control>
+                      <Select.Trigger>
+                          <Select.ValueText placeholder="Choose a category"/>
+                      </Select.Trigger>
+                      <Select.IndicatorGroup>
+                          <Select.Indicator/>
+                      </Select.IndicatorGroup>
+                  </Select.Control>
+                  <Select.Content>
+                      {categoryList.items.map((item) => (
+                          <Select.Item item={item} key={item.value}>
+                              {item.label}
+                          </Select.Item>
+                      ))}
+                  </Select.Content>
+              </Select.Root>
+              )}
+              
               {/* FORM ACTIONS */}
               <Flex justify="space-between" mt={8}>
                 <Button colorScheme="red" onClick={handleDelete}>
@@ -117,7 +154,7 @@ function ProductPage() {
                 <Button
                   colorScheme="blue"
                   type="submit"
-                  isDisabled={loading || !formData.name || !formData.price || !formData.image}
+                  isDisabled={loading || !formData.name || !formData.price || !formData.image || !formData.category_id}
                 >
                   {loading ? (
                     <Spinner size="sm" />

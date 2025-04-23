@@ -1,10 +1,10 @@
 import { Button, Dialog, Stack, Input, Fieldset, Portal, Field, Select } from "@chakra-ui/react";
+import { toaster } from "@/components/ui/toaster"
 import { useProductStore } from "@/store/useProductStore";
-import { useEffect } from "react";
 
 function AddProductModal() {
 
-    const { addProduct, formData, setFormData, loading, categories, error } = useProductStore()
+    const { addProduct, formData, setFormData, loading, categoryList, error } = useProductStore()
 
   return (
     <Dialog.Root placement="center">
@@ -36,7 +36,7 @@ function AddProductModal() {
 
                                         <Field.Root>
                                             <Field.Label>Price</Field.Label>
-                                            <Input 
+                                            <Input          
                                             type="number"
                                             min="0"
                                             step="0.01"
@@ -50,16 +50,28 @@ function AddProductModal() {
                                             <Input type="text" placeholder="https://example.com/image.jpg" value={formData.image} onChange={(e) => setFormData({...formData, image: e.target.value})}/>
                                         </Field.Root>
 
-                                        <Field.Root>
-                                            <Field.Label>Category</Field.Label>
-                                            <Select.Root placeholder="Select category" value={formData.category_id} onChange={(e) => setFormData({ ...formData, category_id: e.target.value })} >
-                                                {categories.map((cat) => (
-                                                <option key={cat.id} value={cat.id}>
-                                                    {cat.name}
-                                                </option>
+                                        {categoryList && (
+                                            <Select.Root collection={categoryList} 
+                                            onValueChange={(key) => {console.log(key); setFormData({...formData, category_id: key.value[0]})} }>
+                                            <Select.HiddenSelect />
+                                            <Select.Label>Select category</Select.Label>
+                                            <Select.Control>
+                                                <Select.Trigger>
+                                                    <Select.ValueText placeholder="Barang" />
+                                                </Select.Trigger>
+                                                <Select.IndicatorGroup>
+                                                    <Select.Indicator/>
+                                                </Select.IndicatorGroup>
+                                            </Select.Control>
+                                            <Select.Content>
+                                                {categoryList.items.map((item) => (
+                                                    <Select.Item item={item} key={item.value}>
+                                                        {item.label}
+                                                    </Select.Item>
                                                 ))}
-                                            </Select.Root>
-                                            </Field.Root>
+                                            </Select.Content>
+                                        </Select.Root>
+                                        )}
                                     </Stack>
                                 </Fieldset.Content>
                             </Fieldset.Root>
@@ -72,9 +84,49 @@ function AddProductModal() {
                                 Cancel
                             </Button>
                         </Dialog.CloseTrigger>
-                        <Button onClick={addProduct} isLoading={loading}>
+                        <Button onClick={ toaster.promise(addProduct, {
+                            success: {
+                                id: "upload-success",
+                                title: "Succesufully uploaded!",
+                                description: "Looks great"
+                            },
+                            error: {
+                                title: "Upload failed",
+                                description: "Something went wrong with the upload"
+                            }
+                        })} isLoading={loading}>
                             Add Product
                         </Button>
+
+                        <Button
+      variant="outline"
+      size="sm"
+      onClick={() => {
+        const promise = new Promise<void>((resolve) => {
+          setTimeout(() => resolve(), 5000)
+        })
+
+        toaster.promise(promise, {
+          success: {
+            id: "upload-success",
+            title: "Successfully uploaded!",
+            description: "Looks great",
+          },
+          error: {
+            id: "upload-error",
+            title: "Upload failed",
+            description: "Something went wrong with the upload",
+          },
+          loading: {
+            id: "upload-loading",
+            title: "Uploading...",
+            description: "Please wait",
+          },
+        })
+      }}
+    >
+      Show Toast
+    </Button>
                     </Dialog.Footer>
 
                 </Dialog.Content>

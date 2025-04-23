@@ -4,12 +4,15 @@ import ProductPage from "@/pages/ProductPage"
 import  Navbar  from '@/components/ui/Navbar'
 import { Routes, Route } from "react-router-dom"
 import CategoryPage from "./pages/CategoryPage"
+import { Toaster } from "./components/ui/toaster"
 
 function App() {
   return (
     <>
+    <Toaster />
     <Container>
       <Navbar />
+
       <Routes>
         <Route path="/" element={<HomePage />}/>
         <Route path="/product/:id" element={<ProductPage />}/>

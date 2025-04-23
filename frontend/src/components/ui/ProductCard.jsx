@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useProductStore } from '@/store/useProductStore'
 
 function ProductCard({ product }) {
-    const { deleteProduct } = useProductStore()
+    const { deleteProduct, categories } = useProductStore()
   return (
     <Card.Root maxW="sm" overflow="hidden">
       <Box h="250px" overflow="hidden">
@@ -13,6 +13,7 @@ function ProductCard({ product }) {
       <Card.Body gap="2" p="4">
         <Card.Title>{product.name}</Card.Title>
         <Card.Description>
+        {categories.find(c => c.id === product.category_id)?.name}
         </Card.Description>
         <Text textStyle="2xl" fontWeight="medium" letterSpacing="tight" mt="2">
           ${product.price}
