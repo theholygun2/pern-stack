@@ -3,7 +3,6 @@ import { Container,Text, SimpleGrid, Center, Spinner} from "@chakra-ui/react";
 import { useEffect } from "react";
 import ProductCard from "@/components/ui/ProductCard";
 import AddProductModal from "@/components/ui/AddProductModal";
-import NameForm from "@/components/ui/NameForm";
 const HomePage = () => {
   
   const {products, loading, error, fetchProducts, fetchCategories} = useProductStore()

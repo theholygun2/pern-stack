@@ -1,15 +1,28 @@
 import { Button, Dialog, Stack, Input, Fieldset, Portal, Field, Select } from "@chakra-ui/react";
-import { toaster } from "@/components/ui/toaster"
 import { useProductStore } from "@/store/useProductStore";
+import { useState, useEffect } from "react";
 
 function AddProductModal() {
 
-    const { addProduct, formData, setFormData, loading, categoryList, error } = useProductStore()
-
+    const { addProduct, formData, setFormData, resetForm, loading, categoryList } = useProductStore()
+    const isFormValid = () => {
+        const { name, price, image, category_id } = formData;
+        return (
+          name.trim() !== "" &&
+          price.trim() !== "" &&
+          image.trim() !== "" &&
+          category_id !== ""
+        );
+      };
+      
   return (
-    <Dialog.Root placement="center">
+    <Dialog.Root placement="center" >
         <Dialog.Trigger asChild>
-            <Button variant="outline">Add Product</Button>
+        <Button onClick={() => {
+      resetForm(); 
+    }}>
+      Add Product
+    </Button>
         </Dialog.Trigger>
         <Portal>
             <Dialog.Backdrop/>
@@ -51,26 +64,32 @@ function AddProductModal() {
                                         </Field.Root>
 
                                         {categoryList && (
-                                            <Select.Root collection={categoryList} 
-                                            onValueChange={(key) => {console.log(key); setFormData({...formData, category_id: key.value[0]})} }>
+                                            <Select.Root
+                                            collection={categoryList}
+                                            onValueChange={(key) => {
+                                              const selectedId = key.value[0];
+                                              console.log(selectedId);
+                                              setFormData({ ...formData, category_id: selectedId });
+                                            }}
+                                          >
                                             <Select.HiddenSelect />
                                             <Select.Label>Select category</Select.Label>
                                             <Select.Control>
-                                                <Select.Trigger>
-                                                    <Select.ValueText placeholder="Barang" />
-                                                </Select.Trigger>
-                                                <Select.IndicatorGroup>
-                                                    <Select.Indicator/>
-                                                </Select.IndicatorGroup>
+                                              <Select.Trigger>
+                                                <Select.ValueText placeholder="Select a category" />
+                                              </Select.Trigger>
+                                              <Select.IndicatorGroup>
+                                                <Select.Indicator />
+                                              </Select.IndicatorGroup>
                                             </Select.Control>
                                             <Select.Content>
-                                                {categoryList.items.map((item) => (
-                                                    <Select.Item item={item} key={item.value}>
-                                                        {item.label}
-                                                    </Select.Item>
-                                                ))}
+                                              {categoryList.items.map((item) => (
+                                                <Select.Item item={item} key={item.value}>
+                                                  {item.label}
+                                                </Select.Item>
+                                              ))}
                                             </Select.Content>
-                                        </Select.Root>
+                                          </Select.Root>                                          
                                         )}
                                     </Stack>
                                 </Fieldset.Content>
@@ -80,55 +99,14 @@ function AddProductModal() {
 
                     <Dialog.Footer>
                         <Dialog.CloseTrigger asChild>
-                            <Button variant="ghost" mr="3">
+                            <Button>
                                 Cancel
                             </Button>
                         </Dialog.CloseTrigger>
-                        <Button onClick={ toaster.promise(addProduct, {
-                            success: {
-                                id: "upload-success",
-                                title: "Succesufully uploaded!",
-                                description: "Looks great"
-                            },
-                            error: {
-                                title: "Upload failed",
-                                description: "Something went wrong with the upload"
-                            }
-                        })} isLoading={loading}>
-                            Add Product
+                        <Button onClick={addProduct}isLoading={loading} disabled={!isFormValid()}>
+                            Upload Product
                         </Button>
-
-                        <Button
-      variant="outline"
-      size="sm"
-      onClick={() => {
-        const promise = new Promise<void>((resolve) => {
-          setTimeout(() => resolve(), 5000)
-        })
-
-        toaster.promise(promise, {
-          success: {
-            id: "upload-success",
-            title: "Successfully uploaded!",
-            description: "Looks great",
-          },
-          error: {
-            id: "upload-error",
-            title: "Upload failed",
-            description: "Something went wrong with the upload",
-          },
-          loading: {
-            id: "upload-loading",
-            title: "Uploading...",
-            description: "Please wait",
-          },
-        })
-      }}
-    >
-      Show Toast
-    </Button>
                     </Dialog.Footer>
-
                 </Dialog.Content>
             </Dialog.Positioner>
         </Portal>

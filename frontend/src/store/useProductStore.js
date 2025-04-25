@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
-import toast from "react-hot-toast";
 import { createListCollection } from "@chakra-ui/react";
+import { toaster } from "@/components/ui/toaster";
 
 // base url will be dynamic depending on the environment
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
@@ -29,18 +29,23 @@ export const useProductStore = create((set, get) => ({
   addProduct: async (e) => {
     e.preventDefault();
     set({ loading: true });
-
     try {
       const { formData } = get();
       console.log(`form`, formData)
       await axios.post(`${BASE_URL}/api/products`, formData);
       await get().fetchProducts();
       get().resetForm();
-      toast.success("Product added successfully");
+      toaster.success({
+        title: "Upload successfull",
+        description: "Product successfully uploaded to the server",
+      })
       //document.getElementById("add_product_modal").close();
     } catch (error) {
       console.log("Error in addProduct function", error);
-      toast.error("Something went wrong");
+      toaster.error({
+        title: "Error",
+        description: "Error while uploading product"
+      })
     } finally {
       set({ loading: false });
     }
@@ -65,10 +70,8 @@ export const useProductStore = create((set, get) => ({
     try {
       await axios.delete(`${BASE_URL}/api/products/${id}`);
       set((prev) => ({ products: prev.products.filter((product) => product.id !== id) }));
-      toast.success("Product deleted successfully");
     } catch (error) {
       console.log("Error in deleteProduct function", error);
-      toast.error("Something went wrong");
     } finally {
       set({ loading: false });
     }
@@ -100,9 +103,7 @@ export const useProductStore = create((set, get) => ({
       const { formData } = get();
       const response = await axios.put(`${BASE_URL}/api/products/${id}`, formData);
       set({ currentProduct: response.data.data });
-      toast.success("Product updated successfully");
     } catch (error) {
-      toast.error("Something went wrong");
       console.log("Error in updateProduct function", error);
     } finally {
       set({ loading: false });
