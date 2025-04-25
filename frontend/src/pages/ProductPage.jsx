@@ -52,19 +52,19 @@ function ProductPage() {
     );
   }
 
-  // if (!currentProduct) {
-  //   return (
-  //     <Container maxW="4xl" py={8}>
-  //       <Box bg="yellow.100" p={4} rounded="md">
-  //         Product not found.
-  //       </Box>
-  //       <Button mt={4} onClick={() => navigate('/')}>
-  //         <ArrowLeftIcon size={16} style={{ marginRight: "8px" }} />
-  //         Back to Products
-  //       </Button>
-  //     </Container>
-  //   );
-  // }
+  if (!currentProduct) {
+    return (
+      <Container maxW="4xl" py={8}>
+        <Box bg="yellow.100" p={4} rounded="md">
+          Product not found.
+        </Box>
+        <Button mt={4} onClick={() => navigate('/')}>
+          <ArrowLeftIcon size={16} style={{ marginRight: "8px" }} />
+          Back to Products
+        </Button>
+      </Container>
+    );
+  }
 
   return (
     <Container mx="auto" px={4} py={8} maxW="4xl">
@@ -93,7 +93,7 @@ function ProductPage() {
           <Box shadow="lg" rounded="lg" p={6}>
             <Heading size="lg" mb={6}/>
 
-            <form onSubmit={(e) => {e.preventDefault(); updateProduct(id);}}>
+            <form onSubmit={ async (e) => {e.preventDefault(); const success = await updateProduct(id); if (success) {navigate('/')}}}>
               <Fieldset.Root>
                 <Fieldset.Content>
                   {/* PRODUCT Name */}
@@ -117,7 +117,6 @@ function ProductPage() {
                 </Fieldset.Content>
               </Fieldset.Root>
 
-              {categoryList && (
                   <Select.Root 
                   collection={categoryList} 
                   value={[formData.category_id.toString()]}
@@ -142,7 +141,6 @@ function ProductPage() {
                       ))}
                   </Select.Content>
               </Select.Root>
-              )}
               
               {/* FORM ACTIONS */}
               <Flex justify="space-between" mt={8}>

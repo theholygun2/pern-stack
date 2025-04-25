@@ -103,8 +103,10 @@ export const useProductStore = create((set, get) => ({
       const { formData } = get();
       const response = await axios.put(`${BASE_URL}/api/products/${id}`, formData);
       set({ currentProduct: response.data.data });
+      return true
     } catch (error) {
       console.log("Error in updateProduct function", error);
+      return false
     } finally {
       set({ loading: false });
     }
