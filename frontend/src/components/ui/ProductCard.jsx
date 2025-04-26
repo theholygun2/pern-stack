@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Button, Text, Image, Box } from '@chakra-ui/react'
+import { Card, Button, Text, Image, Box, Dialog, Portal } from '@chakra-ui/react'
 import { Link } from 'react-router-dom'
 import { useProductStore } from '@/store/useProductStore'
 
@@ -23,8 +23,26 @@ function ProductCard({ product }) {
         <Link to={`/product/${product.id}`}>
         <Button variant="solid">Edit</Button>
         </Link>
-        
-        <Button variant="ghost" onClick={() => deleteProduct(product.id)}>Delete Product</Button>
+        <Dialog.Root placement="center">
+          <Dialog.Trigger asChild>
+            <Button>Delete Product</Button>
+          </Dialog.Trigger>
+          <Portal>
+            <Dialog.Backdrop/>
+            <Dialog.Positioner>
+            <Dialog.Content>
+              
+              <Dialog.Body>Delete {product.name}?</Dialog.Body>
+              <Dialog.Footer>
+                <Dialog.ActionTrigger asChild>
+                  <Button variant="outline">Cancel</Button>
+                </Dialog.ActionTrigger>
+                <Button variant="ghost" onClick={() => deleteProduct(product.id)}>Confirm</Button>
+              </Dialog.Footer>
+            </Dialog.Content>
+            </Dialog.Positioner>
+          </Portal>
+        </Dialog.Root>
       </Card.Footer>
           </Card.Root >
   )

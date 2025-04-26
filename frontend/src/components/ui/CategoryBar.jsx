@@ -1,13 +1,17 @@
 import { SimpleGrid, Box, Text } from "@chakra-ui/react"
 import { Link } from "react-router-dom"
+import { useProductStore } from '@/store/useProductStore'
 
-function CategoryBar({ categories }) {
+function CategoryBar() {
+  // Get categories from the store
+  const { categories } = useProductStore()
+
   return (
     <SimpleGrid columns={[2, 3, 4]} spacing={4} mt={4}>
       {categories.map((cat) => (
         <Box 
           as={Link} 
-          to={`/categories/${cat.id}`} 
+          to={`/category/${cat.id}`}  // Adjust the path based on your routing setup
           p={4} 
           borderWidth="1px" 
           rounded="md" 
@@ -20,3 +24,5 @@ function CategoryBar({ categories }) {
     </SimpleGrid>
   )
 }
+
+export default CategoryBar

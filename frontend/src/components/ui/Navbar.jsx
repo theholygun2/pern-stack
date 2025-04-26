@@ -1,34 +1,34 @@
-import { Box, Flex, Button, Text, Spacer, Stack, Span, HStack } from "@chakra-ui/react"
-import { Link, useResolvedPath } from "react-router-dom"
+import { Box, Flex, Button, Text, Spacer, Stack, Span, HStack, Link as ChakraLink } from "@chakra-ui/react"
+import { Link, useLocation, useResolvedPath } from "react-router-dom"
 import { ColorModeButton } from "./color-mode"
-import { useProductStore } from "@/store/useProductStore"
 import { ShoppingBagIcon, ShoppingCartIcon } from "lucide-react"
 
 function Navbar() {
-  const {pathname} = useResolvedPath()
+  const {pathname} = useLocation()
   const isHomePage = pathname === "/"
 
   return (
-    <Box px={4} py={2}>
-      <Box maxW={"7xl"} mx={"auto"}>
-        <Flex justify={"space-between"}>
-          <Link to={`/`}>
-          <HStack>
-          <ShoppingCartIcon/>
-          <Text>PERN SHOP</Text>
-          </HStack>
-          </Link>
-          <Flex justify={"flex-end"}>
-            <HStack>
+    <Box>
+      <Flex justify="space-between" align="center" px={4} py={2} minH="60px" borderBottom={1} borderStyle="solid">
+        <Flex>
+          <ShoppingCartIcon />
+          Clothes Shop
+          Best Sellers
+          Shop All
+          Collaborations
+          Accessories
+          Sale
+          Lookbooks
+        </Flex>
+        <HStack>
             <ColorModeButton/>
             {isHomePage && (
               <ShoppingBagIcon/>
             )}
             </HStack>
-          </Flex>
-        </Flex>
-      </Box>
+      </Flex>
     </Box>
+        
   )
 }
 

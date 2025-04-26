@@ -1,7 +1,10 @@
 import { useParams } from 'react-router-dom';
+import { useProductStore } from '@/store/useProductStore';
+import { useEffect } from 'react';
+import { Container, Center, Spinner, Text } from '@chakra-ui/react';
 
 const CategoryPage = () => {
-    const { category } = useParams();
+    const { id } = useParams();
     const {products, loading, error, fetchProducts} = useProductStore()
   
     useEffect(() => {
@@ -28,14 +31,14 @@ const CategoryPage = () => {
   
     return (
       <Container>
-        <AddProductModal />
-        <SimpleGrid columns={3} gap="40px" >
-          {products.map((product) => (
-            <ProductCard key={product.id} product = {product}/>
-          )
-        )}
-        </SimpleGrid>
-      </Container>
+      <AddProductModal />
+      <SimpleGrid columns={3} gap="40px" >
+        {products.map((product) => (
+          <ProductCard key={product.id} product = {product}/>
+        )
+      )}
+      </SimpleGrid>
+    </Container>
     )
 }
 

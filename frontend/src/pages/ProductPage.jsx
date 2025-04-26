@@ -16,7 +16,6 @@ function ProductPage() {
     fetchProduct,
     updateProduct,
     deleteProduct,
-    resetForm,
   } = useProductStore();
 
   const navigate = useNavigate();
@@ -24,7 +23,7 @@ function ProductPage() {
 
   useEffect(() => {
     fetchProduct(id);
-  }, [fetchProduct, id]);
+  }, [id]);
 
   useEffect(() => {
     if (!categoryList || categoryList.items.length === 0) {

@@ -10,7 +10,7 @@ const HomePage = () => {
   useEffect(() => {
     fetchProducts();
     fetchCategories(); // Fetch categories as well if not already done
-  }, [fetchProducts, fetchCategories]);
+  }, []);
 
   if (loading) {
     return (
