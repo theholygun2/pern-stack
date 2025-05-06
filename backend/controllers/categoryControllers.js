@@ -1,4 +1,5 @@
 import { sql } from "../config/db.js"
+import slugify from 'slugify'
 
 export const getCategories = async (req,res) => {
     try{
@@ -36,16 +37,18 @@ export const getCategory = async (req,res) => {
     }
 }
 export const createCategory = async (req,res) => {
-    const {name,price,image} = req.body
+    const {name} = req.body
 
-    if(!name){
-        return res.status(400).json({ success: false, message: "All fields are required"})
+    if (!name || typeof name !== "string") {
+        return res.status(400).json({ message: "Category name is required and must be a string "})
     }
+
+    const slug = slugify(name, { lower: true, strict: true})
 
     try {
         const newCategory = await sql`
-        INSERT INTO categories (name)
-        VALUES (${name})
+        INSERT INTO categories (name,slug)
+        VALUES (${name},${slug})
         RETURNING *`
 
         res.status(201).json({ success: true, data: newCategory[0]})
@@ -100,3 +103,26 @@ export const deleteCategory = async (req,res) => {
         res.status(500).json({ success: false, message: "Internal Server Error"})
     }
 }
+
+export const getCategoryBySlug = async (req, res) => {
+    const { slug } = req.params;
+    try {
+      const category = await sql`
+        SELECT * FROM categories WHERE slug = ${slug}
+      `;
+      if (!category.length) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+  
+      // Fetch products by category ID
+      const products = await sql`
+        SELECT * FROM products WHERE category_id = ${category[0].id}
+      `;
+      
+      res.json({ data: category[0], products });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
+  

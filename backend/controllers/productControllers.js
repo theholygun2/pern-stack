@@ -102,11 +102,11 @@ export const deleteProduct = async (req,res) => {
 }
 
 export const getProductsByCategory = async (req, res) => {
-    const { category_id } = req.params;
+    const { categoryId } = req.query;
     try {
         const products = await sql`
         SELECT * FROM products
-        WHERE category_id = ${category_id}
+        WHERE category_id = ${categoryId}
         ORDER BY created_at DESC`;
 
         res.status(200).json({ success: true, data: products });

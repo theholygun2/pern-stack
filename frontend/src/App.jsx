@@ -13,6 +13,7 @@ function App() {
     <>
     <Toaster />
       <Navbar />
+      <CategoryBar/>
       <Routes>
         <Route path="/" element={<HomePage />}/>
         <Route path="/product/:id" element={<ProductPage />}/>

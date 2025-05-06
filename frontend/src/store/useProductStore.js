@@ -97,12 +97,23 @@ export const useProductStore = create((set, get) => ({
       set({ loading: false });
     }
   },
+  
+  fetchProductsByCategoryId: async (id) => {
+    set( {loading: true});
+    try {
+      const response = await axios.get(`${BASE_URL}/api/products/by-category/?categoryID=${id}`)
+      console.log("Fetched product response: ", response.data)
+    } catch (error) {
+      console.log("Error in fetchProductsByCategoryId function ", error)
+    }
+  },
+
   updateProduct: async (id) => {
     set({ loading: true });
     try {
       const { formData } = get();
       const response = await axios.put(`${BASE_URL}/api/products/${id}`, formData);
-      set({ currentProduct: response.data.data });
+      set({ currentProduct: response.data.data }); //data.data
       return true
     } catch (error) {
       console.log("Error in updateProduct function", error);
