@@ -1,8 +1,8 @@
-import { Text, Box, Flex, HStack, Link as ChakraLink, Select, Popover, Portal, SelectClearTrigger } from "@chakra-ui/react"
+import { Text, Box, Flex, HStack, Link as ChakraLink, Select, Popover, Portal, VStack, SimpleGrid } from "@chakra-ui/react"
 import { Link, useLocation, useResolvedPath } from "react-router-dom"
 import { ColorModeButton } from "./color-mode"
 import { ShoppingBagIcon, ShoppingCartIcon } from "lucide-react"
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 function Navbar() {
   const {pathname} = useLocation()
@@ -10,26 +10,24 @@ function Navbar() {
   const [open, setOpen ] = useState(false)
 
   return (
-    <Box>
-      <Flex justify="space-between" align="center" px={4} py={2} minH="60px" borderBottom={1} borderStyle="solid">
-        <Flex gap="4">
+    <Box position="sticky" top="0" zIndex="sticky" bg={{ base: "white", _dark: "black" }}>
+      <Flex justify="space-between" align="center" px={4} py={2} minH="60px" borderBottom={1} shadow={"sm"}>
+        <Flex gap="4" align="center">
           <ShoppingCartIcon />
-          <ChakraLink as={Link} _><Text>Best Sellers</Text></ChakraLink>
-          <Popover.Root trigger={'hover'} open={open} onOpenChange={(e) => setOpen(e.open)} asChild>
-            <Popover.Trigger onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-              Shop All
-            </Popover.Trigger>
-            <Portal>
+          <ChakraLink as={Link}><Text>Best Sellers</Text></ChakraLink>
+            <Popover.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
+              <Popover.Trigger onMouseEnter={() => setOpen(true)}>
+                <Box>
+                Hover Me
+                </Box>
+              </Popover.Trigger>
               <Popover.Positioner>
-                <Popover.Content onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-                  <Popover.Body>
-                    WADIDAWWWW
-                  </Popover.Body>
+                <Popover.Content >
+                  Im Clicked breh
                 </Popover.Content>
               </Popover.Positioner>
-            </Portal>
-          </Popover.Root>
-          <Text>Shop All</Text>
+            </Popover.Root>
+
           <Text>Collaborations</Text>
           <Text>Accessories</Text>
           <Text>Sale</Text>

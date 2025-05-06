@@ -1,5 +1,5 @@
 import { useProductStore } from "@/store/useProductStore";
-import { Container,Text, SimpleGrid, Center, Spinner} from "@chakra-ui/react";
+import { Container,Text, SimpleGrid, Center, Spinner, VStack} from "@chakra-ui/react";
 import { useEffect } from "react";
 import ProductCard from "@/components/ui/ProductCard";
 import AddProductModal from "@/components/ui/AddProductModal";
@@ -39,6 +39,42 @@ const HomePage = () => {
         )
       )}
       </SimpleGrid>
+      <VStack gap={100}>
+        <Text>
+          dfsafsf
+        </Text>
+        <Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text><Text>
+          dfsafsf
+        </Text>
+      </VStack>
     </Container>
   )
 }

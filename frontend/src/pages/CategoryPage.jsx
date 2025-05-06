@@ -1,7 +1,9 @@
 import { useParams } from 'react-router-dom';
 import { useProductStore } from '@/store/useProductStore';
 import { useEffect } from 'react';
-import { Container, Center, Spinner, Text } from '@chakra-ui/react';
+import { Container, Center, Spinner, Text, SimpleGrid } from '@chakra-ui/react';
+import AddProductModal from '@/components/ui/AddProductModal';
+import ProductCard from '@/components/ui/ProductCard';
 
 const CategoryPage = () => {
     const { id } = useParams();

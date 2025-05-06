@@ -1,5 +1,5 @@
 import { useProductStore } from '@/store/useProductStore';
-import { Button, Container, Select, Image, Spinner, Box, Input, Flex, Center, Grid, GridItem, Heading, Fieldset, Field } from '@chakra-ui/react';
+import { Button, Container, Select, Image, Spinner, Box, Input, Flex, Center, Grid, GridItem, Heading, Fieldset, Field, Portal } from '@chakra-ui/react';
 import { ArrowLeftIcon, SaveIcon, Trash2Icon } from 'lucide-react'; // Assuming all icons are from lucide-react
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -132,13 +132,15 @@ function ProductPage() {
                           <Select.Indicator/>
                       </Select.IndicatorGroup>
                   </Select.Control>
+                  <Select.Positioner>
                   <Select.Content>
-                      {categoryList.items.map((item) => (
+                    {categoryList.items.map((item) => (
                           <Select.Item item={item} key={item.value}>
                               {item.label}
                           </Select.Item>
-                      ))}
+                      ))}                      
                   </Select.Content>
+                  </Select.Positioner>
               </Select.Root>
               
               {/* FORM ACTIONS */}
