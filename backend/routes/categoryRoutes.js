@@ -1,13 +1,9 @@
-import express from "express"
-import { createCategory, getCategories, getCategory, updateCategory, deleteCategory,getCategoryBySlug } from "../controllers/categoryControllers.js"
-const router = express.Router()
+import express from "express";
+import { getCategories, getCategoryBySlug } from "../controllers/categoryController.js";
 
-router.get("/slug/:slug", getCategoryBySlug);
-router.get("/", getCategories)
-router.get("/:id", getCategory)
-router.post("/", createCategory)
-router.put("/:id", updateCategory)
-router.delete("/:id", deleteCategory)
+const router = express.Router();
 
+router.get("/", getCategories);
+router.get("/:slug", getCategoryBySlug); // Optional, if you want a dedicated category page
 
-export default router
+export default router;

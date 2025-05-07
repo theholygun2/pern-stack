@@ -6,7 +6,7 @@ import AddProductModal from '@/components/ui/AddProductModal';
 import ProductCard from '@/components/ui/ProductCard';
 
 const CategoryPage = () => {
-    const { id } = useParams();
+    const { slug } = useParams();
     const {products, loading, error, fetchProducts} = useProductStore()
   
     useEffect(() => {

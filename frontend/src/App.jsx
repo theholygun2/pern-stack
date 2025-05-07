@@ -16,12 +16,21 @@ function App() {
       <CategoryBar/>
       <Routes>
         <Route path="/" element={<HomePage />}/>
-        <Route path="/product/:id" element={<ProductPage />}/>
-        <Route path="/category/:id" element={<CategoryPage />}/>
+        <Route path="/product/:slug" element={<ProductPage />}/>
+        <Route path="/category/:slug" element={<CategoryPage />}/>
         <Route path="/cart" element={<CartPage />}/>
       </Routes>
     </>
   )
 }
+
+// File Name	Component Purpose
+// HomePage.jsx	Landing experience (hero + featured)
+// ProductsPage.jsx	List all products
+// ProductPage.jsx	Show single product details
+// CategoryPage.jsx	Show products filtered by category
+// CartPage.jsx	User’s selected items
+// CheckoutPage.jsx	Final purchase step (optional)
+// NotFoundPage.jsx	404 route fallback
 
 export default App

@@ -1,12 +1,18 @@
-import express from "express"
-import { createProduct, getProducts, getProduct, updateProduct, deleteProduct, getProductsByCategory } from "../controllers/productControllers.js"
-const router = express.Router()
+import express from "express";
+import {
+  getProducts,
+  getProductBySlug,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} from "../controllers/productController.js";
 
-router.get("/by-category", getProductsByCategory)
-router.get("/", getProducts)
-router.get("/:id", getProduct)
-router.post("/", createProduct)
-router.put("/:id", updateProduct)
-router.delete("/:id", deleteProduct)
+const router = express.Router();
 
-export default router
+router.get("/", getProducts); // Supports filtering: ?category_slug=books&name=Clean&min_price=10
+router.get("/:slug", getProductBySlug);
+router.post("/", createProduct);
+router.put("/:id", updateProduct);
+router.delete("/:id", deleteProduct);
+
+export default router;

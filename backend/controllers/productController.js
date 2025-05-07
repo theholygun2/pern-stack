@@ -1,19 +1,43 @@
 import { sql } from "../config/db.js"
+import { handleNotFound, handleServerError } from "../utils/response.js";
 
-export const getProducts = async (req,res) => {
-    try{
-        const products = await sql`
-        SELECT * FROM products
-        ORDER BY created_at DESC`;
+export const getProducts = async (req, res) => {
+  const { category_slug, name, max_price, min_price } = req.query;
 
-        console.log("fetched products", products);
-        res.status(200).json({ success: true, data:products})
-    } catch (error)
-    {
-        console.error(error); // <--- kasih console.log error juga
-        res.status(500).json({ success: false, message: "Something went wrong" });
+  try {
+    let baseQuery = sql`
+      SELECT p.* FROM products p
+      JOIN categories c ON p.category_id = c.id
+      WHERE true
+    `;
+
+    if (category_slug) {
+      baseQuery = sql`${baseQuery} AND c.slug = ${category_slug}`;
     }
-}
+
+    if (name) {
+      baseQuery = sql`${baseQuery} AND p.name ILIKE ${'%' + name + '%'}`;
+    }
+
+    if (min_price) {
+      baseQuery = sql`${baseQuery} AND p.price >= ${min_price}`;
+    }
+
+    if (max_price) {
+      baseQuery = sql`${baseQuery} AND p.price <= ${max_price}`;
+    }
+
+    baseQuery = sql`${baseQuery} ORDER BY p.created_at DESC`;
+
+    const products = await baseQuery;
+
+    res.status(200).json({ success: true, data: products });
+  } catch (error) {
+    console.error("Error in getProducts function", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 export const getProduct = async (req,res) => {
     const { id } = req.params
 
@@ -60,24 +84,22 @@ export const updateProduct = async (req,res) => {
     const {name, price, image, category_id } = req.body
 
     try {
-        await sql`
-        UPDATE products
-        SET name=${name}, price=${price}, image=${image}, category_id=${category_id}
-        WHERE id=${id}
-        RETURNING *`;
-
-        if (updateProduct.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Product not found"
-            })
+        const updated = await sql`
+            UPDATE products
+            SET name=${name}, price=${price}, image=${image}, category_id=${category_id}
+            WHERE id=${id}
+            RETURNING *`;
+            
+        if (updated.length === 0) {
+            return handleNotFound(res, "Product");
         }
-        res.status(200).json({ success:true, data: updateProduct[0]})
+
+  res.status(200).json({ success: true, data: updated[0] });    
     } catch (error) {
-        console.log("Error in updateProduct function")
-        res.status(500).json({ success: false, message: "Internal Server Error"})
-    }
+        return handleServerError(res, error, "Failed to udpate product")
+    } 
 }
+
 export const deleteProduct = async (req,res) => {
     const { id } = req.params
 
@@ -100,18 +122,22 @@ export const deleteProduct = async (req,res) => {
         res.status(500).json({ success: false, message: "Internal Server Error"})
     }
 }
-
-export const getProductsByCategory = async (req, res) => {
-    const { categoryId } = req.query;
+export const getProductBySlug = async (req, res) => {
+    const { slug } = req.params;
+  
     try {
-        const products = await sql`
+      const product = await sql`
         SELECT * FROM products
-        WHERE category_id = ${categoryId}
-        ORDER BY created_at DESC`;
-
-        res.status(200).json({ success: true, data: products });
+        WHERE slug = ${slug}
+      `;
+  
+      if (product.length === 0) {
+        return res.status(404).json({ success: false, message: "Product not found" });
+      }
+  
+      res.status(200).json({ success: true, data: product[0] });
     } catch (error) {
-        console.error("Error in getProductsByCategory", error);
-        res.status(500).json({ success: false, message: "Internal Server Error" });
+      console.error("Error in getProductBySlug", error);
+      res.status(500).json({ success: false, message: "Internal Server Error" });
     }
-};
+  };
