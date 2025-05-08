@@ -14,7 +14,7 @@ function Navbar() {
       <Flex justify="space-between" align="center" px={4} py={2} minH="60px" borderBottom={1} shadow={"sm"}>
         <Flex gap="4" align="center">
           <ShoppingCartIcon />
-          <ChakraLink as={Link}><Text>Best Sellers</Text></ChakraLink>
+          <ChakraLink as={Link} to="/"><Text>Best Sellers</Text></ChakraLink>
             <Popover.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
               <Popover.Trigger onMouseEnter={() => setOpen(true)}>
                 <Box>

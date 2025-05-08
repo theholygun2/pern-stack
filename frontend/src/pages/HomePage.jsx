@@ -5,30 +5,39 @@ import ProductCard from "@/components/ui/ProductCard";
 import AddProductModal from "@/components/ui/AddProductModal";
 const HomePage = () => {
   
-  const {products, loading, error, fetchProducts, fetchCategories} = useProductStore()
+  const {
+    products,
+    loadingProducts,
+    errorProducts,
+    fetchProducts,
+    fetchCategories,
+    loadingCategories,
+    errorCategories
+  } = useProductStore();
   
   useEffect(() => {
     fetchProducts();
-    fetchCategories(); // Fetch categories as well if not already done
+    fetchCategories();
   }, []);
-
-  if (loading) {
-    return (
-      <Center >
-        <Spinner />
-      </Center>
-    )
-  }
-
-  if (error) {
+  
+  if (loadingProducts || loadingCategories) {
     return (
       <Center minH="60vh">
-        <Text color="red.500" fontSize="lg">
-          {error}
+        <Spinner />
+      </Center>
+    );
+  }
+  
+  if (errorProducts || errorCategories) {
+    return (
+      <Center minH="60vh">
+        <Text color="red.500">
+          {errorProducts || errorCategories}
         </Text>
       </Center>
     );
   }
+  
 
   return (
     <Container>

@@ -41,7 +41,6 @@ export const getProducts = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
-
 export const getProduct = async (req,res) => {
     const { slug } = req.params
 
@@ -135,8 +134,6 @@ export const updateProduct = async (req, res) => {
     return handleServerError(res, error, "Failed to update product");
   }
 };
-
-
 export const deleteProduct = async (req,res) => {
     const { id } = req.params
 
@@ -159,22 +156,21 @@ export const deleteProduct = async (req,res) => {
         res.status(500).json({ success: false, message: "Internal Server Error"})
     }
 }
-export const getProductBySlug = async (req, res) => {
-    const { slug } = req.params;
-  
-    try {
-      const product = await sql`
-        SELECT * FROM products
-        WHERE slug = ${slug}
-      `;
-  
-      if (product.length === 0) {
-        return res.status(404).json({ success: false, message: "Product not found" });
-      }
-  
-      res.status(200).json({ success: true, data: product[0] });
-    } catch (error) {
-      console.error("Error in getProductBySlug", error);
-      res.status(500).json({ success: false, message: "Internal Server Error" });
-    }
-  };
+export const getProductByCategory = async (req, res) => {
+  const { slug } = req.params;
+
+  try {
+    const products = await sql`
+      SELECT p.* 
+      FROM products p
+      JOIN categories c ON c.id = p.category_id
+      WHERE c.slug = ${slug}
+    `;
+
+    console.log("Fetched products: ", products);
+    res.status(200).json({ success: true, data: products });
+  } catch (error) {
+    console.error("Error in fetchProductByCategory:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};

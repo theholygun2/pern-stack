@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import axios from "axios";
-import { createListCollection, MarkPropsProvider } from "@chakra-ui/react";
 import { toaster } from "@/components/ui/toaster";
 import { useLocation } from "react-router-dom";
+import { createListCollection } from "@chakra-ui/react";
 
 // base url will be dynamic depending on the environment
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
@@ -15,6 +15,10 @@ export const useProductStore = create((set, get) => ({
   loading: false,
   error: null,
   currentProduct: null,
+  loadingProducts: false,
+  loadingCategories: false,
+  errorProducts: null,
+  errorCategories: null,
 
   // form state
   formData: {
@@ -54,24 +58,37 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
-  fetchProducts: async ({ category_slug, name, min_price, max_price } = {}) => {
-    set({ loading: true });
-    try {
-      const params = new URLSearchParams();
-      if (category_slug) params.append("category_slug", category_slug);
-      if (name) params.append("name", name);
-      if (min_price) params.append("min_price", min_price);
-      if (max_price) params.append("max_price", max_price)
-      
-      const response = await axios.get(`${BASE_URL}/api/products?${params.toString()}`);
-      set({ products: response.data.data, error: null });
-    } catch (err) {
-      if (err.status == 429) set({ error: "Rate limit exceeded", products: [] });
-      else set({ error: "Something went wrong", products: [] });
-    } finally {
-      set({ loading: false });
-    }
-  },
+fetchProducts: async ({ category_slug, name, min_price, max_price } = {}) => {
+  set({ loadingProducts: true });
+  try {
+    const params = new URLSearchParams();
+    if (category_slug) params.append("category_slug", category_slug);
+    if (name) params.append("name", name);
+    if (min_price) params.append("min_price", min_price);
+    if (max_price) params.append("max_price", max_price);
+
+    const response = await axios.get(`${BASE_URL}/api/products?${params.toString()}`);
+    set({ products: response.data.data, errorProducts: null });
+  } catch (err) {
+    console.error("fetchProducts error", err);
+    set({ errorProducts: "Failed to fetch products", products: [] });
+  } finally {
+    set({ loadingProducts: false });
+  }
+},
+
+fetchProductByCategory: async (slug) => {
+  set({ loadingProducts: true })
+  try {
+    const response = await axios.get(`${BASE_URL}/api/products/category/${slug}`)
+    set({ products: response.data.data, errorProducts: null })
+  } catch (err) {
+    set({ errorProducts: "Failed to fetch products for category" })
+  } finally {
+    set({ loadingProducts: false })
+  }
+},
+
 
   deleteProduct: async (id) => {
     console.log("deleteProduct function called", id);
@@ -106,16 +123,6 @@ export const useProductStore = create((set, get) => ({
       set({ loading: false });
     }
   },
-  
-  fetchProductsByCategoryId: async (id) => {
-    set( {loading: true});
-    try {
-      const response = await axios.get(`${BASE_URL}/api/products/by-category/?categoryID=${id}`)
-      console.log("Fetched product response: ", response.data)
-    } catch (error) {
-      console.log("Error in fetchProductsByCategoryId function ", error)
-    }
-  },
 
   updateProduct: async () => {
     set({ loading: true });
@@ -133,22 +140,24 @@ export const useProductStore = create((set, get) => ({
   },
 
   fetchCategories: async () => {
-    set({ loading: true });
+    set({ loadingCategories: true });
     try {
       const response = await axios.get(`${BASE_URL}/api/categories`);
       const categories = response.data.data;
+  
       const categoryList = createListCollection({
         items: categories.map((cat) => ({
           label: cat.name,
           value: cat.id.toString(),
         }))
-      })
-      set({ categories, categoryList, error: null });
+      });
+  
+      set({ categories, categoryList, errorCategories: null });
     } catch (err) {
-      if (err.status == 429) set({ error: "Rate limit exceeded", categories: [] });
-      else set({ error: "Something went wrong", categories: [] });
+      console.error("fetchCategories error", err);
+      set({ errorCategories: "Failed to fetch categories", categories: [] });
     } finally {
-      set({ loading: false });
+      set({ loadingCategories: false });
     }
   },
 

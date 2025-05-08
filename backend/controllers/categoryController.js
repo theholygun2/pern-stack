@@ -103,7 +103,6 @@ export const deleteCategory = async (req,res) => {
         res.status(500).json({ success: false, message: "Internal Server Error"})
     }
 }
-
 export const getCategoryBySlug = async (req, res) => {
     const { slug } = req.params;
     try {
@@ -118,11 +117,10 @@ export const getCategoryBySlug = async (req, res) => {
       const products = await sql`
         SELECT * FROM products WHERE category_id = ${category[0].id}
       `;
-      
       res.json({ data: category[0], products });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Server error" });
     }
-  };
+};
   
