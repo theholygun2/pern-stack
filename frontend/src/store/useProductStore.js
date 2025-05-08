@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import axios from "axios";
-import { createListCollection } from "@chakra-ui/react";
+import { createListCollection, MarkPropsProvider } from "@chakra-ui/react";
 import { toaster } from "@/components/ui/toaster";
+import { useLocation } from "react-router-dom";
 
 // base url will be dynamic depending on the environment
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
@@ -17,14 +18,16 @@ export const useProductStore = create((set, get) => ({
 
   // form state
   formData: {
+    id: "",
     name: "",
     price: "",
     image: "",
-    category_id: ""
+    category_id: "",
+    slug: ""
   },
 
   setFormData: (formData) => set({ formData }),
-  resetForm: () => set({ formData: { name: "", price: "", image: "", category_id: "" } }),
+  resetForm: () => set({ formData: { name: "", price: "", image: "", category_id: "", slug: "" } }),
 
   addProduct: async (e) => {
     e.preventDefault();
@@ -51,10 +54,16 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
-  fetchProducts: async () => {
+  fetchProducts: async ({ category_slug, name, min_price, max_price } = {}) => {
     set({ loading: true });
     try {
-      const response = await axios.get(`${BASE_URL}/api/products`);
+      const params = new URLSearchParams();
+      if (category_slug) params.append("category_slug", category_slug);
+      if (name) params.append("name", name);
+      if (min_price) params.append("min_price", min_price);
+      if (max_price) params.append("max_price", max_price)
+      
+      const response = await axios.get(`${BASE_URL}/api/products?${params.toString()}`);
       set({ products: response.data.data, error: null });
     } catch (err) {
       if (err.status == 429) set({ error: "Rate limit exceeded", products: [] });
@@ -77,17 +86,17 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
-  fetchProduct: async (id) => {
+  fetchProduct: async (slug) => {
     set({ loading: true });
     try {
-      const response = await axios.get(`${BASE_URL}/api/products/${id}`);
+      const response = await axios.get(`${BASE_URL}/api/products/${slug}`);
       console.log("Fetched product response:", response.data);
   
       const product = response.data.data; // <- correct key
   
       set({
         currentProduct: product,
-        formData: product,
+        formData: { ...product},
         error: null,
       });
     } catch (error) {
@@ -108,11 +117,11 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
-  updateProduct: async (id) => {
+  updateProduct: async () => {
     set({ loading: true });
     try {
       const { formData } = get();
-      const response = await axios.put(`${BASE_URL}/api/products/${id}`, formData);
+      const response = await axios.put(`${BASE_URL}/api/products/${formData.id}`, formData);
       set({ currentProduct: response.data.data }); //data.data
       return true
     } catch (error) {
@@ -142,4 +151,6 @@ export const useProductStore = create((set, get) => ({
       set({ loading: false });
     }
   },
+
+  
 }));

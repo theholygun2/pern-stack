@@ -19,11 +19,11 @@ function ProductPage() {
   } = useProductStore();
 
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { slug } = useParams();
 
   useEffect(() => {
-    fetchProduct(id);
-  }, [id]);
+    fetchProduct(slug);
+  }, [slug]);
 
   useEffect(() => {
     if (!categoryList || categoryList.items.length === 0) {
@@ -92,7 +92,7 @@ function ProductPage() {
           <Box shadow="lg" rounded="lg" p={6}>
             <Heading size="lg" mb={6}/>
 
-            <form onSubmit={ async (e) => {e.preventDefault(); const success = await updateProduct(id); if (success) {navigate('/')}}}>
+            <form onSubmit={ async (e) => {e.preventDefault(); const success = await updateProduct(); if (success) {navigate('/')}}}>
               <Fieldset.Root>
                 <Fieldset.Content>
                   {/* PRODUCT Name */}

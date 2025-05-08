@@ -20,7 +20,7 @@ function ProductCard({ product }) {
         </Text>
       </Card.Body>
       <Card.Footer gap="2">
-        <Link to={`/product/${product.id}`}>
+        <Link to={`/product/${product.slug}`}>
         <Button variant="solid">Edit</Button>
         </Link>
         <Dialog.Root placement="center">

@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useProductStore } from '@/store/useProductStore';
 import { useEffect } from 'react';
 import { Container, Center, Spinner, Text, SimpleGrid } from '@chakra-ui/react';
@@ -6,11 +6,13 @@ import AddProductModal from '@/components/ui/AddProductModal';
 import ProductCard from '@/components/ui/ProductCard';
 
 const CategoryPage = () => {
-    const { slug } = useParams();
+    const [ searchParams ] = useSearchParams()
+    const category_slug = searchParams.get("category_slug")
+    //const name = searchParams.get("name")
     const {products, loading, error, fetchProducts} = useProductStore()
   
     useEffect(() => {
-      fetchProducts()
+      fetchProducts( {category_slug: category_slug})
     }, [fetchProducts])
   
     if (loading) {

@@ -1,8 +1,9 @@
 import { sql } from "../config/db.js"
 import { handleNotFound, handleServerError } from "../utils/response.js";
+import slugify from "slugify";
 
 export const getProducts = async (req, res) => {
-  const { category_slug, name, max_price, min_price } = req.query;
+  const { category_slug, name, max_price, min_price, slug } = req.query;
 
   try {
     let baseQuery = sql`
@@ -26,6 +27,9 @@ export const getProducts = async (req, res) => {
     if (max_price) {
       baseQuery = sql`${baseQuery} AND p.price <= ${max_price}`;
     }
+    if (slug) {
+      baseQuery = sql`${baseQuery} AND p.name ILIKE ${'%' + slug + '%'}`;
+    }
 
     baseQuery = sql`${baseQuery} ORDER BY p.created_at DESC`;
 
@@ -39,12 +43,12 @@ export const getProducts = async (req, res) => {
 };
 
 export const getProduct = async (req,res) => {
-    const { id } = req.params
+    const { slug } = req.params
 
     try {
         const product = await sql`
         SELECT * FROM products
-        WHERE id = ${id}`
+        WHERE slug = ${slug}`
 
         if (product.length === 0) {
             // Product not found
@@ -66,10 +70,21 @@ export const createProduct = async (req,res) => {
         return res.status(400).json({ success: false, message: "All fields are required"})
     }
 
+    const baseSlug = slugify(name, { lower: true, strict: true})
+    let slug = baseSlug
+    let counter = 1
+
+    let existing = await sql`SELECT id FROM products WHERE slug = ${slug}`
+    while (existing.length > 0 ) {
+      slug  = `${baseSlug}-${counter}`
+      existing = await sql `SELECT id FROM products WHERE slug = ${slug}`
+      counter++;
+    }
+
     try {
         const newProduct = await sql`
-        INSERT INTO products (name,price,image,category_id)
-        VALUES (${name},${price},${image},${category_id})
+        INSERT INTO products (name,price,image,category_id,slug)
+        VALUES (${name},${price},${image},${category_id},${slug})
         RETURNING *`
 
         res.status(201).json({ success: true, data: newProduct[0]})
@@ -79,26 +94,48 @@ export const createProduct = async (req,res) => {
         res.status(500).json({ success: false, message: "internal server error"})
     }
 }
-export const updateProduct = async (req,res) => {
-    const { id } = req.params
-    const {name, price, image, category_id } = req.body
+export const updateProduct = async (req, res) => {
+  const { id } = req.params
+  const {name, price, image, category_id } = req.body;
 
-    try {
-        const updated = await sql`
-            UPDATE products
-            SET name=${name}, price=${price}, image=${image}, category_id=${category_id}
-            WHERE id=${id}
-            RETURNING *`;
-            
-        if (updated.length === 0) {
-            return handleNotFound(res, "Product");
-        }
+  const baseSlug = slugify(name, { lower: true, strict: true });
+  let slug = baseSlug;
+  let counter = 1;
 
-  res.status(200).json({ success: true, data: updated[0] });    
-    } catch (error) {
-        return handleServerError(res, error, "Failed to udpate product")
-    } 
-}
+  // Avoid slug conflict with *other* products (excluding current product)
+  let existing = await sql`
+    SELECT id FROM products WHERE slug = ${slug} AND id != ${id}
+  `;
+  while (existing.length > 0) {
+    slug = `${baseSlug}-${counter}`;
+    existing = await sql`
+      SELECT id FROM products WHERE slug = ${slug} AND id != ${id}
+    `;
+    counter++;
+  }
+
+  try {
+    const updated = await sql`
+      UPDATE products
+      SET name = ${name},
+          price = ${price},
+          image = ${image},
+          category_id = ${category_id},
+          slug = ${slug}
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    if (updated.length === 0) {
+      return handleNotFound(res, "Product");
+    }
+
+    res.status(200).json({ success: true, data: updated[0] });
+  } catch (error) {
+    return handleServerError(res, error, "Failed to update product");
+  }
+};
+
 
 export const deleteProduct = async (req,res) => {
     const { id } = req.params

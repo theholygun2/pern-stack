@@ -1,6 +1,7 @@
 import { Container } from "@chakra-ui/react"
 import HomePage from "@/pages/HomePage"
 import ProductPage from "@/pages/ProductPage"
+import ProductsPage from "@/pages/ProductsPage"
 import  Navbar  from '@/components/ui/Navbar'
 import  CategoryBar  from '@/components/ui/CategoryBar'
 import { Routes, Route } from "react-router-dom"
@@ -16,6 +17,7 @@ function App() {
       <CategoryBar/>
       <Routes>
         <Route path="/" element={<HomePage />}/>
+        <Route path="/products" element={<ProductsPage /> }/>
         <Route path="/product/:slug" element={<ProductPage />}/>
         <Route path="/category/:slug" element={<CategoryPage />}/>
         <Route path="/cart" element={<CartPage />}/>

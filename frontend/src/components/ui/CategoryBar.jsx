@@ -11,7 +11,7 @@ function CategoryBar() {
       {categories.map((cat) => (
         <Box 
           as={Link} 
-          to={`/category/${cat.id}`}  // Adjust the path based on your routing setup
+          to={`/products/${cat.slug}`}  // Adjust the path based on your routing setup
           p={4} 
           borderWidth="1px" 
           rounded="md" 
