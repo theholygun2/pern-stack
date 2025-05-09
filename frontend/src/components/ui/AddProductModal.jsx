@@ -1,10 +1,11 @@
 import { Button, Dialog, Stack, Input, Fieldset, Portal, Field, Select } from "@chakra-ui/react";
 import { useProductStore } from "@/store/useProductStore";
+import { addProduct } from "@/store/productActions";
 import { useState, useEffect } from "react";
 
 function AddProductModal() {
 
-    const { addProduct, formData, setFormData, resetForm, loading, categoryList } = useProductStore()
+    const { formData, setFormData, resetForm, loadingProducts, categoryList } = useProductStore()
     const isFormValid = () => {
         const { name, price, image, category_id } = formData;
         return (
@@ -103,7 +104,7 @@ function AddProductModal() {
                                 Cancel
                             </Button>
                         </Dialog.CloseTrigger>
-                        <Button onClick={addProduct}isLoading={loading} disabled={!isFormValid()}>
+                        <Button onClick={addProduct}isLoading={loadingProducts} disabled={!isFormValid()}>
                             Upload Product
                         </Button>
                     </Dialog.Footer>

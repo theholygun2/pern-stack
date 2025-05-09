@@ -3,19 +3,16 @@ import { Button, Container, Select, Image, Spinner, Box, Input, Flex, Center, Gr
 import { ArrowLeftIcon, SaveIcon, Trash2Icon } from 'lucide-react'; // Assuming all icons are from lucide-react
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { fetchProduct, updateProduct, deleteProduct, fetchCategories } from '@/store/productActions';
 
 function ProductPage() {
   const {
     currentProduct,
     formData,
     categoryList,
-    fetchCategories,
     setFormData,
-    loading,
-    error,
-    fetchProduct,
-    updateProduct,
-    deleteProduct,
+    loadingProducts,
+    errorProducts,
   } = useProductStore();
 
   const navigate = useNavigate();
@@ -39,14 +36,14 @@ function ProductPage() {
     }
   };
 
-  if (loading) {
+  if (loadingProducts) {
     return <Spinner />;
   }
 
-  if (error) {
+  if (errorProducts) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="alert alert-error">{error}</div>
+        <div className="alert alert-error">{errorProducts}</div>
       </div>
     );
   }
@@ -153,9 +150,9 @@ function ProductPage() {
                 <Button
                   colorScheme="blue"
                   type="submit"
-                  isDisabled={loading || !formData.name || !formData.price || !formData.image || !formData.category_id}
+                  isDisabled={loadingProducts || !formData.name || !formData.price || !formData.image || !formData.category_id}
                 >
-                  {loading ? (
+                  {loadingProducts ? (
                     <Spinner size="sm" />
                   ) : (
                     <>

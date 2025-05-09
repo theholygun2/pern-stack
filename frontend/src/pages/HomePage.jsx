@@ -1,4 +1,5 @@
 import { useProductStore } from "@/store/useProductStore";
+import { fetchProducts, } from "@/store/productActions";
 import { Container,Text, SimpleGrid, Center, Spinner, VStack} from "@chakra-ui/react";
 import { useEffect } from "react";
 import ProductCard from "@/components/ui/ProductCard";
@@ -9,18 +10,14 @@ const HomePage = () => {
     products,
     loadingProducts,
     errorProducts,
-    fetchProducts,
-    fetchCategories,
-    loadingCategories,
-    errorCategories
+    categories
   } = useProductStore();
   
   useEffect(() => {
     fetchProducts();
-    fetchCategories();
   }, []);
-  
-  if (loadingProducts || loadingCategories) {
+
+  if (loadingProducts) {
     return (
       <Center minH="60vh">
         <Spinner />
@@ -28,24 +25,26 @@ const HomePage = () => {
     );
   }
   
-  if (errorProducts || errorCategories) {
+  if (errorProducts) {
     return (
       <Center minH="60vh">
-        <Text color="red.500">
-          {errorProducts || errorCategories}
-        </Text>
+        <Text color="red.500">{errorProducts}</Text>
       </Center>
     );
-  }
-  
+  }  
 
   return (
     <Container>
       <AddProductModal />
       <SimpleGrid columns={3} gap="40px" >
-        {products.map((product) => (
-          <ProductCard key={product.id} product = {product}/>
-        )
+        {products.map((product) => {
+          const category = categories.find(c => c.id === product.category_id)?.name || "uncagetorized"
+          return (
+            (
+              <ProductCard key={product.id} product = {product} category={category}/>
+            )
+          )
+        }
       )}
       </SimpleGrid>
       <VStack gap={100}>
