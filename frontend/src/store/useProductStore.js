@@ -42,11 +42,6 @@ export const useProductStore = create((set, get) => ({
       await axios.post(`${BASE_URL}/api/products`, formData);
       await get().fetchProducts();
       get().resetForm();
-      toaster.success({
-        title: "Upload successfull",
-        description: "Product successfully uploaded to the server",
-      })
-      //document.getElementById("add_product_modal").close();
     } catch (error) {
       console.log("Error in addProduct function", error);
       toaster.error({

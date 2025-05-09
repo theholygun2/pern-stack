@@ -35,7 +35,6 @@ const CategoryPage = () => {
   
     return (
       <Container>
-      <AddProductModal />
       <SimpleGrid columns={3} gap="40px" >
         {products.map((product) => (
           <ProductCard key={product.id} product = {product}/>
