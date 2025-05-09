@@ -83,6 +83,7 @@ function AddProductModal() {
                                                 <Select.Indicator />
                                               </Select.IndicatorGroup>
                                             </Select.Control>
+                                            <Select.Positioner>
                                             <Select.Content>
                                               {categoryList.items.map((item) => (
                                                 <Select.Item item={item} key={item.value}>
@@ -90,6 +91,7 @@ function AddProductModal() {
                                                 </Select.Item>
                                               ))}
                                             </Select.Content>
+                                            </Select.Positioner>
                                           </Select.Root>                                          
                                         )}
                                     </Stack>

@@ -133,7 +133,7 @@ export async function deleteProduct(id) {
 }
 export async function fetchCategories() {
   const {
-    setCategories, setCategoryList, categories, setLoadingCategories, setErrorCategories
+    setCategories, setCategoryList, setLoadingCategories, setErrorCategories
   } = useProductStore.getState()
 
   setLoadingCategories(true)
