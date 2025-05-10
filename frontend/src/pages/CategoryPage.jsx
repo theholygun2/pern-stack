@@ -2,14 +2,14 @@ import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { useProductStore } from '@/store/useProductStore';
 import { useEffect } from 'react';
 import { Container, Center, Spinner, Text, SimpleGrid } from '@chakra-ui/react';
-import AddProductModal from '@/components/ui/AddProductModal';
 import ProductCard from '@/components/ui/ProductCard';
+import { fetchProductByCategory } from '@/store/productActions';
 
 
 // localhost:5173/category/:slug
 const CategoryPage = () => {
     const { slug } = useParams()
-    const {products, loadingProducts, loadingCategories, errorProducts, errorCategories, fetchProductByCategory} = useProductStore()
+    const {products, loadingProducts, loadingCategories, errorProducts, errorCategories} = useProductStore()
   
     useEffect(() => {
       fetchProductByCategory(slug)

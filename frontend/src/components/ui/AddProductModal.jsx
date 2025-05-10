@@ -1,7 +1,6 @@
 import { Button, Dialog, Stack, Input, Fieldset, Portal, Field, Select } from "@chakra-ui/react";
 import { useProductStore } from "@/store/useProductStore";
 import { addProduct } from "@/store/productActions";
-import { useState, useEffect } from "react";
 
 function AddProductModal() {
 

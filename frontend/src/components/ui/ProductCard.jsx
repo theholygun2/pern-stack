@@ -15,7 +15,11 @@ function ProductCard({ product, category}) {
         {category}
         </Card.Description>
         <Text textStyle="2xl" fontWeight="medium" letterSpacing="tight" mt="2">
-          ${product.price}
+        {new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(product.price)}
         </Text>
       </Card.Body>
       <Card.Footer gap="2">
