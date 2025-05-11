@@ -1,4 +1,6 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, HStack, IconButton, Image, VStack, Text, FileUploadItemDeleteTrigger } from "@chakra-ui/react";
+import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
+import { useState } from "react";
 
 const initialCart = [
     {
@@ -19,9 +21,34 @@ const initialCart = [
 
 const CartPage = () => {
     const [cartItems, setCartItems] = useState(initialCart);  
-    <Box>
+    return(
+        <Box p={6} maxW="800px">
         <Heading>Your Cart</Heading>
+        <VStack>
+            <Box>
+                <HStack>
+                    <Image boxSize="100px" src="https://images.unsplash.com/photo-1746648177616-eed4cc1a1213?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+                    <Box flex="1">
+                        <Text>product name</Text>
+                        <Text>product price</Text>
+                        <HStack>
+                            <IconButton>
+                                <FaMinus/>
+                            </IconButton>
+                            <Text>0</Text>
+                            <IconButton>
+                                <FaPlus/>
+                            </IconButton>
+                        </HStack>
+                    </Box>
+                    <IconButton>
+                        <FaTrash/>
+                    </IconButton>
+                </HStack>
+            </Box>
+        </VStack>
     </Box>
+    )
 }
 
 export default CartPage
