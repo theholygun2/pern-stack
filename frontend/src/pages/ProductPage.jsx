@@ -1,9 +1,10 @@
 import { useProductStore } from '@/store/useProductStore';
-import { Button, Container, Select, Image, Spinner, Box, Input, Flex, Center, Grid, GridItem, Heading, Fieldset, Field, Portal } from '@chakra-ui/react';
+import { Button, Container, Select, Image, Spinner, Box, Input, Flex, Center, Grid, GridItem, Heading, Fieldset, Field, Portal, InputGroup } from '@chakra-ui/react';
 import { ArrowLeftIcon, SaveIcon, Trash2Icon } from 'lucide-react'; // Assuming all icons are from lucide-react
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchProduct, updateProduct, deleteProduct, fetchCategories } from '@/store/productActions';
+import { NumericFormat } from 'react-number-format';
 
 function ProductPage() {
   const {
@@ -31,7 +32,7 @@ function ProductPage() {
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      await deleteProduct(id);
+      await deleteProduct(formData.id);
       navigate('/');
     }
   };
@@ -101,7 +102,23 @@ function ProductPage() {
                   {/* PRODUCT Price */}
                   <Field.Root mb={4}>
                     <Field.Label>Price</Field.Label>
-                    <Input type="number" min="0" step="0.01" placeholder="0.00" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })}/>
+                    <InputGroup startElement="RP." endElement="IDR">
+                    <NumericFormat
+                        customInput={Input}
+                        thousandSeparator="."
+                        decimalSeparator=","
+                        allowNegative={false}
+                        allowLeadingZeros={false}
+                        value={formData.price}
+                        onValueChange={(values) => {
+                          setFormData({ ...formData, price: values.value }); // this gives raw number
+                        }}
+                        placeholder="0"
+                        inputMode="numeric"
+                        decimalScale={0}
+                      />
+                    </InputGroup>
+                    
                   </Field.Root>
 
                   {/* PRODUCT Image URL */}
@@ -109,9 +126,7 @@ function ProductPage() {
                     <Field.Label>Image URL</Field.Label>
                     <Input type="text" placeholder="https://example.com/image.jpg" value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })}/>
                   </Field.Root>
-                  
-                </Fieldset.Content>
-              </Fieldset.Root>
+
 
                   <Select.Root 
                   collection={categoryList} 
@@ -139,7 +154,21 @@ function ProductPage() {
                   </Select.Content>
                   </Select.Positioner>
               </Select.Root>
-              
+
+              <Field.Root>
+                <Field.Label>Quantity</Field.Label>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="0"
+                  value={formData.quantity || 1}  // Default value of 1 if formData.quantity is falsy (undefined or null)
+                  onChange={(e) =>
+                    setFormData({ ...formData, quantity: parseInt(e.target.value, 10) || 1 }) // Fallback to 1 if input is not a number
+                  }
+                />
+              </Field.Root>
+                </Fieldset.Content>
+              </Fieldset.Root>
               {/* FORM ACTIONS */}
               <Flex justify="space-between" mt={8}>
                 <Button colorScheme="red" onClick={handleDelete}>

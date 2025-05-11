@@ -124,6 +124,7 @@ export async function deleteProduct(id) {
     await axios.delete(`${BASE_URL}/api/products/${id}`)
     const updatedProducts = products.filter((product) => product.id !== id)
     setProducts(updatedProducts)
+    console.log("product deleted", updatedProducts)
   } catch (error) {
     console.error("Error in delete Product function", error)
     setErrorProducts("Error in deleting product")
@@ -133,10 +134,10 @@ export async function deleteProduct(id) {
 }
 export async function fetchCategories() {
   const {
-    setCategories, setCategoryList, setLoadingCategories, setErrorCategories
+    setCategories, setCategoryList, setLoadingCategories, setErrorCategories, categories
   } = useProductStore.getState()
 
-  if (get().categories.length > 0 ) return;
+  if (categories.length > 0 ) return;
 
   setLoadingCategories(true)
 

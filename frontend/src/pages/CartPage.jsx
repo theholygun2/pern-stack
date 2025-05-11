@@ -58,8 +58,9 @@ const CartPage = () => {
                             <Text>{item.name}</Text>
                             <Text>{item.price}</Text>
                             <HStack>
-                                <FaMinus/>
-                                <Text>quantity</Text>
+                                <IconButton onClick={decreaseQty}><FaMinus/></IconButton>
+                                <Text>{item.quantity}</Text>
+                                <IconButton onClick={increaseQty}><FaPlus/></IconButton>
                             </HStack>
                         </Box>
                     </HStack>

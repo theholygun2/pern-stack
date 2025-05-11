@@ -25,6 +25,7 @@ export const useProductStore = create((set, get) => ({
     price: "",
     image: "",
     category_id: "",
+    quantity: 1,
     slug: ""
   },
 
@@ -39,26 +40,5 @@ export const useProductStore = create((set, get) => ({
   setErrorCategories: (errorCategories) => set({errorCategories}),
 
   setFormData: (formData) => set({ formData }),
-  resetForm: () => set({ formData: { name: "", price: "", image: "", category_id: "", slug: "" } }),
-
-  fetchProduct: async (slug) => {
-    set({ loading: true });
-    try {
-      const response = await axios.get(`${BASE_URL}/api/products/${slug}`);
-      console.log("Fetched product response:", response.data);
-  
-      const product = response.data.data; // <- correct key
-  
-      set({
-        currentProduct: product,
-        formData: { ...product},
-        error: null,
-      });
-    } catch (error) {
-      console.log("Error in fetchProduct function", error);
-      set({ error: "Something went wrong", currentProduct: null });
-    } finally {
-      set({ loading: false });
-    }
-  },
+  resetForm: () => set({ formData: { name: "", price: "", image: "", category_id: "", slug: "", quantity: 1 } }),
 }));
