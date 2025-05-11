@@ -21,31 +21,50 @@ const initialCart = [
 
 const CartPage = () => {
     const [cartItems, setCartItems] = useState(initialCart);  
+
+    const increaseQty = (id) => {
+        setCartItems(items => 
+            items.map(item => 
+                item.id === id ? { ...item, quantity: item.quantity + 1} : item
+            )
+        )
+    }
+
+    const decreaseQty = (id) => {
+        setCartItems(items => 
+            items.map(item => 
+                item.id === id ? { ...item, quantity: item.quantity - 1} : item
+            )
+        )
+    }
+
+    const removeItem = (id) => {
+        setCartItems(items => items.filter(item => item.id !== id))
+    }
+
+    const totalPrice = cartItems.reduce(
+        (sum, item) => sum + item.price * item.quantity
+    )
+
     return(
         <Box p={6} maxW="800px">
         <Heading>Your Cart</Heading>
         <VStack>
-            <Box>
-                <HStack>
-                    <Image boxSize="100px" src="https://images.unsplash.com/photo-1746648177616-eed4cc1a1213?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
-                    <Box flex="1">
-                        <Text>product name</Text>
-                        <Text>product price</Text>
-                        <HStack>
-                            <IconButton>
+            {cartItems.map(item => (
+                <Box key={item.id} >
+                    <HStack>
+                        <Image boxSize="100px" src={item.image} alt={item.name}/>
+                        <Box>
+                            <Text>{item.name}</Text>
+                            <Text>{item.price}</Text>
+                            <HStack>
                                 <FaMinus/>
-                            </IconButton>
-                            <Text>0</Text>
-                            <IconButton>
-                                <FaPlus/>
-                            </IconButton>
-                        </HStack>
-                    </Box>
-                    <IconButton>
-                        <FaTrash/>
-                    </IconButton>
-                </HStack>
-            </Box>
+                                <Text>quantity</Text>
+                            </HStack>
+                        </Box>
+                    </HStack>
+                </Box>
+            ))}
         </VStack>
     </Box>
     )

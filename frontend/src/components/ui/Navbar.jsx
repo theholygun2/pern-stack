@@ -35,9 +35,7 @@ function Navbar() {
         </Flex>
         <HStack>
             <ColorModeButton/>
-            {isHomePage && (
-              <ShoppingBagIcon/>
-            )}
+            <ChakraLink as={Link} to="/cart"><ShoppingCartIcon/></ChakraLink>
             </HStack>
       </Flex>
     </Box>

@@ -136,6 +136,8 @@ export async function fetchCategories() {
     setCategories, setCategoryList, setLoadingCategories, setErrorCategories
   } = useProductStore.getState()
 
+  if (get().categories.length > 0 ) return;
+
   setLoadingCategories(true)
 
   try {
