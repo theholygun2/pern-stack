@@ -6,7 +6,7 @@ const initialCart = [
     {
       id: 1,
       name: 'Wireless Headphones',
-      image: 'https://via.placeholder.com/100',
+      image: 'https://images.unsplash.com/photo-1746483965618-d7dc246439a3?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       price: 79.99,
       quantity: 1,
     },
@@ -56,11 +56,11 @@ const CartPage = () => {
                         <Image boxSize="100px" src={item.image} alt={item.name}/>
                         <Box>
                             <Text>{item.name}</Text>
-                            <Text>{item.price}</Text>
+                            <Text>{totalPrice}</Text>
                             <HStack>
-                                <IconButton onClick={decreaseQty}><FaMinus/></IconButton>
+                                <IconButton onClick={() => decreaseQty(item.id)}><FaMinus/></IconButton>
                                 <Text>{item.quantity}</Text>
-                                <IconButton onClick={increaseQty}><FaPlus/></IconButton>
+                                <IconButton onClick={() => increaseQty(item.id)}><FaPlus/></IconButton>
                             </HStack>
                         </Box>
                     </HStack>
