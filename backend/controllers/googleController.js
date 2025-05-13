@@ -13,14 +13,23 @@ export const callback = async (req, res) => {
     const user = await findOrCreateUserByGoogleInfo(userInfo);
 
     // You can now create a session here
-    // req.session.user = {
-    //   id: user.id,
-    //   email: user.email,
-    // };
+    req.session.user = {
+      id: user.id,
+      email: user.email,
+      picture: user.picture
+    };
 
-    res.json({user})
+    res.redirect("http://localhost:5173/")
   } catch (error) {
     console.error("OAuth callback error:", error);
     res.status(500).send("Authentication failed");
   }
 };
+
+export const getCurrentUser = async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({message: "Not authenticated"})
+  }
+
+  res.json(req.session.user)
+}

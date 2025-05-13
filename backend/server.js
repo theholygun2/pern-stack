@@ -12,15 +12,42 @@ import { sql } from "./config/db.js";
 import { aj } from "./lib/arcjet.js";
 import session  from "express-session"
 import pgSession from 'connect-pg-simple'
+import { Pool } from "pg"
+
+const PgSession = pgSession(session)
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
+const pgPool = new Pool({
+  connectionString: process.env.DATABASE_URL
+})
 
 app.use(express.json());
 app.use(cors());
+app.use(
+  session({
+    store: new PgSession({
+      pool: pgPool,
+      tableName: "session", // optional, defaults to "session"
+    }),
+    secret: process.env.SESSION_SECRET || "some-secret-key",
+    resave: false,
+    saveUninitialized: false, // ← don't create empty sessions
+    cookie: {
+      secure: false, // set to true if using HTTPS in production
+      maxAge: 1000 * 60 * 60, // 1 hour
+    },
+  })
+);
+
+app.get("/test-session", (req, res) => {
+  req.session.user = { test: true };
+  res.send("Session set!");
+});
+
 app.use(
   helmet({
     contentSecurityPolicy: false,
