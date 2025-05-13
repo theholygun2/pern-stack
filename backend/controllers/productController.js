@@ -171,7 +171,7 @@ export const getProductByCategory = async (req, res) => {
     console.log("Fetched products: ", products);
     res.status(200).json({ success: true, data: products });
   } catch (error) {
-    console.error("Error in fetchProductByCategory:", error);
+    console.error("Error in getProductByCategory:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
