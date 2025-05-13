@@ -7,8 +7,11 @@ import path from "path";
 
 import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import authRoutes from "./routes/auth.js"
 import { sql } from "./config/db.js";
 import { aj } from "./lib/arcjet.js";
+import session  from "express-session"
+import pgSession from 'connect-pg-simple'
 
 dotenv.config();
 
@@ -61,6 +64,7 @@ if( process.env.NODE_ENV === "production") {
 
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes)
+app.use("/auth", authRoutes)
 
 if (process.env.NODE_ENV === "production") {
   // server our react app
@@ -78,7 +82,8 @@ async function initDB() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         image VARCHAR(255) NOT NULL,
-        price DECIMAL(10, 2) NOT NULL,
+        price NUMERIC(10, 2) NOT NULL,
+        quantity INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
