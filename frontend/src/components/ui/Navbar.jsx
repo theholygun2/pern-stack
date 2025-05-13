@@ -3,12 +3,12 @@ import { Link, useLocation, useResolvedPath } from "react-router-dom"
 import { ColorModeButton } from "./color-mode"
 import { ShoppingBagIcon, ShoppingCartIcon } from "lucide-react"
 import { useRef, useState } from "react"
+import { useProductStore } from "@/store/useProductStore"
 
 function Navbar() {
   const {pathname} = useLocation()
   const isHomePage = pathname === "/"
   const [open, setOpen ] = useState(false)
-
 
   return (
     <Box position="sticky" top="0" zIndex="sticky" bg={{ base: "white", _dark: "black" }}>
@@ -28,32 +28,8 @@ function Navbar() {
                 </Popover.Content>
               </Popover.Positioner>
             </Popover.Root>
-
-          <Text>Collaborations</Text>
-          <Text>Accessories</Text>
-          <Text>Sale</Text>
-          <Text>Lookbooks</Text>
         </Flex>
-        <HStack>
-            <ColorModeButton />
-          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'fsdf'}>
-            Sign In
-          </Button>
-          <Button
-            as={'a'}
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
-            fontWeight={600}
-            color={'white'}
-            bg={'pink.400'}
-            href={'#'}
-            _hover={{
-              bg: 'pink.300',
-            }}>
-            Subscribe
-          </Button>
-            <ChakraLink as={Link} to="/cart"><ShoppingCartIcon/></ChakraLink>
-            </HStack>
+        <RightSideHeader/>
       </Flex>
     </Box>
         
@@ -61,31 +37,64 @@ function Navbar() {
 }
 
 const RightSideHeader = () => {
+  const { user, setUser } = useProductStore()
   return (
-    <Stack
-          flex={{ base: 1, md: 0 }}
-          justify={'flex-end'}
-          direction={'row'}
-          spacing={6}>
-          <ColorModeButton />
-          <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'#'}>
+    <HStack>
+      <ColorModeButton />
+
+      {user ? (
+        <>
+          <Box>
+            <Text>{user.email}</Text>
+            {/* Optional profile pic if user.picture exists */}
+          </Box>
+          <Button
+            onClick={async () => {
+              await fetch("http://localhost:3000/auth/logout", {
+                credentials: "include",
+              });
+              setUser(null); // Clear user on logout
+            }}
+            fontSize="sm"
+            fontWeight={600}
+            color="white"
+            bg="red.400"
+            _hover={{ bg: "red.300" }}
+          >
+            Logout
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button
+            as="a"
+            fontSize="sm"
+            fontWeight={400}
+            variant="link"
+            href="http://localhost:3000/auth/google"
+          >
             Sign In
           </Button>
           <Button
-            as={'a'}
-            display={{ base: 'none', md: 'inline-flex' }}
-            fontSize={'sm'}
+            as="a"
+            display={{ base: "none", md: "inline-flex" }}
+            fontSize="sm"
             fontWeight={600}
-            color={'white'}
-            bg={'pink.400'}
-            href={'#'}
-            _hover={{
-              bg: 'pink.300',
-            }}>
+            color="white"
+            bg="pink.400"
+            href="#"
+            _hover={{ bg: "pink.300" }}
+          >
             Subscribe
           </Button>
-        </Stack>
-  )
+        </>
+      )}
+
+      <ChakraLink as={Link} to="/cart">
+        <ShoppingCartIcon />
+      </ChakraLink>
+    </HStack>
+  );
 }
 
 export default Navbar

@@ -33,3 +33,15 @@ export const getCurrentUser = async (req, res) => {
 
   res.json(req.session.user)
 }
+
+export const logout = async (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Session destruction error:", err);
+      return res.status(500).json({ error: "Logout failed" });
+    }
+
+    res.clearCookie("connect.sid"); // Default cookie name for express-session
+    return res.status(200).json({ message: "Logged out successfully" });
+  });
+};

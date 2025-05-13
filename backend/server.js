@@ -26,7 +26,10 @@ const pgPool = new Pool({
 })
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173", // ✅ MUST be explicit
+  credentials: true
+}));
 app.use(
   session({
     store: new PgSession({

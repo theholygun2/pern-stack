@@ -1,4 +1,3 @@
-import { Container } from "@chakra-ui/react"
 import HomePage from "@/pages/HomePage"
 import ProductPage from "@/pages/ProductPage"
 import ProductsPage from "@/pages/ProductsPage"
@@ -8,8 +7,22 @@ import { Routes, Route } from "react-router-dom"
 import CategoryPage from "./pages/CategoryPage"
 import CartPage from "./pages/CartPage"
 import { Toaster } from "./components/ui/toaster"
+import { useEffect, useState } from "react";
+import { useProductStore } from "./store/useProductStore"
 
 function App() {
+
+  const {setUser} = useProductStore()
+
+  useEffect(() => {
+    fetch("http://localhost:3000/auth/me", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => {
+        if (data?.id) setUser(data)
+      })
+      .catch(err => console.error("User not logged in", err))
+  }, [])
+
   return (
     <>
     <Toaster />

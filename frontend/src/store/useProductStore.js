@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import axios from "axios";
 
 // base url will be dynamic depending on the environment
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
@@ -7,16 +6,21 @@ const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000
 export const useProductStore = create((set, get) => ({
   // products state
   products: [],
-  categories: [],
-  categoryList: null,
+  currentProduct: null,
+  loadingProducts: false,
+
+  setProducts: (products) => set({ products }),
+  setCurrentProduct: (currentProduct) => set({currentProduct}),
+  setLoadingProducts: (loadingProducts) => set({ loadingProducts }),
+  setErrorProducts: (errorProducts) => set({errorProducts}),
+
+  // user state
+  user: null,
+  setUser: (user) => set({user}),
+  clearUser: (user) => set({ user: null}),
 
   loading: false,
   error: null,
-  currentProduct: null,
-  loadingProducts: false,
-  loadingCategories: false,
-  errorProducts: null,
-  errorCategories: null,
 
   // form state
   formData: {
@@ -28,17 +32,19 @@ export const useProductStore = create((set, get) => ({
     quantity: 1,
     slug: ""
   },
+  setFormData: (formData) => set({ formData }),
+  resetForm: () => set({ formData: { name: "", price: "", image: "", category_id: "", slug: "", quantity: 1 } }),
 
-  setProducts: (products) => set({ products }),
-  setCurrentProduct: (currentProduct) => set({currentProduct}),
-  setLoadingProducts: (loadingProducts) => set({ loadingProducts }),
-  setErrorProducts: (errorProducts) => set({errorProducts}),
+  categories: [],
+  categoryList: null,
+  loadingCategories: false,
+  errorProducts: null,
+  errorCategories: null,
 
   setCategories: (categories) => set({categories}),
   setCategoryList: (categoryList) => set({categoryList}),
   setLoadingCategories: (loadingCategories) => set({loadingCategories}),
   setErrorCategories: (errorCategories) => set({errorCategories}),
 
-  setFormData: (formData) => set({ formData }),
-  resetForm: () => set({ formData: { name: "", price: "", image: "", category_id: "", slug: "", quantity: 1 } }),
+
 }));

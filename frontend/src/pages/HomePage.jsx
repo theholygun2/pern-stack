@@ -48,6 +48,7 @@ const HomePage = () => {
         }
       )}
       </SimpleGrid>
+      
       <VStack gap={100}>
         <Text>
           dfsafsf
