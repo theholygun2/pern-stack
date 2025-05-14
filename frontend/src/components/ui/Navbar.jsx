@@ -1,4 +1,4 @@
-import { Text, Box, Button, Flex, HStack, Link as ChakraLink, Popover, Stack } from "@chakra-ui/react"
+import { Text, Box, Button, Flex, HStack, Link as ChakraLink, Popover, Stack, Avatar } from "@chakra-ui/react"
 import { Link, useLocation, useResolvedPath } from "react-router-dom"
 import { ColorModeButton } from "./color-mode"
 import { ShoppingBagIcon, ShoppingCartIcon } from "lucide-react"
@@ -45,7 +45,11 @@ const RightSideHeader = () => {
       {user ? (
         <>
           <Box>
-            <Text>{user.email}</Text>
+            <Text>{user.name}</Text>
+            <Avatar.Root>
+              <Avatar.Fallback name={user.name} />
+              <Avatar.Image src={user.picture} />
+            </Avatar.Root>
             {/* Optional profile pic if user.picture exists */}
           </Box>
           <Button
