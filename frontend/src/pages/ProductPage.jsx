@@ -51,6 +51,35 @@ const ProductPage = () => {
 
   const subtotal = (currentProduct.price * quantity);
 
+  const handleBuyNow = async () => {
+  try {
+    const res = await fetch("http://localhost:3000/api/order/checkout", {
+      method: "POST",
+      credentials: "include", // this is critical for session cookies to be sent
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        productId: currentProduct.id,
+        quantity,
+      }),
+    });
+
+    if (res.status === 401) {
+      window.location.href = "http://localhost:3000/auth/google"; // or show modal/login prompt
+      return;
+    }
+
+    const data = await res.json();
+
+    // Redirect to checkout page or payment page
+    window.location.href = data.redirectUrl || `/order-summary/${data.orderId}`;
+  } catch (error) {
+    console.error("Error processing purchase", error);
+  }
+};
+
+
   return (
     <Box p={6} maxW="500px" borderWidth={1} borderRadius="xl" boxShadow="md">
       <Heading size="md" mb={4}>
@@ -86,7 +115,7 @@ const ProductPage = () => {
 
       <HStack mt={6} justify="flex-end">
         <Button variant="outline">Add to Cart</Button>
-        <Button colorScheme="blue">Buy Now</Button>
+        <Button colorScheme="blue" onClick={handleBuyNow}>Buy Now</Button>
       </HStack>
     </Box>
     

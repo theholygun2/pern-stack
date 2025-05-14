@@ -4,6 +4,7 @@ import { ColorModeButton } from "./color-mode"
 import { ShoppingBagIcon, ShoppingCartIcon } from "lucide-react"
 import { useRef, useState } from "react"
 import { useProductStore } from "@/store/useProductStore"
+import { logoutUser } from "@/services/authService"
 
 function Navbar() {
   const {pathname} = useLocation()
@@ -15,7 +16,7 @@ function Navbar() {
       <Flex justify="space-between" align="center" px={4} py={2} minH="60px" borderBottom={1} shadow={"sm"}>
         <Flex gap="4" align="center">
           <ShoppingCartIcon />
-          <ChakraLink as={Link} to="/"><Text>Best Sellers</Text></ChakraLink>
+          <ChakraLink as={Link} to="/"><Text>All Products</Text></ChakraLink>
             <Popover.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
               <Popover.Trigger onMouseEnter={() => setOpen(true)}>
                 <Box>
@@ -37,68 +38,47 @@ function Navbar() {
 }
 
 const RightSideHeader = () => {
-  const { user, setUser } = useProductStore()
+  const { user } = useProductStore();
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
   return (
     <HStack>
       <ColorModeButton />
-
       {user ? (
         <>
           <Box>
-            <Text>{user.name}</Text>
+            <Text>{user?.name}</Text>
             <Avatar.Root>
-              <Avatar.Fallback name={user.name} />
-              <Avatar.Image src={user.picture} />
+              <Avatar.Fallback name={user?.name} />
+              <Avatar.Image src={user?.picture} />
             </Avatar.Root>
-            {/* Optional profile pic if user.picture exists */}
           </Box>
-          <Button
-            onClick={async () => {
-              await fetch("http://localhost:3000/auth/logout", {
-                credentials: "include",
-              });
-              setUser(null); // Clear user on logout
-            }}
-            fontSize="sm"
-            fontWeight={600}
-            color="white"
-            bg="red.400"
-            _hover={{ bg: "red.300" }}
-          >
-            Logout
-          </Button>
+          <Button onClick={handleLogout}>Logout</Button>
         </>
       ) : (
-        <>
-          <Button
-            as="a"
-            fontSize="sm"
-            fontWeight={400}
-            variant="link"
-            href="http://localhost:3000/auth/google"
-          >
-            Sign In
-          </Button>
-          <Button
-            as="a"
-            display={{ base: "none", md: "inline-flex" }}
-            fontSize="sm"
-            fontWeight={600}
-            color="white"
-            bg="pink.400"
-            href="#"
-            _hover={{ bg: "pink.300" }}
-          >
-            Subscribe
-          </Button>
-        </>
+        <Button
+          fontSize="sm"
+          fontWeight={400}
+          variant="solid"
+          as="a"
+          href="http://localhost:3000/auth/google"
+        >
+          Sign in
+        </Button>
       )}
-
       <ChakraLink as={Link} to="/cart">
         <ShoppingCartIcon />
       </ChakraLink>
     </HStack>
   );
-}
+};
+
 
 export default Navbar

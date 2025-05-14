@@ -9,6 +9,7 @@ import CartPage from "./pages/CartPage"
 import { Toaster } from "./components/ui/toaster"
 import { useEffect, useState } from "react";
 import { useProductStore } from "./store/useProductStore"
+import CheckoutPage from "./pages/CheckoutPage"
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
         <Route path="/product/:slug" element={<ProductPage />}/>
         <Route path="/category/:slug" element={<CategoryPage />}/>
         <Route path="/cart" element={<CartPage />}/>
+        <Route path="/checkout" element={<CheckoutPage />}/>
       </Routes>
     </>
   )
