@@ -8,6 +8,8 @@ import path from "path";
 import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import authRoutes from "./routes/auth.js"
+import orderRoutes from "./routes/orderRoutes.js"
+
 import { sql } from "./config/db.js";
 import { aj } from "./lib/arcjet.js";
 import session  from "express-session"
@@ -95,6 +97,7 @@ if( process.env.NODE_ENV === "production") {
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes)
 app.use("/auth", authRoutes)
+app.use("/order", orderRoutes)
 
 if (process.env.NODE_ENV === "production") {
   // server our react app

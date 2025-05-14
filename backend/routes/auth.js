@@ -8,9 +8,7 @@ router.get("/google", (req,res) => {
     res.redirect(googleAuthUrl)
 })
 router.get("/google/callback", callback)
-
 router.get("/me", getCurrentUser)
-
 router.get("/logout", logout)
 
 export default router;

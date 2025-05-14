@@ -20,3 +20,5 @@ router.post("/checkout", requireLogin, async (req, res) => {
     redirectUrl: `/order-summary/${order.id}`, // or Stripe URL
   });
 });
+
+export default router
