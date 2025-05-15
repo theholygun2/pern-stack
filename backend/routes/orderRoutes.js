@@ -1,7 +1,9 @@
 import express from "express"
+import { protectRoute } from "../middleware/auth.middleware.js";
+
 const router = express.Router()
 
-router.post("/checkout", requireLogin, async (req, res) => {
+router.post("/checkout", protectRoute, async (req, res) => {
   const { productId, quantity } = req.body;
   const userId = req.session.user?.id;
 

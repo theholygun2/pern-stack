@@ -11,3 +11,5 @@ PGDATABASE=
 #arcjet
 ARCJET_KEY=
 ARCJET_ENV=
+
+Session Secret

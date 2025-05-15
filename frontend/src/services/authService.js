@@ -8,7 +8,9 @@ export async function logoutUser() {
   const { setUser } = useProductStore.getState();
 
   try {
-    await axios.get(`${BASE_URL}/auth/logout`, { withCredentials: true });
+    await axios.post(`${BASE_URL}/auth/logout`, null, {
+      withCredentials: true,
+    });    
     setUser(null);
     // You could also add toast here
   } catch (error) {

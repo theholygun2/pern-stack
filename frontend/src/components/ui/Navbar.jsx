@@ -9,7 +9,6 @@ import { logoutUser } from "@/services/authService"
 function Navbar() {
   const {pathname} = useLocation()
   const isHomePage = pathname === "/"
-  const [open, setOpen ] = useState(false)
 
   return (
     <Box position="sticky" top="0" zIndex="sticky" bg={{ base: "white", _dark: "black" }}>
@@ -17,18 +16,6 @@ function Navbar() {
         <Flex gap="4" align="center">
           <ShoppingCartIcon />
           <ChakraLink as={Link} to="/"><Text>All Products</Text></ChakraLink>
-            <Popover.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
-              <Popover.Trigger onMouseEnter={() => setOpen(true)}>
-                <Box>
-                Hover Me
-                </Box>
-              </Popover.Trigger>
-              <Popover.Positioner>
-                <Popover.Content >
-                  Im Clicked breh
-                </Popover.Content>
-              </Popover.Positioner>
-            </Popover.Root>
         </Flex>
         <RightSideHeader/>
       </Flex>

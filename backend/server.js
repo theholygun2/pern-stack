@@ -7,8 +7,9 @@ import path from "path";
 
 import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
-import authRoutes from "./routes/auth.js"
+import authRoutes from "./routes/authRoutes.js"
 import orderRoutes from "./routes/orderRoutes.js"
+import cartRoutes from "./routes/cartRoutes.js"
 
 import { sql } from "./config/db.js";
 import { aj } from "./lib/arcjet.js";
@@ -53,6 +54,14 @@ app.get("/test-session", (req, res) => {
   res.send("Session set!");
 });
 
+// only in development
+app.get("/dev-login", async (req, res) => {
+  const [user] = await sql`SELECT * FROM users LIMIT 1`;
+  req.session.user = user;
+  res.send("Logged in with session");
+});
+
+
 app.use(
   helmet({
     contentSecurityPolicy: false,
@@ -94,10 +103,11 @@ if( process.env.NODE_ENV === "production") {
   });
 }
 
+app.use("/auth", authRoutes)
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes)
-app.use("/auth", authRoutes)
-app.use("/order", orderRoutes)
+app.use("/api/order", orderRoutes)
+app.use("/api/cart", cartRoutes)
 
 if (process.env.NODE_ENV === "production") {
   // server our react app

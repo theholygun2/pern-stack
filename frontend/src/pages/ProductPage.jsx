@@ -15,6 +15,8 @@ import { useState, useEffect} from "react";
 import { fetchProduct } from "@/store/productActions";
 import { useProductStore } from "@/store/useProductStore";
 import { useParams, useNavigate} from "react-router-dom";
+import { useCartStore } from "@/store/useCartStore";
+import axios from "axios";
 
 const ProductPage = () => {
 
@@ -51,6 +53,30 @@ const ProductPage = () => {
   }
 
   const subtotal = (currentProduct.price * quantity);
+
+
+  const handleAddToCart = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/cart/",
+        {
+          productId: currentProduct.id,
+          quantity: quantity,
+        },
+        {
+          withCredentials: true, // important for sending cookies/session
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      console.log("Cart updated:", response.data);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
+  };
+  
 
   const handleBuyNow = async () => {
     try {
@@ -115,7 +141,7 @@ const ProductPage = () => {
       </HStack>
 
       <HStack mt={6} justify="flex-end">
-        <Button variant="outline">Add to Cart</Button>
+        <Button variant="outline" onClick={handleAddToCart}>Add to Cart</Button>
         <Button colorScheme="blue" onClick={handleBuyNow}>Buy Now</Button>
       </HStack>
     </Box>
