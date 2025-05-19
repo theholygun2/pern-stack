@@ -1,45 +1,46 @@
-import HomePage from "@/pages/HomePage"
-import ProductPage from "@/pages/ProductPage"
-import ProductsPage from "@/pages/ProductsPage"
-import  Navbar  from '@/components/ui/Navbar'
-import  CategoryBar  from '@/components/ui/CategoryBar'
-import { Routes, Route } from "react-router-dom"
-import CategoryPage from "./pages/CategoryPage"
-import CartPage from "./pages/CartPage"
-import { Toaster } from "./components/ui/toaster"
-import { useEffect, useState } from "react";
-import { useProductStore } from "./store/useProductStore"
-import CheckoutPage from "./pages/CheckoutPage"
+import { Routes, Route } from 'react-router-dom'
+import HomePage from '@/pages/HomePage'
+import ProductPage from '@/pages/ProductPage'
+import ProductsPage from '@/pages/ProductsPage'
+import CategoryPage from '@/pages/CategoryPage'
+import CartPage from '@/pages/CartPage'
+import CheckoutPage from '@/pages/CheckoutPage'
+import MainLayout from '@/layouts/MainLayout'
+import PlainLayout from '@/layouts/PlainLayout'
+import { Toaster } from './components/ui/toaster'
+import { useEffect } from 'react'
+import { fetchSession } from './services/sessionService'
+import { fetchCart } from './services/cartService'
 
 function App() {
 
-  const {setUser} = useProductStore()
-
   useEffect(() => {
-    fetch("http://localhost:3000/auth/me", { credentials: "include" })
-      .then(res => res.json())
-      .then(data => {
-        if (data?.id) setUser(data)
-      })
-      .catch(err => console.error("User not logged in", err))
+    fetchSession(),
+    fetchCart()
   }, [])
 
   return (
     <>
-    <Toaster />
-      <Navbar />
-      <CategoryBar/>
+      <Toaster />
       <Routes>
-        <Route path="/" element={<HomePage />}/>
-        <Route path="/products" element={<ProductsPage /> }/>
-        <Route path="/product/:slug" element={<ProductPage />}/>
-        <Route path="/category/:slug" element={<CategoryPage />}/>
-        <Route path="/cart" element={<CartPage />}/>
-        <Route path="/checkout" element={<CheckoutPage />}/>
+        {/* Routes that use MainLayout */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<HomePage />} /> 
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/product/:slug" element={<ProductPage />} />
+          <Route path="/category/:slug" element={<CategoryPage />} />
+        </Route>
+
+        {/* Routes that use PlainLayout (no navbar/category) */}
+        <Route element={<PlainLayout />}>
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+        </Route>
       </Routes>
     </>
   )
 }
+
 
 // File Name	Component Purpose
 // HomePage.jsx	Landing experience (hero + featured)

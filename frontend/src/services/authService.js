@@ -1,11 +1,11 @@
 // services/authService.js
+import { useUserStore } from "@/store/useUserStore";
 import axios from "axios";
-import { useProductStore } from "@/store/useProductStore";
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
 export async function logoutUser() {
-  const { setUser } = useProductStore.getState();
+  const { setUser } = useUserStore.getState();
 
   try {
     await axios.post(`${BASE_URL}/auth/logout`, null, {

@@ -6,31 +6,17 @@
 
 import { sql } from "../config/db.js"
 
-export const getCurrentUserCart = async (req, res) => {
-    // const user = req.session.user
-    // try {
-    //     const cart = await sql `
-    //     SELECT * FROM cart WHERE user_id = ${user.id};
-    //     `
-    // } catch (error) {
-    //     res.error("Error in getCurrentUserCart", error)
-    // }
-
-	res.render("U get the C")
-}
-
 export const getCartProducts = async (req, res) => {
 	try {
-		const user = req.session.user;
+		const cart = req.session.cart
 		const products = await sql`
-			SELECT p.*, ci.quantity
+			SELECT p.*, ci.quantity as cart_quantity
 			FROM cart_items ci
-			JOIN products p ON ci.product_id = p.id
-			JOIN cart c ON ci.cart_id = c.id
-			WHERE c.user_id = ${user.id};
+			JOIN products p 
+			ON ci.product_id = p.id
+			WHERE ci.cart_id = ${cart.id}
 		`;
-
-		res.json(products);
+		res.json({ id: cart.id, products });
 	} catch (error) {
 		console.error("Error in getCartProducts controller:", error.message);
 		res.status(500).json({ message: "Server error", error: error.message });

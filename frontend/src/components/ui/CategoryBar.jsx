@@ -23,6 +23,7 @@ function CategoryBar() {
           rounded="md" 
           _hover={{ bg: "gray.100" }}
           key={cat.id}
+          
         >
           <Text fontWeight="medium">{cat.name}</Text>
         </Box>

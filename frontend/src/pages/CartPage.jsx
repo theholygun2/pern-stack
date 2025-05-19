@@ -1,6 +1,11 @@
-import { Box, Heading, HStack, IconButton, Image, VStack, Text, FileUploadItemDeleteTrigger } from "@chakra-ui/react";
+import { Box, Heading, HStack, Container, IconButton, Image, VStack, Text, FileUploadItemDeleteTrigger } from "@chakra-ui/react";
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useUserStore } from "@/store/useUserStore";
+import { useCartStore } from "@/store/useCartStore";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 const initialCart = [
     {
@@ -20,55 +25,24 @@ const initialCart = [
   ];
 
 const CartPage = () => {
-    const [cartItems, setCartItems] = useState(initialCart);  
 
-    const increaseQty = (id) => {
-        setCartItems(items => 
-            items.map(item => 
-                item.id === id ? { ...item, quantity: item.quantity + 1} : item
-            )
-        )
-    }
+  //users picks selected items here fromt he prouduct page
 
-    const decreaseQty = (id) => {
-        setCartItems(items => 
-            items.map(item => 
-                item.id === id ? { ...item, quantity: item.quantity - 1} : item
-            )
-        )
-    }
-
-    const removeItem = (id) => {
-        setCartItems(items => items.filter(item => item.id !== id))
-    }
-
-    const totalPrice = cartItems.reduce(
-        (sum, item) => sum + item.price * item.quantity
-    )
-
+  const { cart } = useCartStore()
+    const navigate = useNavigate()
     return(
-        <Box p={6} maxW="800px">
-        <Heading>Your Cart</Heading>
-        <VStack>
-            {cartItems.map(item => (
-                <Box key={item.id} >
-                    <HStack>
-                        <Image boxSize="100px" src={item.image} alt={item.name}/>
-                        <Box>
-                            <Text>{item.name}</Text>
-                            <Text>{totalPrice}</Text>
-                            <HStack>
-                                <IconButton onClick={() => decreaseQty(item.id)}><FaMinus/></IconButton>
-                                <Text>{item.quantity}</Text>
-                                <IconButton onClick={() => increaseQty(item.id)}><FaPlus/></IconButton>
-                            </HStack>
-                        </Box>
-                    </HStack>
-                </Box>
-            ))}
-        </VStack>
+      <Container>
+  <Text>Cart ID: {cart.id}</Text>
+  {cart.products?.map((product) => (
+    <Box key={product.id}>
+      <Text>{product.name}</Text>
+      <Text>Quantity: {product.cart_quantity}</Text>
     </Box>
-    )
+  ))}
+</Container>
+
+  )
+
 }
 
 export default CartPage

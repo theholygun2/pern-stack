@@ -3,8 +3,9 @@ import { Link, useLocation, useResolvedPath } from "react-router-dom"
 import { ColorModeButton } from "./color-mode"
 import { ShoppingBagIcon, ShoppingCartIcon } from "lucide-react"
 import { useRef, useState } from "react"
-import { useProductStore } from "@/store/useProductStore"
 import { logoutUser } from "@/services/authService"
+import { useCartStore } from "@/store/useCartStore"
+import { useUserStore } from "@/store/useUserStore"
 
 function Navbar() {
   const {pathname} = useLocation()
@@ -25,7 +26,7 @@ function Navbar() {
 }
 
 const RightSideHeader = () => {
-  const { user } = useProductStore();
+  const { user } = useUserStore();
 
   const handleLogout = async () => {
     try {
@@ -36,34 +37,38 @@ const RightSideHeader = () => {
   };
 
   return (
-    <HStack>
-      <ColorModeButton />
-      {user ? (
-        <>
-          <Box>
-            <Text>{user?.name}</Text>
-            <Avatar.Root>
-              <Avatar.Fallback name={user?.name} />
-              <Avatar.Image src={user?.picture} />
-            </Avatar.Root>
-          </Box>
-          <Button onClick={handleLogout}>Logout</Button>
-        </>
-      ) : (
-        <Button
-          fontSize="sm"
-          fontWeight={400}
-          variant="solid"
-          as="a"
-          href="http://localhost:3000/auth/google"
-        >
-          Sign in
-        </Button>
-      )}
-      <ChakraLink as={Link} to="/cart">
-        <ShoppingCartIcon />
-      </ChakraLink>
-    </HStack>
+    <HStack spacing={4} align="center">
+  <ColorModeButton />
+
+  {user ? (
+    <>
+      <HStack spacing={2} align="center">
+        <Text>{user.name}</Text>
+        <Avatar.Root>
+          <Avatar.Fallback name={user.name} />
+          <Avatar.Image src={user.picture} />
+        </Avatar.Root>
+      </HStack>
+
+      <Button onClick={handleLogout}>Logout</Button>
+    </>
+  ) : (
+    <Button
+      fontSize="sm"
+      fontWeight={400}
+      variant="solid"
+      as="a"
+      href="http://localhost:3000/auth/google"
+    >
+      Sign in
+    </Button>
+  )}
+
+  <ChakraLink as={Link} to="/cart">
+    <ShoppingCartIcon />
+  </ChakraLink>
+</HStack>
+
   );
 };
 

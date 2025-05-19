@@ -1,6 +1,8 @@
 import { oauth2Client } from "../config/googleOauth.js";
 import { getGoogleUserInfo } from "../services/google.service.js";
 import { findOrCreateUserByGoogleInfo } from "../services/user.service.js";
+import { sql } from "../config/db.js"
+import { findOrCreateCartByUserId } from "../services/cart.service.js";
 
 // Handles the OAuth callback (should be named accordingly)
 export const handleGoogleCallback = async (req, res) => {
@@ -10,12 +12,14 @@ export const handleGoogleCallback = async (req, res) => {
   try {
     const { tokens } = await oauth2Client.getToken(code); // todos: store tokens in redis
     const userInfo = await getGoogleUserInfo(tokens); // 
-    const user = await findOrCreateUserByGoogleInfo(userInfo); // Register to DB
+    const user = await findOrCreateUserByGoogleInfo(userInfo);
+    const cart = await findOrCreateCartByUserId(user)
 
     req.session.user = {
       id: user.id,
-      email: user.email,
-      picture: user.picture,
+    };
+    req.session.cart = {
+      id: cart.id,
     };
 
     res.redirect("http://localhost:5173/");
@@ -26,11 +30,13 @@ export const handleGoogleCallback = async (req, res) => {
 };
 
 // validate or authenticate if the session has the user
-export const getCurrentUser = async (req, res) => {
-  if (!req.session.user) {
-    return res.status(401).json({ message: "Not authenticated" });
-  }
-  res.json(req.session.user);
+export const authMe = async (req, res) => {
+
+  console.log("seession:", req.session.user)
+    const [user] = await sql`
+    SELECT id, name, email, picture FROM users WHERE id = ${req.session.user.id}
+  `;
+  res.json(user);
 };
 
 export const logout = (req, res) => {
@@ -46,6 +52,6 @@ export const logout = (req, res) => {
   });
 };
 
-export const login = async (req, res) => {
-  
+export const login = async (req, res) => { 
+  // for emails and password created solo
 }
