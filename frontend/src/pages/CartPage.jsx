@@ -5,6 +5,7 @@ import { useUserStore } from "@/store/useUserStore";
 import { useCartStore } from "@/store/useCartStore";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import CartItem from "@/components/ui/CartItem";
 
 
 const initialCart = [
@@ -24,26 +25,36 @@ const initialCart = [
     },
   ];
 
-const CartPage = () => {
-
-  //users picks selected items here fromt he prouduct page
-
-  const { cart } = useCartStore()
-    const navigate = useNavigate()
-    return(
+  const CartPage = () => {
+    const { cart } = useCartStore();
+    const { user } = useUserStore();
+  
+    return (
       <Container>
-  <Text>Cart ID: {cart.id}</Text>
-  {cart.products?.map((product) => (
-    <Box key={product.id}>
-      <Text>{product.name}</Text>
-      <Text>Quantity: {product.cart_quantity}</Text>
-    </Box>
-  ))}
-</Container>
-
-  )
-
-}
+        {user ? (
+          <>
+            <Text>Cart ID: {cart.id}</Text>
+            {cart.products?.map((product) => (
+              <CartItem key={product.id} item={product} />
+            ))}
+          </>
+        ) : (
+          <VStack spacing={4} mt={10}>
+            <Heading size="md">Please log in to view your cart</Heading>
+            <Text>Sign in with Google to access your saved items.</Text>
+            <a href="http://localhost:3000/auth/google">
+              <Image
+                src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png"
+                alt="Sign in with Google"
+                _hover={{ opacity: 0.8 }}
+              />
+            </a>
+          </VStack>
+        )}
+      </Container>
+    );
+  };
+  
 
 export default CartPage
 

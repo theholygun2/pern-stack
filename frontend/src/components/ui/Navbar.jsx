@@ -1,8 +1,7 @@
 import { Text, Box, Button, Flex, HStack, Link as ChakraLink, Popover, Stack, Avatar } from "@chakra-ui/react"
-import { Link, useLocation, useResolvedPath } from "react-router-dom"
+import { Link, useLocation, useNavigate, useResolvedPath } from "react-router-dom"
 import { ColorModeButton } from "./color-mode"
 import { ShoppingBagIcon, ShoppingCartIcon } from "lucide-react"
-import { useRef, useState } from "react"
 import { logoutUser } from "@/services/authService"
 import { useCartStore } from "@/store/useCartStore"
 import { useUserStore } from "@/store/useUserStore"
@@ -28,13 +27,16 @@ function Navbar() {
 const RightSideHeader = () => {
   const { user } = useUserStore();
 
-  const handleLogout = async () => {
-    try {
-      await logoutUser();
-    } catch (error) {
-      console.error("Logout failed", error);
-    }
-  };
+const handleLogout = async () => {
+  try {
+    await logoutUser(); // backend call
+    useUserStore.getState().setUser(null); // local state reset
+    useCartStore.getState().setCart(null);
+    useNavigate("/")
+  } catch (err) {
+    console.error("Logout failed", err);
+  }
+};
 
   return (
     <HStack spacing={4} align="center">

@@ -27,12 +27,13 @@ const __dirname = path.resolve();
 const pgPool = new Pool({
   connectionString: process.env.DATABASE_URL
 })
-
-app.use(express.json());
 app.use(cors({
   origin: "http://localhost:5173", // ✅ MUST be explicit
   credentials: true
 }));
+
+app.use(express.json());
+
 app.use(
   session({
     store: new PgSession({

@@ -6,8 +6,6 @@ export const getCategories = async (req,res) => {
         const categories = await sql`
         SELECT * FROM categories
         ORDER BY name`;
-
-        console.log("fetched categories", categories);
         res.status(200).json({ success: true, data:categories})
     } catch (error)
     {
@@ -123,4 +121,3 @@ export const getCategoryBySlug = async (req, res) => {
       res.status(500).json({ message: "Server error" });
     }
 };
-  

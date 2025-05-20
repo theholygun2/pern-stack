@@ -1,7 +1,7 @@
 // middleware/auth.middleware.js
 export const protectRoute = (req, res, next) => {
   console.log("SESSION?", req.session)
-    if (!req.session.user) {
+    if (!req.session.user || !req.session) {
       return res.status(401).json({ message: "Unauthorized - No session user" });
     } 
     next();

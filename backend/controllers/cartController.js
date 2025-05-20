@@ -81,9 +81,9 @@ export const removeAllFromCart = async (req, res) => {
 
 export const updateQuantity = async (req, res) => {
 	try {
-		const user = req.session.user;
-		const { id } = req.params; // product_id
-		const { quantity } = req.body;
+		// const user = req.session.user;
+		// const { id } = req.params; // product_id
+		// const { quantity } = req.body;
 
 		if (quantity < 1) {
 			return res.status(400).json({ message: "Quantity must be at least 1" });

@@ -22,7 +22,7 @@ export const handleGoogleCallback = async (req, res) => {
       id: cart.id,
     };
 
-    res.redirect("http://localhost:5173/");
+    res.redirect("http://localhost:5173/?auth=success");
   } catch (error) {
     console.error("OAuth callback error:", error);
     res.status(500).send("Authentication failed");
@@ -31,13 +31,19 @@ export const handleGoogleCallback = async (req, res) => {
 
 // validate or authenticate if the session has the user
 export const authMe = async (req, res) => {
+  if (!req.session || !req.session.user) {
+    return res.status(200).json(null); // No error, just null user
+  }
 
-  console.log("seession:", req.session.user)
-    const [user] = await sql`
+  console.log("session:", req.session.user);
+
+  const [user] = await sql`
     SELECT id, name, email, picture FROM users WHERE id = ${req.session.user.id}
   `;
-  res.json(user);
+  
+  return res.json(user);
 };
+
 
 export const logout = (req, res) => {
   req.session.destroy((err) => {
@@ -48,7 +54,8 @@ export const logout = (req, res) => {
     res.clearCookie("connect.sid", {
       path: "/", // adjust if your session cookie is scoped to a specific path
     });
-    res.json({ message: "Logout successful" });
+    console.log(`User logged out`);
+    res.redirect("/");
   });
 };
 

@@ -9,15 +9,28 @@ import MainLayout from '@/layouts/MainLayout'
 import PlainLayout from '@/layouts/PlainLayout'
 import { Toaster } from './components/ui/toaster'
 import { useEffect } from 'react'
-import { fetchSession } from './services/sessionService'
+import { fetchUser } from './services/userService'
 import { fetchCart } from './services/cartService'
+import { useUserStore } from './store/useUserStore'
 
 function App() {
 
   useEffect(() => {
-    fetchSession(),
-    fetchCart()
-  }, [])
+    const init = async () => {
+      try {
+        const user = await fetchUser(); 
+        if (user) {
+          setUser(user);
+          const cart = await fetchCart();
+          if (cart) setCart(cart);
+        }
+      } catch (err) {
+        console.error("App init failed", err);
+      }
+    };
+    init();
+  }, []);
+  
 
   return (
     <>
