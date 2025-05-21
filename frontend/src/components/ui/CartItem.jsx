@@ -2,7 +2,10 @@ import { Box, Button,Image, Text, Flex, HStack, VStack, Heading, IconButton } fr
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import { useCartStore } from "@/store/useCartStore";
 const CartItem = ({ item }) => {
-  const quantity = item.cart_quantity || 1;
+  const quantity = useCartStore((state) =>
+    state.cart.find((product) => product.id === item.id)?.cart_quantity || 1
+  );
+  
   const { updateQuantity } = useCartStore(); // ✅ just this!
 
   return (
@@ -20,9 +23,9 @@ const CartItem = ({ item }) => {
           </Text>
 
           <HStack>
-            <IconButton size="sm" onClick={() => updateQuantity(item.id, quantity - 1)}><FaMinus /></IconButton>
+            {/* <IconButton size="sm" onClick={() =>  updateQuantity(item.id, quantity - 1)}><FaMinus /></IconButton> fix this bro */}
             <Text>{quantity}</Text>
-            <IconButton size="sm" onClick={() => updateQuantity(item.id, quantity + 1)}><FaPlus /></IconButton>
+            <IconButton size="sm" onClick={() => {if(quantity < item.quantity) updateQuantity(item.id, quantity + 1)}}><FaPlus /></IconButton>
             <Text fontSize="sm" color="gray.500">Stock: {item.quantity}</Text>
           </HStack>
         </VStack>

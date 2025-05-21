@@ -10,7 +10,7 @@ export const getCartProducts = async (req, res) => {
 	try {
 		const cart = req.session.cart
 		const products = await sql`
-			SELECT p.id, p.name, p.price, p.image, ci.quantity as cart_quantity
+			SELECT p.id, p.name, p.price, p.image, p.quantity, ci.quantity as cart_quantity
 			FROM cart_items ci
 			JOIN products p 
 			ON ci.product_id = p.id
@@ -81,7 +81,7 @@ export const removeFromCart = async (req, res) => {
 
 		// Re-fetch updated cart to return
 		const updatedProducts = await sql`
-			SELECT p.id, p.name, p.price, p.image, ci.quantity as cart_quantity
+			SELECT p.id, p.name, p.price, p.image, p.quantity, ci.quantity as cart_quantity
 			FROM cart_items ci
 			JOIN products p ON ci.product_id = p.id
 			WHERE ci.cart_id = ${cart.id}
