@@ -14,7 +14,7 @@ import { useState, useEffect} from "react";
 import { fetchProduct } from "@/store/productActions";
 import { useProductStore } from "@/store/useProductStore";
 import { useParams, useNavigate} from "react-router-dom";
-import axios from "axios";
+import ProductCartItem from "@/components/ui/ProductCartItem";
 
 const ProductPage = () => {
 
@@ -39,7 +39,7 @@ const ProductPage = () => {
 
   return (
     <Container>
-      
+      <ProductCartItem item={currentProduct}/>
     </Container>
   );
 };

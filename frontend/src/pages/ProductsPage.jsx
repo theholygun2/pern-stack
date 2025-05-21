@@ -42,7 +42,7 @@ const ProductsPage = () => {
           const category = categories.find(c => c.id === product.category_id)?.name || "uncagetorized"
           return (
             (
-              <ProductCard key={product.id} product = {product} category={category}/>
+              <ProductCard key={product.id} product={product} category={category}/>
             )
           )
         }

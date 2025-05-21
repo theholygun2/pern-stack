@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import HomePage from '@/pages/HomePage'
 import ProductPage from '@/pages/ProductPage'
 import ProductsPage from '@/pages/ProductsPage'
@@ -11,25 +11,41 @@ import { Toaster } from './components/ui/toaster'
 import { useEffect } from 'react'
 import { fetchUser } from './services/userService'
 import { fetchCart } from './services/cartService'
+import { useCartStore } from './store/useCartStore'
 import { useUserStore } from './store/useUserStore'
-
 function App() {
+
+  const navigate = useNavigate();
+
+  // ✅ Pull setUser from user store and setCart from cart store
+  const setUser = useUserStore((state) => state.setUser);
+  const setCart = useCartStore((state) => state.setCart);
 
   useEffect(() => {
     const init = async () => {
       try {
-        const user = await fetchUser(); 
+        const user = await fetchUser(); // session-based fetch
         if (user) {
-          setUser(user);
-          const cart = await fetchCart();
-          if (cart) setCart(cart);
+          setUser(user); // ✅ update Zustand store
+          const cart = await fetchCart(); // get cart from backend
+          if (cart) setCart(cart); // ✅ update Zustand store
         }
+
+        // ✅ Handle OAuth redirect (if applicable)
+        const params = new URLSearchParams(window.location.search);
+        const stateParam = params.get("state");
+        if (stateParam) {
+          await handleOAuthIntent(stateParam, setCart, navigate);
+        }
+
       } catch (err) {
         console.error("App init failed", err);
       }
     };
+
     init();
-  }, []);
+  }, [setUser, setCart, navigate]); // ✅ include in deps
+  
   
 
   return (

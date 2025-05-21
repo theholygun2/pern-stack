@@ -7,19 +7,13 @@ const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000
 // services/cartService.js
 export async function fetchCart() {
   const res = await axios.get(`${BASE_URL}/api/cart`, { withCredentials: true });
-  return res.data;
+  return res.data.products || [];
 }
 
-export async function updateQuantity(productId, quantity) {
-  if (quantity === 0) {
-    get().removeFromCart(productId);
-    return;
-  }
+export async function updateQuantity(product_id, quantity) {
+  return await axios.put(`${BASE_URL}/api/cart/${product_id}`, { quantity }, {withCredentials: true});
+}
 
-  await axios.put(`/cart/${productId}`, { quantity });
-  set((prevState) => ({
-    cart: prevState.cart.map((item) => (item._id === productId ? { ...item, quantity } : item)),
-  }));
-  get().calculateTotals();
-
+export async function removeFromCart(product_id) {
+  return await axios.delete(`${BASE_URL}/api/cart`, { data: { product_id }, withCredentials: true});
 }

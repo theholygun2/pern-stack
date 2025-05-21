@@ -33,8 +33,7 @@ const initialCart = [
       <Container>
         {user ? (
           <>
-            <Text>Cart ID: {cart.id}</Text>
-            {cart.products?.map((product) => (
+            {cart.map((product) => (
               <CartItem key={product.id} item={product} />
             ))}
           </>

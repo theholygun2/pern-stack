@@ -50,19 +50,6 @@ app.use(
   })
 );
 
-app.get("/test-session", (req, res) => {
-  req.session.user = { test: true };
-  res.send("Session set!");
-});
-
-// only in development
-app.get("/dev-login", async (req, res) => {
-  const [user] = await sql`SELECT * FROM users LIMIT 1`;
-  req.session.user = user;
-  res.send("Logged in with session");
-});
-
-
 app.use(
   helmet({
     contentSecurityPolicy: false,

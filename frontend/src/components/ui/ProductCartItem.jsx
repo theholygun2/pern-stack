@@ -1,9 +1,29 @@
+import { Minus, Plus, Trash } from "lucide-react";
 import { Box, Button,Image, Text, Flex, HStack, VStack, Heading, IconButton } from "@chakra-ui/react";
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
-import { useCartStore } from "@/store/useCartStore";
-const CartItem = ({ item }) => {
-  const quantity = item.cart_quantity || 1;
-  const { updateQuantity } = useCartStore(); // ✅ just this!
+import { useState } from "react";
+
+
+const ProductCartItem = ({ item }) => {
+const [ quantity, setQuantity ] = useState(1)
+const productIntent = {
+    action: "addToCart",
+    product_id: item.id,
+    quantity,
+  };
+  const encodedState = encodeURIComponent(JSON.stringify(productIntent));
+
+function decrement() {
+    if (quantity > 1 ) {
+        setQuantity(quantity - 1)
+    }
+}
+
+function increment() {
+    if (quantity < item.quantity) {
+        setQuantity(quantity + 1)
+    }
+}
 
   return (
     <Box p={6} maxW="500px" borderWidth={1} borderRadius="xl" boxShadow="md">
@@ -20,19 +40,21 @@ const CartItem = ({ item }) => {
           </Text>
 
           <HStack>
-            <IconButton size="sm" onClick={() => updateQuantity(item.id, quantity - 1)}><FaMinus /></IconButton>
+            <IconButton size="sm" onClick={decrement}><FaMinus /></IconButton>
             <Text>{quantity}</Text>
-            <IconButton size="sm" onClick={() => updateQuantity(item.id, quantity + 1)}><FaPlus /></IconButton>
+            <IconButton size="sm" onClick={increment}><FaPlus /></IconButton>
             <Text fontSize="sm" color="gray.500">Stock: {item.quantity}</Text>
           </HStack>
         </VStack>
       </HStack>
 
       <HStack mt={6} justify="flex-end">
+        <Button variant="outline" as="a" 
+        href={`http://localhost:3000/auth/google?state=${encodedState}`}>Add to Cart</Button>
         <Button colorScheme="blue">Buy Now</Button>
       </HStack>
     </Box>
   );
 };
 
-export default CartItem;
+export default ProductCartItem

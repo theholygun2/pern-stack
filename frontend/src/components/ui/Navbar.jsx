@@ -26,13 +26,15 @@ function Navbar() {
 
 const RightSideHeader = () => {
   const { user } = useUserStore();
+  const navigate = useNavigate();
 
 const handleLogout = async () => {
   try {
     await logoutUser(); // backend call
     useUserStore.getState().setUser(null); // local state reset
-    useCartStore.getState().setCart(null);
-    useNavigate("/")
+    useCartStore.getState().setCart([]);
+    
+    navigate("/")
   } catch (err) {
     console.error("Logout failed", err);
   }

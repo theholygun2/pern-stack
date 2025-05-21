@@ -10,13 +10,14 @@ export const getCartProducts = async (req, res) => {
 	try {
 		const cart = req.session.cart
 		const products = await sql`
-			SELECT p.*, ci.quantity as cart_quantity
+			SELECT p.id, p.name, p.price, p.image, ci.quantity as cart_quantity
 			FROM cart_items ci
 			JOIN products p 
 			ON ci.product_id = p.id
 			WHERE ci.cart_id = ${cart.id}
 		`;
-		res.json({ id: cart.id, products });
+		console.log("get cart Products", products)
+		res.json({ products });
 	} catch (error) {
 		console.error("Error in getCartProducts controller:", error.message);
 		res.status(500).json({ message: "Server error", error: error.message });
@@ -60,43 +61,54 @@ export const addToCart = async (req, res) => {
 	}
 };
 
-export const removeAllFromCart = async (req, res) => {
+export const removeFromCart = async (req, res) => {
 	try {
-		const user = req.session.user;
+		const cart = req.session.cart;
+		const { product_id } = req.body;
 
-		const [cart] = await sql`SELECT id FROM cart WHERE user_id = ${user.id};`;
-
-		if (!cart) {
-			return res.status(404).json({ message: "Cart not found" });
+		if (!product_id) {
+			// Clear entire cart
+			await sql`
+				DELETE FROM cart_items WHERE cart_id = ${cart.id}
+			`;
+		} else {
+			// Delete a specific product from cart
+			await sql`
+				DELETE FROM cart_items 
+				WHERE cart_id = ${cart.id} AND product_id = ${product_id}
+			`;
 		}
 
-		await sql`DELETE FROM cart_items WHERE cart_id = ${cart.id};`;
+		// Re-fetch updated cart to return
+		const updatedProducts = await sql`
+			SELECT p.id, p.name, p.price, p.image, ci.quantity as cart_quantity
+			FROM cart_items ci
+			JOIN products p ON ci.product_id = p.id
+			WHERE ci.cart_id = ${cart.id}
+		`;
 
-		res.json({ message: "All items removed from cart" });
+		res.json({products: updatedProducts });
 	} catch (error) {
-		console.error("Error in removeAllFromCart controller:", error.message);
+		console.error("Error in removeFromCart controller:", error.message);
 		res.status(500).json({ message: "Server error", error: error.message });
 	}
 };
 
 export const updateQuantity = async (req, res) => {
 	try {
-		// const user = req.session.user;
-		// const { id } = req.params; // product_id
-		// const { quantity } = req.body;
+		const cart = req.session.cart;
+		const { id } = req.params; // product_id
+		const { quantity } = req.body;
 
 		if (quantity < 1) {
 			return res.status(400).json({ message: "Quantity must be at least 1" });
 		}
-
-		const [cart] = await sql`SELECT id FROM cart WHERE user_id = ${user.id};`;
 
 		await sql`
 			UPDATE cart_items 
 			SET quantity = ${quantity} 
 			WHERE cart_id = ${cart.id} AND product_id = ${id};
 		`;
-
 		res.json({ message: "Quantity updated" });
 	} catch (error) {
 		console.error("Error in updateQuantity controller:", error.message);
