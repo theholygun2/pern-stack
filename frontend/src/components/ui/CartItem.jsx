@@ -6,7 +6,7 @@ const CartItem = ({ item }) => {
     state.cart.find((product) => product.id === item.id)?.cart_quantity || 1
   );
   
-  const { updateQuantity } = useCartStore(); // ✅ just this!
+  const { updateQuantity } = useCartStore();
 
   return (
     <Box p={6} maxW="500px" borderWidth={1} borderRadius="xl" boxShadow="md">

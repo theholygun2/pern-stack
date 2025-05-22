@@ -1,4 +1,3 @@
-import { Minus, Plus, Trash } from "lucide-react";
 import { Box, Button,Image, Text, Flex, HStack, VStack, Heading, IconButton } from "@chakra-ui/react";
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import { useState } from "react";

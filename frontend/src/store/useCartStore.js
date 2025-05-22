@@ -4,11 +4,12 @@ import * as cartService from "@/services/cartService";
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
 export const useCartStore = create((set, get) => ({
-  productCart: [],
+  
+  guestCart: [],
   cart: [],
 
-  setUser: (user) => set({ user }),
   setCart: (cart) => set({ cart }),
+  setGuestCart: (guestCart) => set({ guestCart }),
 
   initCart: async () => {
     const cart = await fetchCart();
