@@ -1,15 +1,11 @@
 import {
-  Badge,
   Box,
   Button,
-  Card,
   Container,
   Heading,
-  HStack,
-  IconButton,
   Image,
   Text,
-  VStack, Stack, SimpleGrid,Flex,List,ListItem
+  VStack, Stack, SimpleGrid,Flex,List
 } from "@chakra-ui/react";
 
 import { useState, useEffect} from "react";
