@@ -1,5 +1,5 @@
 import { useProductStore } from "@/store/useProductStore";
-import { fetchProducts, fetchCategories } from "@/store/productActions";
+import { fetchProducts} from "@/store/productActions";
 import { Container,Text, SimpleGrid, Center, Spinner, VStack} from "@chakra-ui/react";
 import { useEffect } from "react";
 import ProductCard from "@/components/ui/ProductCard";
@@ -14,8 +14,7 @@ const ProductsPage = () => {
   } = useProductStore();
   
   useEffect(() => {
-    fetchProducts();
-    fetchCategories();
+    if (products.length === 0 ) fetchProducts()
   }, []);
 
   if (loadingProducts) {

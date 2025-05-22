@@ -1,5 +1,4 @@
 import { Routes, Route, useNavigate } from 'react-router-dom'
-import HomePage from '@/pages/HomePage'
 import ProductPage from '@/pages/ProductPage'
 import ProductsPage from '@/pages/ProductsPage'
 import CategoryPage from '@/pages/CategoryPage'
@@ -26,17 +25,10 @@ function App() {
       try {
         const user = await fetchUser(); // session-based fetch
         if (user) {
-          setUser(user); // ✅ update Zustand store
-          const cart = await fetchCart(); // get cart from backend
-          if (cart) setCart(cart); // ✅ update Zustand store
-        }
-
-        // ✅ Handle OAuth redirect (if applicable)
-        const params = new URLSearchParams(window.location.search);
-        const stateParam = params.get("state");
-        if (stateParam) {
-          await handleOAuthIntent(stateParam, setCart, navigate);
-        }
+          setUser(user);
+          const cart = await fetchCart();
+          if (cart?.length) setCart(cart); // Only set if there's something
+        }        
 
       } catch (err) {
         console.error("App init failed", err);
@@ -44,7 +36,7 @@ function App() {
     };
 
     init();
-  }, [setUser, setCart, navigate]); // ✅ include in deps
+  }, []);
   
   
 
@@ -54,7 +46,7 @@ function App() {
       <Routes>
         {/* Routes that use MainLayout */}
         <Route element={<MainLayout />}>
-          <Route path="/" element={<HomePage />} /> 
+          <Route path="/" element={<ProductsPage />} /> 
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:slug" element={<ProductPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />

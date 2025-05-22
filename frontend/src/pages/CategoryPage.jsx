@@ -3,7 +3,7 @@ import { useProductStore } from '@/store/useProductStore';
 import { useEffect } from 'react';
 import { Container, Center, Spinner, Text, SimpleGrid } from '@chakra-ui/react';
 import ProductCard from '@/components/ui/ProductCard';
-import { fetchProductByCategory, fetchCategories } from '@/store/productActions';
+import { fetchProductByCategory} from '@/store/productActions';
 
 
 // localhost:5173/category/:slug
@@ -13,7 +13,6 @@ const CategoryPage = () => {
   
     useEffect(() => {
       fetchProductByCategory(slug)
-      fetchCategories();
     }, [slug])
   
     if (loadingProducts || loadingCategories) {

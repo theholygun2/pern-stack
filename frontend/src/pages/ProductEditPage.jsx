@@ -3,7 +3,7 @@ import { Button, Container, Select, Image, Spinner, Box, Input, Flex, Center, Gr
 import { ArrowLeftIcon, SaveIcon, Trash2Icon } from 'lucide-react'; // Assuming all icons are from lucide-react
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchProduct, updateProduct, deleteProduct, fetchCategories } from '@/store/productActions';
+import { fetchProduct, updateProduct, deleteProduct} from '@/store/productActions';
 import { NumericFormat } from 'react-number-format';
 
 function ProductEditPage() {
@@ -25,7 +25,6 @@ function ProductEditPage() {
 
   useEffect(() => {
     if (!categoryList || categoryList.items.length === 0) {
-      fetchCategories(); // your function to get categories
     }
   }, []);
   

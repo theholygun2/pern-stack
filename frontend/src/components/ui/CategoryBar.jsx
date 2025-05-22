@@ -9,7 +9,7 @@ function CategoryBar() {
   const { categories, loadingCategories, errorCategories } = useProductStore()
 
   useEffect(() => {
-    fetchCategories()
+    if (categories.length === 0) fetchCategories()
   }, [])
 
   return (

@@ -54,7 +54,14 @@ export const addToCart = async (req, res) => {
 			`;
 		}
 
-		res.json({ message: "Product added to cart" });
+		const updatedCartItems = await sql`
+		SELECT p.*, ci.quantity cart_quantity
+		FROM cart_items ci
+		JOIN products p ON ci.product_id = p.id
+		WHERE ci.cart_id = ${cart.id};
+    `;
+
+    res.status(200).json({ cartItems: updatedCartItems });
 	} catch (error) {
 		console.error("Error in addToCart controller:", error.message);
 		res.status(500).json({ message: "Server error", error: error.message });

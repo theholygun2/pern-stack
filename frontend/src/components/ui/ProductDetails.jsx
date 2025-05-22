@@ -25,16 +25,13 @@ const ProductDetails = () => {
 
                 <Stack>
                     <VStack spacing={{base:4, sm:6}}>
-                        <Text>Description Here?</Text>
-                        <Text></Text>
+                        <Text>Description</Text>
+                        <Text>dfsfsfsfsdfsdsdf</Text>
                     </VStack>
                     <Box>
                         <Text>Features</Text>
                         <SimpleGrid column={{base: 1, md: 2}} spacing={10}>
                             <List.Root spacing={2}>
-                                <ListItem>item 1</ListItem>
-                                <ListItem>item 2</ListItem>
-                                <ListItem>item 3</ListItem>
                             </List.Root>
                         </SimpleGrid>
                     </Box>
@@ -43,7 +40,6 @@ const ProductDetails = () => {
                             Product Details
                         </Text>
                         <List.Root spacing={2}>
-
                         </List.Root>
                     </Box>
                 </Stack>

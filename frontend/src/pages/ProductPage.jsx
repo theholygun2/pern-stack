@@ -20,13 +20,15 @@ import ProductCartItem from "@/components/ui/ProductCartItem";
 import { useUserStore } from "@/store/useUserStore";
 import CartItem from "@/components/ui/CartItem";
 import { useCartStore } from "@/store/useCartStore";
-import ProductDetails from "@/components/ui/ProductDetails";
+import { addToCart } from "@/services/cartService";
 
 const ProductPage = () => {
 
   const navigate = useNavigate()
+  const { user } = useUserStore()
   const { currentProduct } = useProductStore()
   const { slug } = useParams()
+
 
   useEffect(() => {
     fetchProduct(slug)
@@ -43,11 +45,27 @@ const ProductPage = () => {
     )
   }
 
+  const handleAddToCart = () => {
+    if (!user) {
+      const redirectAction = encodeURIComponent(
+        JSON.stringify({
+          type: "addToCart",
+          product_id: currentProduct.id
+        })
+      );
+      // redirect to OAuth login with state
+      window.location.href = `http://localhost:3000/auth/google?state=${redirectAction}`;
+      return;
+    }
+    // user is logged in: proceed to add to cart
+    addToCart(currentProduct.id);
+  };
+
     return (
       <Container maxW="7xl">
-          <SimpleGrid columns={{ base: 1, lg: 2}} spacing={{ base:8, md: 10}} py={{ base:18, md: 24}}>
+          <SimpleGrid columns={{ base: 1, lg: 2}} spacing={{ base:8, md: 10}} py={{ base:18, md: 24}} gap="10">
               <Flex>
-                  <Image src={currentProduct.image} rounded="md" fit="cover" align="center" w="100%" h={{ base: "100%", sm: "400px" , lg: "5xl"}}/>
+                  <Image src={currentProduct.image} rounded="md" fit="cover" align="center" w="100%" h={{ base: "100%", sm: "400px" , lg: "5xl"}} />
               </Flex>
               <Stack spacing={{base: 6, md: 10}}>
                   <Box>
@@ -70,9 +88,9 @@ const ProductPage = () => {
                           <Text>Features</Text>
                           <SimpleGrid column={{base: 1, md: 2}} spacing={10}>
                               <List.Root spacing={2}>
-                                  <ListItem>item 1</ListItem>
-                                  <ListItem>item 2</ListItem>
-                                  <ListItem>item 3</ListItem>
+                                <List.Item>
+                                  Item1 1
+                                </List.Item>
                               </List.Root>
                           </SimpleGrid>
                       </Box>
@@ -81,11 +99,17 @@ const ProductPage = () => {
                               Product Details
                           </Text>
                           <List.Root spacing={2}>
-  
+                            <List.Item><Text>Between lugs</Text></List.Item>
+                            <List.Item><Text>Between lugs</Text></List.Item>
+                            <List.Item><Text>Between lugs</Text></List.Item>
                           </List.Root>
                       </Box>
                   </Stack>
               </Stack>
+
+              <Button mt={8} size={"lg"} py={"7"} textTransform={"uppercase"} onClick={handleAddToCart}>
+                Add to Cart
+              </Button>
           </SimpleGrid>
       </Container>
       )

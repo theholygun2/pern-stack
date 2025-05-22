@@ -10,6 +10,10 @@ export async function fetchCart() {
   return res.data.products || [];
 }
 
+export async function addToCart(product) {
+  return await axios.post(`${BASE_URL}/api/cart`, { product_id: product.id})
+}
+
 export async function updateQuantity(product_id, quantity) {
   return await axios.put(`${BASE_URL}/api/cart/${product_id}`, { quantity }, {withCredentials: true});
 }
