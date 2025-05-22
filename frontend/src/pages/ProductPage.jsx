@@ -16,10 +16,7 @@ import { useState, useEffect} from "react";
 import { fetchProduct } from "@/store/productActions";
 import { useProductStore } from "@/store/useProductStore";
 import { useParams, useNavigate} from "react-router-dom";
-import ProductCartItem from "@/components/ui/ProductCartItem";
 import { useUserStore } from "@/store/useUserStore";
-import CartItem from "@/components/ui/CartItem";
-import { useCartStore } from "@/store/useCartStore";
 import { addToCart } from "@/services/cartService";
 
 const ProductPage = () => {
@@ -58,7 +55,7 @@ const ProductPage = () => {
       return;
     }
     // user is logged in: proceed to add to cart
-    addToCart(currentProduct.id);
+    addToCart(currentProduct);
   };
 
     return (

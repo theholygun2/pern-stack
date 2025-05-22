@@ -23,9 +23,9 @@ const CartItem = ({ item }) => {
           </Text>
 
           <HStack>
-            {/* <IconButton size="sm" onClick={() =>  updateQuantity(item.id, quantity - 1)}><FaMinus /></IconButton> fix this bro */}
+            <IconButton size="sm" onClick={() =>  updateQuantity(item.id, quantity - 1)} disabled={quantity === 1}><FaMinus /></IconButton>
             <Text>{quantity}</Text>
-            <IconButton size="sm" onClick={() => {if(quantity < item.quantity) updateQuantity(item.id, quantity + 1)}}><FaPlus /></IconButton>
+            <IconButton size="sm" onClick={() => {if(quantity < item.quantity) updateQuantity(item.id, quantity + 1)}} disabled={quantity === item.quantity}><FaPlus /></IconButton>
             <Text fontSize="sm" color="gray.500">Stock: {item.quantity}</Text>
           </HStack>
         </VStack>

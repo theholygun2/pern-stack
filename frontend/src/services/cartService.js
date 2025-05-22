@@ -11,7 +11,8 @@ export async function fetchCart() {
 }
 
 export async function addToCart(product) {
-  return await axios.post(`${BASE_URL}/api/cart`, { product_id: product.id})
+  console.log(product)
+  return await axios.post(`${BASE_URL}/api/cart`, { product_id: product.id}, {withCredentials: true})
 }
 
 export async function updateQuantity(product_id, quantity) {

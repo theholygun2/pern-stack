@@ -27,7 +27,7 @@ export const getCartProducts = async (req, res) => {
 export const addToCart = async (req, res) => {
 	try {
 		const user = req.session.user;
-		const { productId } = req.body;
+		const { product_id } = req.body;
 
 		const [cart] = await sql`SELECT id FROM cart WHERE user_id = ${user.id};`;
 
@@ -38,19 +38,19 @@ export const addToCart = async (req, res) => {
 		// Check if product already in cart
 		const [existingItem] = await sql`
 			SELECT * FROM cart_items 
-			WHERE cart_id = ${cart.id} AND product_id = ${productId};
+			WHERE cart_id = ${cart.id} AND product_id = ${product_id};
 		`;
 
 		if (existingItem) {
 			await sql`
 				UPDATE cart_items 
 				SET quantity = quantity + 1 
-				WHERE cart_id = ${cart.id} AND product_id = ${productId};
+				WHERE cart_id = ${cart.id} AND product_id = ${product_id};
 			`;
 		} else {
 			await sql`
 				INSERT INTO cart_items (cart_id, product_id, quantity) 
-				VALUES (${cart.id}, ${productId}, 1);
+				VALUES (${cart.id}, ${product_id}, 1);
 			`;
 		}
 
