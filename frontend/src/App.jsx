@@ -50,11 +50,11 @@ function App() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:slug" element={<ProductPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
+          <Route path="/cart" element={<CartPage />} />
         </Route>
 
         {/* Routes that use PlainLayout (no navbar/category) */}
         <Route element={<PlainLayout />}>
-          <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
         </Route>
       </Routes>

@@ -5,40 +5,41 @@ import {
   Heading,
   Image,
   Text,
-  VStack, Stack, SimpleGrid,Flex,List
+  VStack,
+  Flex,
+  SimpleGrid,
+  Stack,
 } from "@chakra-ui/react";
 
-import { useState, useEffect} from "react";
+import { useEffect } from "react";
 import { fetchProduct } from "@/store/productActions";
 import { useProductStore } from "@/store/useProductStore";
-import { useParams, useNavigate} from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useUserStore } from "@/store/useUserStore";
 import { addToCart } from "@/services/cartService";
+import { toaster } from "@/components/ui/toaster";
+import { useCartStore } from "@/store/useCartStore";
 
-const ProductPage = () => {
-
-  const navigate = useNavigate()
-  const { user } = useUserStore()
-  const { currentProduct } = useProductStore()
-  const { slug } = useParams()
-
+const ProductDetailsPage = () => {
+  const navigate = useNavigate();
+  const { user } = useUserStore();
+  const { currentProduct } = useProductStore();
+  const { slug } = useParams();
+  const { setCart } = useCartStore();
 
   useEffect(() => {
-    fetchProduct(slug)
-  }, [slug])
+    fetchProduct(slug);
+  }, [slug]);
 
-  
   if (!currentProduct) {
     return (
       <Container>
-        <Box>
-          Product Not Found
-        </Box>
+        <Box>Product Not Found</Box>
       </Container>
-    )
+    );
   }
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!user) {
       const redirectAction = encodeURIComponent(
         JSON.stringify({
@@ -47,65 +48,122 @@ const ProductPage = () => {
         })
       );
       // redirect to OAuth login with state
-      window.location.href = `http://localhost:3000/auth/google?state=${redirectAction}`;
+      window.location.href = `http://localhost:3000/auth/google?state=${redirectAction};`
       return;
     }
     // user is logged in: proceed to add to cart
-    addToCart(currentProduct);
+    try {
+      const updatedCart = await addToCart(currentProduct);
+      setCart(updatedCart)
+      toaster.success({
+        title: "Added 1 Item to Cart",
+        description: "The product was successfully added"
+      })
+    } catch (error) {
+      const message = error?.response?.data?.message || "Something went wrong.";
+      toaster.error({
+        title: "Error",
+        description: message
+      })
+    }
   };
 
-    return (
-      <Container maxW="7xl">
-          <SimpleGrid columns={{ base: 1, lg: 2}} spacing={{ base:8, md: 10}} py={{ base:18, md: 24}} gap="10">
-              <Flex>
-                  <Image src={currentProduct.image} rounded="md" fit="cover" align="center" w="100%" h={{ base: "100%", sm: "400px" , lg: "5xl"}} />
-              </Flex>
-              <Stack spacing={{base: 6, md: 10}}>
-                  <Box>
-                      <Heading>{currentProduct.name}</Heading>
-                      <Text textStyle="2xl" fontWeight="medium" letterSpacing="tight" mt="2">
-                                  {new Intl.NumberFormat("id-ID", {
-                                    style: "currency",
-                                    currency: "IDR",
-                                    minimumFractionDigits: 0,
-                                  }).format(currentProduct.price)}
-                                </Text>
-                  </Box>
-  
-                  <Stack>
-                      <VStack spacing={{base:4, sm:6}}>
-                          <Text>Description Here?</Text>
-                          <Text></Text>
-                      </VStack>
-                      <Box>
-                          <Text>Features</Text>
-                          <SimpleGrid column={{base: 1, md: 2}} spacing={10}>
-                              <List.Root spacing={2}>
-                                <List.Item>
-                                  Item1 1
-                                </List.Item>
-                              </List.Root>
-                          </SimpleGrid>
-                      </Box>
-                      <Box>
-                          <Text>
-                              Product Details
-                          </Text>
-                          <List.Root spacing={2}>
-                            <List.Item><Text>Between lugs</Text></List.Item>
-                            <List.Item><Text>Between lugs</Text></List.Item>
-                            <List.Item><Text>Between lugs</Text></List.Item>
-                          </List.Root>
-                      </Box>
-                  </Stack>
-              </Stack>
+  const handleBuyNow = async () => {
+    if (!user) {
+      const redirectAction = encodeURIComponent(
+        JSON.stringify({
+          type: "buyNow",
+          product_id: currentProduct.id,
+        })
+      );
+      window.location.href = `http://localhost:3000/auth/google?state=${redirectAction}`;
+      return;
+    }
+    try {
+      const updatedCart = await addToCart(currentProduct);
+      setCart(updatedCart);
+      navigate("/checkout");
+    } catch (error) {
+      const message =
+        error?.response?.data?.message || "Something went wrong.";
+      toaster.error({
+        title: "Error",
+        description: message,
+      });
+    }
+  };
 
-              <Button mt={8} size={"lg"} py={"7"} textTransform={"uppercase"} onClick={handleAddToCart}>
-                Add to Cart
-              </Button>
-          </SimpleGrid>
-      </Container>
-      )
+  return (
+    <Container maxW="7xl" py={10}>
+      <Flex direction={{ base: "column", lg: "row" }} gap={10}>
+        {/* Left: Product Image */}
+        <Box flex="1" maxW="400px">
+          <Image
+            src={currentProduct.image}
+            alt={currentProduct.name}
+            rounded="md"
+            w="100%"
+            h={{ base: "auto", lg: "350px" }}
+            objectFit="cover"
+          />
+        </Box>
+
+        {/* Middle: Description and Info */}
+        <Box flex="2">
+          <Heading fontSize="2xl" mb={2}>{currentProduct.name}</Heading>
+          <Text fontSize="lg" mb={4}>
+            Stock: {currentProduct.quantity}
+          </Text>
+          <Text mb={6}>
+            {currentProduct.description || "No description available."}
+          </Text>
+          <Box>
+            <Heading size="md" mb={2}>Product Details</Heading>
+            <Text fontSize="sm" >• Feature 1</Text>
+            <Text fontSize="sm" >• Feature 2</Text>
+            <Text fontSize="sm" >• Feature 3</Text>
+          </Box>
+          {/* Optional: Add reviews section here later */}
+        </Box>
+
+        {/* Right: Buy Box */}
+        <Box
+          flex="1"
+          borderWidth={1}
+          borderRadius="lg"
+          p={6}
+          boxShadow="md"
+          alignSelf="flex-start"
+          position="sticky"
+          top="1rem"
+        >
+          <Text fontSize="2xl" fontWeight="bold" mb={4}>
+            {new Intl.NumberFormat("id-ID", {
+              style: "currency",
+              currency: "IDR",
+              minimumFractionDigits: 0,
+            }).format(currentProduct.price)}
+          </Text>
+          <Button
+            colorScheme="green"
+            size="lg"
+            width="100%"
+            onClick={handleAddToCart}
+          >
+            Add to Cart
+          </Button>
+          <Button
+            bg="green"
+            size="lg"
+            width="100%"
+            onClick={handleBuyNow}
+          >
+            Buy Now
+          </Button>
+        </Box>
+      </Flex>
+    </Container>
+  );
 };
 
-export default ProductPage;
+export default ProductDetailsPage;

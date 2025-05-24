@@ -12,7 +12,8 @@ export async function fetchCart() {
 
 export async function addToCart(product) {
   console.log(product)
-  return await axios.post(`${BASE_URL}/api/cart`, { product_id: product.id}, {withCredentials: true})
+  const res = await axios.post(`${BASE_URL}/api/cart`, { product_id: product.id}, {withCredentials: true})
+  return res.data.cartItems
 }
 
 export async function updateQuantity(product_id, quantity) {
@@ -20,5 +21,6 @@ export async function updateQuantity(product_id, quantity) {
 }
 
 export async function removeFromCart(product_id) {
-  return await axios.delete(`${BASE_URL}/api/cart`, { data: { product_id }, withCredentials: true});
+  const res = await axios.delete(`${BASE_URL}/api/cart`, { data: { product_id }, withCredentials: true}); 
+  return res.data.cartItems
 }

@@ -16,11 +16,11 @@ function Navbar() {
         <Flex gap="4" align="center">
           <ShoppingCartIcon />
           <ChakraLink as={Link} to="/"><Text>All Products</Text></ChakraLink>
+          <Text>Categories</Text>
         </Flex>
         <RightSideHeader/>
       </Flex>
-    </Box>
-        
+    </Box>       
   )
 }
 

@@ -33,9 +33,8 @@ export const useCartStore = create((set, get) => ({
   },
 
   removeFromCart: async (product_id) => {
-    await cartService.removeFromCart(product_id);
-    set((state) => ({
-      cart: state.cart.filter((item) => item._id !== product_id),
-    }));
+    const updatedCart = await cartService.removeFromCart(product_id); // <- await and capture
+    set({ cart: updatedCart }); // <- directly set to the returned data
   },
+  
 }));

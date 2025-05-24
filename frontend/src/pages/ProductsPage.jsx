@@ -14,7 +14,7 @@ const ProductsPage = () => {
   } = useProductStore();
   
   useEffect(() => {
-    if (products.length === 0 ) fetchProducts()
+    fetchProducts()
   }, []);
 
   if (loadingProducts) {
