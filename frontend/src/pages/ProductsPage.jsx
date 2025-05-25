@@ -47,42 +47,6 @@ const ProductsPage = () => {
         }
       )}
       </SimpleGrid>
-      <VStack gap={100}>
-        <Text>
-          dfsafsf
-        </Text>
-        <Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text><Text>
-          dfsafsf
-        </Text>
-      </VStack>
     </Container>
   )
 }

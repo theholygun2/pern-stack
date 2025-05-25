@@ -7,7 +7,7 @@ const CartItem = ({ item }) => {
     state.cart.find((product) => product.id === item.id)?.cart_quantity || 1
   );
 
-  const { updateQuantity, removeFromCart, setCart} = useCartStore();
+  const { updateQuantity, removeFromCart} = useCartStore();
 
   return (
     <Box p={3} maxW="1000px" borderWidth={1} borderRadius="lg" boxShadow="sm">
@@ -16,7 +16,7 @@ const CartItem = ({ item }) => {
           <Image boxSize="80px" objectFit="cover" src={item.image} alt={item.name} borderRadius="md" />
           <Box>
             <Text fontWeight="semibold">{item.name}</Text>
-            <Text fontSize="sm" color="gray.500">
+            <Text fontSize="sm">
               Stock: {item.quantity}
             </Text>
           </Box>
