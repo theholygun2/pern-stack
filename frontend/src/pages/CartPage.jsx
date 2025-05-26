@@ -10,19 +10,16 @@ import { useNavigate } from "react-router-dom";
     const navigate = useNavigate()
 
     const handleCheckout = async () => {
-      navigate('/checkout')
+      navigate("/checkout")
     }
 
     const totalQuantity = cart.reduce((sum, item) => sum + item.cart_quantity, 0);
-
-    const totalPrice = cart.reduce((sum, product) => {
-      return sum + product.price * (product.cart_quantity || 1);
-    }, 0);
+    const totalPrice = 0
 
     return (
-<Container p="4" maxW="container.xl">
-  {user ? (
-    <Flex gap={6} align="flex-start">
+    <Container p="4" maxW="container.xl">
+      {user ? (
+        <Flex gap={6} align="flex-start">
       {/* Cart Items */}
       <VStack flex="2" gap={4} align="stretch">
         {cart.length === 0 ? (
@@ -33,6 +30,7 @@ import { useNavigate } from "react-router-dom";
         ))
         )}
 </VStack>
+
 
 
       {/* Summary / Side Box */}

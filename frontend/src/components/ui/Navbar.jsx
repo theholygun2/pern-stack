@@ -7,6 +7,7 @@ import {
   Link as ChakraLink,
   Badge,
   Avatar,
+  Heading
 } from "@chakra-ui/react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ColorModeButton } from "./color-mode";
@@ -20,8 +21,8 @@ function Navbar() {
   const isHomePage = pathname === "/";
 
   return (
-    <Box position="sticky" top="0" zIndex="sticky" shadow="sm">
-      <Flex justify="space-between" align="center" px={4} py={2} borderBottom="1px solid" borderColor="gray.200">
+    <Box position="sticky" top="0" zIndex="sticky" shadow="sm" bg={{_light: "white", _dark: "black"}}>
+      <Flex minH={"60px"} justify="space-between" align="center" px={4} py={2} borderBottom="1px solid" borderColor="gray.200" >
         <NavLinks />
         <RightSideHeader />
       </Flex>
@@ -30,14 +31,17 @@ function Navbar() {
 }
 
 const NavLinks = () => (
-  <HStack spacing={4} align="center">
-    <ShoppingBagIcon size={20} />
+  <HStack spacing={6} align="center">
+    <ChakraLink as={Link} to="/" _hover={{ textDecoration: "none" }}>
+      <Heading size="md" mb="1px">SukaLupa.com</Heading>
+    </ChakraLink>
     <ChakraLink as={Link} to="/">
       <Text>All Products</Text>
     </ChakraLink>
-    <Text>Categories</Text> {/* You can replace this with dynamic links later */}
+    <Text>Categories</Text>
   </HStack>
 );
+
 
 const RightSideHeader = () => {
   const { user } = useUserStore();
@@ -59,7 +63,26 @@ const RightSideHeader = () => {
   return (
     <HStack spacing={4} align="center">
       <ColorModeButton />
-
+      <ChakraLink as={Link} to="/cart">
+      <Box position="relative" mr="4px">
+        <ShoppingCartIcon size={26} />
+    {/* Show badge only if user is logged in and cartCount > 0 */}
+    {user && cartCount > 0 && (
+      <Badge
+        position="absolute"
+        top="-2"
+        right="-1"
+        bg="green.500"
+        color="white"
+        fontSize="0.7em"
+        borderRadius="full"
+        px={2}
+      >
+        {cartCount}
+      </Badge>
+    )}
+  </Box>
+</ChakraLink>
       {user ? (
         <>
           <HStack spacing={2} align="center">
@@ -84,28 +107,6 @@ const RightSideHeader = () => {
           Sign in
         </Button>
       )}
-
-<ChakraLink as={Link} to="/cart">
-  <Box position="relative">
-    <ShoppingCartIcon size={24} />
-    
-    {/* Show badge only if user is logged in and cartCount > 0 */}
-    {user && cartCount > 0 && (
-      <Badge
-        position="absolute"
-        top="-1"
-        right="-1"
-        bg="red.500"
-        color="white"
-        fontSize="0.7em"
-        borderRadius="full"
-        px={2}
-      >
-        {cartCount}
-      </Badge>
-    )}
-  </Box>
-</ChakraLink>
 
     </HStack>
   );

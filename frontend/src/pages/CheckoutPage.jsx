@@ -1,57 +1,61 @@
-import { Box, Button,  Container, Flex, Text, VStack } from "@chakra-ui/react"
+import { Box, Button,  Container, Flex, Text, VStack, Heading, RadioCard } from "@chakra-ui/react"
 import { useParams } from "react-router-dom";
 import CartItem from "@/components/ui/CartItem";
 import { useCartStore } from "@/store/useCartStore";
-import { Link as RouterLink } from "react-router-dom";
-import { Link } from "@chakra-ui/react";
+import { Link as ChakraLink } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
+import { createOrder } from "@/services/orderService";
+
+const items = [
+  { value: "shopeepay", title: "ShopeePay" },
+  { value: "gopay", title: "GoPay" },
+  { value: "bca", title: "Bank Transfer (BCA)" },
+  { value: "cod", title: "Cash on Delivery" },
+];
+
+// Move this ABOVE your CheckoutPage component
+function PaymentBox() {
+  return (
+    <RadioCard.Root defaultValue="shopeepay">
+      <RadioCard.Label>Select Payment Method</RadioCard.Label>
+      <VStack align="stretch">
+        {items.map((item) => (
+          <RadioCard.Item key={item.value} value={item.value}>
+            <RadioCard.ItemHiddenInput />
+            <RadioCard.ItemControl>
+              <RadioCard.ItemText>{item.title}</RadioCard.ItemText>
+              <RadioCard.ItemIndicator />
+            </RadioCard.ItemControl>
+          </RadioCard.Item>
+        ))}
+      </VStack>
+    </RadioCard.Root>
+  );
+}
 
 const CheckoutPage = () => {
+  
   const { cart } = useCartStore()
   const {id} = useParams("id")
+  const totalPrice = cart.reduce((sum, product) => {return sum + product.price * (product.cart_quantity || 1);}, 0);
 
-  const totalQuantity = cart.reduce((sum, item) => sum + item.cart_quantity, 0);
-
-    const totalPrice = cart.reduce((sum, product) => {
-      return sum + product.price * (product.cart_quantity || 1);
-    }, 0);
-  
-  const handleBuyNow = async () => {
-    try {
-      const res = await fetch("http://localhost:3000/api/order/checkout", {
-        method: "POST",
-        credentials: "include", // for session-based auth
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          productId: currentProduct.id,
-          quantity,
-        }),
-      });
-  
-      if (res.status === 401) {
-        window.location.href = "http://localhost:3000/auth/google"; // or show modal
-        return;
-      }
-  
-      const data = await res.json();
-  
-      // Redirect to your local checkout page, passing the orderId
-      navigate(`/checkout/${data.orderId}`);
-    } catch (error) {
-      console.error("Error processing purchase", error);
-    }
+  const items = [
+    { value: "gopay", title: "shopeepay"}
+  ]
+  const handleBuyNow = async (order) => {
+    const res = await createOrder(order)
+    return res
   };
 
   return (
   <>
   <Box p={4}>
-  <Link as={RouterLink} to="/" display="flex" alignItems="center" fontWeight="bold">
-    SukaLupa
-  </Link>
+  <ChakraLink  as={Link} to="/" alignItems="center" fontWeight="bold">
+    <Heading size="md" mb="1px">SukaLupa.com</Heading>
+  </ChakraLink>
 </Box>
-
   <Container p="100px">
+    
       <Flex direction={{ base: "column", md: "row" }} gap={6}>
         {/* Left Side: Address + Cart */}
         <Flex direction="column" flex="2" gap={4}>
@@ -102,7 +106,8 @@ const CheckoutPage = () => {
             }).format(totalPrice)}
           </Text>
           </Flex>
-          <Button mt={4} colorScheme="blue" width="100%">
+          <PaymentBox/>
+          <Button mt={4} colorScheme="blue" width="100%" onClick={() => handleBuyNow([{cart: cart, shipAddress: "Kelapa Gading", status: "pending", paymentMethod: "go-pay"}])}>
             Pay Now
           </Button>
         </Box>
