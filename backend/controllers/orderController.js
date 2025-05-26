@@ -1,15 +1,19 @@
 import { sql } from "../config/db.js"
+import { pgPool } from "../config/pool.js";
 import { getCartTotal } from "../services/cart.service.js";
+import { getOrdersByUser } from "../services/order.service.js";
 import { handleNotFound, handleServerError } from "../utils/response.js";
 
 // orderController.js
-import { pgPool } from "../config/pool.js";
 
 // createOrder, addOrderItem, getOrder, getOrderItem, 
 
 export const getOrder = async (req,res) => {
-    
-}
+  const user = req.session.user
+  const orderHistory = await getOrdersByUser(user.id)
+  console.log(orderHistory)
+  return res.status(201).json({ success: true, message: "Resource Retrieve Successfuly", data: {orderHistory}})
+};
 
 export const addOrder = async (req, res) => {
   const user = req.session.user;
@@ -60,3 +64,13 @@ export const addOrder = async (req, res) => {
   }
 };
 
+export const deleteOrder = async (req, res) => {
+  const user = req.session.user
+  const cart = req.session.cart
+  try {
+    
+    res.status(204)
+  } catch (error) {
+    handleNotFound(res, error)
+  }
+};
