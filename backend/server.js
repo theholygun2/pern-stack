@@ -15,7 +15,7 @@ import { sql } from "./config/db.js";
 import { aj } from "./lib/arcjet.js";
 import session  from "express-session"
 import pgSession from 'connect-pg-simple'
-import { Pool } from "pg"
+import { pgPool } from "./config/pool.js";
 
 const PgSession = pgSession(session)
 
@@ -24,9 +24,6 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
-const pgPool = new Pool({
-  connectionString: process.env.DATABASE_URL
-})
 app.use(cors({
   origin: "http://localhost:5173", // ✅ MUST be explicit
   credentials: true
