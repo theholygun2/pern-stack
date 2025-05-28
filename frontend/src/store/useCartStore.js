@@ -23,13 +23,14 @@ export const useCartStore = create((set, get) => ({
       return;
     }
     const updatedCart = await cartService.updateQuantity(product_id, quantity);
-    set({ cart: updatedCart });
+    console.log(updatedCart)
+    // set({ cart: updatedCart});
 
-    // set((state) => ({
-    //   cart: state.cart.map((item) =>
-    //     item.id === product_id ? { ...item, cart_quantity: quantity } : item
-    //   ),
-    // }));
+    set((state) => ({
+      cart: state.cart.map((item) =>
+        item.id === product_id ? { ...item, cart_quantity: quantity } : item
+      ),
+    }));
   },
 
   removeFromCart: async (product_id) => {

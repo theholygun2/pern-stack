@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
     }
 
     const totalQuantity = cart.reduce((sum, item) => sum + item.cart_quantity, 0);
-    const totalPrice = 0
+    const totalPrice = cart.reduce((sum, item) => sum + item.price * item.cart_quantity, 0);
 
     return (
     <Container p="4" maxW="container.xl">
@@ -25,8 +25,8 @@ import { useNavigate } from "react-router-dom";
         {cart.length === 0 ? (
           <Text>Your cart is empty.</Text>
         ) : (
-          cart.map((product) => (
-          <CartItem key={product.id} item={product} />
+          cart.map((item) => (
+          <CartItem key={item.id} id={item.id} />
         ))
         )}
 </VStack>

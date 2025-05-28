@@ -17,7 +17,8 @@ export async function addToCart(product) {
 }
 
 export async function updateQuantity(product_id, quantity) {
-  return await axios.put(`${BASE_URL}/api/cart/${product_id}`, { quantity }, {withCredentials: true});
+  const res = await axios.put(`${BASE_URL}/api/cart/${product_id}`, { quantity }, {withCredentials: true});
+  return res.data.data
 }
 
 export async function removeFromCart(product_id) {

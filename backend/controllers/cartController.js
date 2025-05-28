@@ -119,22 +119,37 @@ export const removeFromCart = async (req, res) => {
 
 export const updateQuantity = async (req, res) => {
 	try {
-		const cart = req.session.cart;
-		const { id } = req.params; // product_id
-		const { quantity } = req.body;
-
-		if (quantity < 1) {
-			return res.status(400).json({ message: "Quantity must be at least 1" });
-		}
-
-		await sql`
-			UPDATE cart_items 
-			SET quantity = ${quantity} 
-			WHERE cart_id = ${cart.id} AND product_id = ${id};
-		`;
-		res.json({ message: "Quantity updated" });
+	  const cart = req.session.cart;
+	  const { id } = req.params; // product_id
+	  const { quantity } = req.body;
+  
+	  if (quantity < 1) {
+		return res.status(400).json({ message: "Quantity must be at least 1" });
+	  }
+  
+	  // Update quantity
+	  await sql`
+		UPDATE cart_items 
+		SET quantity = ${quantity} 
+		WHERE cart_id = ${cart.id} AND product_id = ${id};
+	  `;
+  
+	  // Fetch the updated cart items
+	  const updatedCart = await sql`
+		SELECT ci.id, ci.product_id, ci.quantity as cart_quantity, p.name, p.image, p.price, p.quantity
+		FROM cart_items ci
+		JOIN products p ON ci.product_id = p.id
+		WHERE ci.cart_id = ${cart.id};
+	  `;
+  
+	  res.status(200).json({
+		success: true,
+		message: "Quantity updated successfully",
+		data: updatedCart,
+	  });
 	} catch (error) {
-		console.error("Error in updateQuantity controller:", error.message);
-		res.status(500).json({ message: "Server error", error: error.message });
+	  console.error("Error in updateQuantity controller:", error.message);
+	  res.status(500).json({ message: "Server error", error: error.message });
 	}
-};
+  };
+  

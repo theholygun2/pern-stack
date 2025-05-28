@@ -53,7 +53,7 @@ export const addOrder = async (req, res) => {
     }
 
     await client.query('COMMIT');
-    res.status(201).json({ success: true });
+    res.status(201).json({ success: true, message: "Order added successfully" });
 
   } catch (err) {
     await client.query('ROLLBACK');

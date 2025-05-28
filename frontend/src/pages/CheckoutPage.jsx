@@ -1,10 +1,11 @@
-import { Box, Button,  Container, Flex, Text, VStack, Heading, RadioCard } from "@chakra-ui/react"
+import { Box, Button,  Container, Flex, Text, VStack, Heading, RadioCard, Input, Stack} from "@chakra-ui/react"
 import { useParams } from "react-router-dom";
 import CartItem from "@/components/ui/CartItem";
 import { useCartStore } from "@/store/useCartStore";
 import { Link as ChakraLink } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { createOrder } from "@/services/orderService";
+import { useState } from "react";
 
 const items = [
   { value: "shopeepay", title: "ShopeePay" },
@@ -38,10 +39,8 @@ const CheckoutPage = () => {
   const { cart } = useCartStore()
   const {id} = useParams("id")
   const totalPrice = cart.reduce((sum, product) => {return sum + product.price * (product.cart_quantity || 1);}, 0);
+  const  [ shippingAddress, setShippingAddress ] = useState("")
 
-  const items = [
-    { value: "gopay", title: "shopeepay"}
-  ]
   const handleBuyNow = async (order) => {
     const res = await createOrder(order)
     return res
@@ -58,20 +57,20 @@ const CheckoutPage = () => {
     
       <Flex direction={{ base: "column", md: "row" }} gap={6}>
         {/* Left Side: Address + Cart */}
-        <Flex direction="column" flex="2" gap={4}>
+        <Flex direction="column" flex="2" gap={4} borderWidth={1} borderRadius="md" minW="250px" borderStyle="bold" borderColor="black">
           <Box p={4} borderWidth={1} borderRadius="md">
             <Text fontWeight="bold" mb={2}>Shipping Address</Text>
+            <Input bg="gray.200" variant="subtle" onChange={(e) => setShippingAddress(e.target.value)}/>
             {/* Address info or input form */}
           </Box>
-            
             <Box p={4} borderWidth={1} borderRadius="md">
               <Text fontWeight="bold" mb={2}>Cart Items</Text>
               <VStack flex="2" gap={4} align="stretch">
         {cart.length === 0 ? (
           <Text>Your cart is empty.</Text>
         ) : (
-          cart.map((product) => (
-          <CartItem key={product.id} item={product} />
+          cart.map((item) => (
+          <CartItem key={item.id} id={item.id} />
         ))
         )}
 </VStack>
@@ -80,7 +79,7 @@ const CheckoutPage = () => {
         
         {/* Right Side: Price Summary */}
         
-        <Box flex="1" p={4} borderWidth={1} borderRadius="md" minW="250px">
+        <Box flex="1" p={4} borderWidth={1} borderRadius="md" minW="250px" borderStyle="bold" borderColor="black">
           <Text fontWeight="bold" mb={2}>Order Summary</Text>
           <Flex justify="space-between">
             <Text>Subtotal</Text>
@@ -107,7 +106,7 @@ const CheckoutPage = () => {
           </Text>
           </Flex>
           <PaymentBox/>
-          <Button mt={4} colorScheme="blue" width="100%" onClick={() => handleBuyNow([{cart: cart, shipAddress: "Kelapa Gading", status: "pending", paymentMethod: "go-pay"}])}>
+          <Button mt={4} colorScheme="blue" width="100%" disabled={cart.length === 0} onClick={() => handleBuyNow({shippingAddress: "Pulogadung", status: "pending", paymentMethod: "m-bca"})}>
             Pay Now
           </Button>
         </Box>

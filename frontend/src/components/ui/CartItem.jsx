@@ -1,16 +1,16 @@
-import { Box, Button, Image, Text, Flex, HStack, VStack, IconButton } from "@chakra-ui/react";
+import { Box, Image, Text, Flex, HStack, VStack, IconButton } from "@chakra-ui/react";
 import { FaMinus, FaPlus, FaTrash } from "react-icons/fa";
 import { useCartStore } from "@/store/useCartStore";
 
-const CartItem = ({ item }) => {
-  const quantity = useCartStore((state) =>
-    state.cart.find((product) => product.id === item.id)?.cart_quantity || 1
-  );
-
+const CartItem = ({id}) => {
+  
+  const item = useCartStore((state) => state.cart.find((i) => i.id === id));
+  const quantity = useCartStore((state) => state.cart.find((i) => i.id === id)?.cart_quantity || 1);
+  if (!item) return null;
   const { updateQuantity, removeFromCart} = useCartStore();
 
   return (
-    <Box p={3} maxW="1000px" borderWidth={1} borderRadius="lg" boxShadow="sm">
+    <Box p={3} maxW="1000px" borderWidth={1} borderRadius="lg" boxShadow="sm" borderColor="black">
       <Flex justify="space-between" align="center">
         <HStack spacing={4}>
           <Image boxSize="80px" objectFit="cover" src={item.image} alt={item.name} borderRadius="md" />
