@@ -10,6 +10,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import authRoutes from "./routes/authRoutes.js"
 import orderRoutes from "./routes/orderRoutes.js"
 import cartRoutes from "./routes/cartRoutes.js"
+import paymenRoutes from "./routes/paymentRoutes.js"
 
 import { sql } from "./config/db.js";
 import { aj } from "./lib/arcjet.js";
@@ -93,6 +94,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes)
 app.use("/api/order", orderRoutes)
 app.use("/api/cart", cartRoutes)
+app.use("/api/payment", paymenRoutes)
 
 if (process.env.NODE_ENV === "production") {
   // server our react app
