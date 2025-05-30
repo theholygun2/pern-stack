@@ -4,7 +4,7 @@ import { createPayment, handleWebhook } from "../controllers/paymentController.j
 
 const router = express.Router()
 
-router.post("/notify", protectRoute, handleWebhook)
+router.post("/notify", handleWebhook)
 router.post("/", createPayment)
 
 export default router

@@ -8,19 +8,31 @@ import { handleNotFound, handleServerError } from "../utils/response.js";
 
 // createOrder, addOrderItem, getOrder, getOrderItem, 
 
-export const getOrder = async (req,res) => {
-  const user = req.session.user
-  const orderHistory = await getOrdersByUser(user.id)
-  console.log(orderHistory)
-  return res.status(201).json({ success: true, message: "Resource Retrieve Successfuly", data: {orderHistory}})
+export const getOrder = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const orderHistory = await getOrdersByUser(user.id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Resource Retrieved Successfully",
+      data: { orderHistory },
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve order history",
+    });
+  }
 };
+
 
 export const addOrder = async (req, res) => {
   const user = req.session.user;
   const cart = req.session.cart;
-  const { shippingAddress, paymentMethod, status } = req.body;
+  const { shippingAddress, paymentMethod} = req.body;
 
-  if (!shippingAddress || !paymentMethod || !status) {
+  if (!shippingAddress || !paymentMethod ) {
     return res.status(400).json({ success: false, message: "Missing required fields" });
   }
 
@@ -32,10 +44,10 @@ export const addOrder = async (req, res) => {
     const totalPrice = await getCartTotal(cart.id); // Assuming this still works with pg client
 
     const { rows: [{ id: orderId }] } = await client.query(`
-      INSERT INTO orders (user_id, status, total_price, shipping_address, payment_method)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO orders (user_id, total_price, shipping_address, payment_method)
+      VALUES ($1, $2, $3, $4)
       RETURNING id
-    `, [user.id, status, totalPrice, shippingAddress, paymentMethod]);
+    `, [user.id, totalPrice, shippingAddress, paymentMethod]);
 
     const { rows: products } = await client.query(`
       SELECT p.id, p.name, ci.quantity, SUM(p.price * ci.quantity) AS subtotal
@@ -51,6 +63,12 @@ export const addOrder = async (req, res) => {
         VALUES ($1, $2, $3, $4, $5)
       `, [orderId, product.id, product.name, product.quantity, product.subtotal]);
     }
+
+    await client.query(`
+      DELETE FROM cart_items
+      WHERE cart_id = $1
+    `, [cart.id]);
+    
 
     await client.query('COMMIT');
     res.status(201).json({ success: true, message: "Order added successfully" });

@@ -1,4 +1,4 @@
-import { Box, Button,  Container, Flex, Text, VStack, Heading, RadioCard, Input, Stack} from "@chakra-ui/react"
+import { Box, Button,  Container, Flex, Text, VStack, Heading, RadioCard, Input, Stack, Toaster} from "@chakra-ui/react"
 import { useParams } from "react-router-dom";
 import CartItem from "@/components/ui/CartItem";
 import { useCartStore } from "@/store/useCartStore";
@@ -37,8 +37,7 @@ function PaymentBox({ selectedPaymentMethod, setSelectedPaymentMethod }) {
 
 const CheckoutPage = () => {
   
-  const { cart } = useCartStore()
-  const {id} = useParams("id")
+  const { cart, clearCart } = useCartStore()
   const totalPrice = cart.reduce((sum, product) => {return sum + product.price * (product.cart_quantity || 1);}, 0);
   const [shippingAddress, setShippingAddress] = useState("");
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("shopeepay");
@@ -49,6 +48,11 @@ const CheckoutPage = () => {
   const handleBuyNow = async () => {
   if (!shippingAddress) {
     console.log("Shipping address is required")
+    toaster.create({
+      title: "Failed checkout",
+      description: "Shipping address is required",
+      type: "error"
+    })
     return;
   }
 
@@ -56,17 +60,20 @@ const CheckoutPage = () => {
   try {
     const order = {
       shippingAddress,
-      paymentMethod: selectedPaymentMethod,
-      status: "pending"
+      paymentMethod: selectedPaymentMethod
     };
-    console.log("not error")
-    // const res = await createOrder(order);
-    // if (res.success) {
-    //   // Clear cart here if needed
-    //   // navigate("/order-success")
-    // }
+    const res = await createOrder(order);
+    if (res) {
+      toaster.create({
+        description: res.message,
+        type: "success"
+      })
+      clearCart();      
+      console.log(cart)
+      // navigate("/order-success")
+    }
   } catch (err) {
-    console.log("error")
+    console.log(err)
     // setErrorMessage("Failed to place order. Please try again.");
   } finally {
     // setIsPlacingOrder(false);
@@ -135,7 +142,7 @@ const CheckoutPage = () => {
           </Flex>
           <PaymentBox selectedPaymentMethod={selectedPaymentMethod} setSelectedPaymentMethod={setSelectedPaymentMethod} />
 
-          <Button mt={4} colorScheme="blue" width="100%" disabled={cart.length === 0} onClick={() => handleBuyNow({shippingAddress: "Pulogadung", status: "pending", paymentMethod: "m-bca"})}>
+          <Button mt={4} colorScheme="blue" width="100%" disabled={cart.length === 0} onClick={() => handleBuyNow({shippingAddress: shippingAddress, paymentMethod: selectedPaymentMethod})}>
             Pay Now
           </Button>
         </Box>

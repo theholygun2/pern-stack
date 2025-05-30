@@ -10,6 +10,7 @@ export const useCartStore = create((set, get) => ({
 
   setCart: (cart) => set({ cart }),
   setGuestCart: (guestCart) => set({ guestCart }),
+  clearCart: (cart) => set({cart: []}),
 
   initCart: async () => {
     const cart = await fetchCart();

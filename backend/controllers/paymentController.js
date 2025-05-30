@@ -26,7 +26,7 @@ export const handleWebhook = async (req, res) => {
 
   // TODO: Verify the signature key to ensure authenticity
 
-  const { transaction_status, order_id } = notification;
+  const { transaction_status, transaction_type, transaction_time, transaction_id, order_id } = notification;
   const client = pgPool.connect();
   try {
     let newStatus = 'pending'
@@ -43,7 +43,7 @@ export const handleWebhook = async (req, res) => {
             newStatus = 'pending';
             break;
     }
-    // await client.query(`UPDATE orders SET status = $1 WHERE id = $2`, [newStatus, order_id]);
+    await client.query(`UPDATE orders SET status = $1 WHERE id = $2`, [newStatus, order_id]);
     res.status(200).json({ success: true, message: `Order ${order_id} updated to ${newStatus}` });
 
   } catch (error) {

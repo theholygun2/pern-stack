@@ -34,7 +34,7 @@ const ProductsPage = () => {
   }  
 
   return (
-    <Container>
+    <Container py="10px">
       <AddProductModal />
       <SimpleGrid columns={3} gap="40px" >
         {products.map((product) => {
