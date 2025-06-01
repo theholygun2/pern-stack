@@ -9,9 +9,7 @@ import {
   Avatar,
   Heading,
   Menu,
-  Popover,
   Portal,
-  VStack,
   Spacer
 } from "@chakra-ui/react";
 import { href, Link, useLocation, useNavigate } from "react-router-dom";
@@ -54,7 +52,7 @@ const RightSideHeader = () => {
   const { cart = [] } = useCartStore();
   const navigate = useNavigate();
   const cartCount = cart.reduce((sum, item) => sum + item.cart_quantity, 0);
-  const links = [{title: "Profile", href: "profile"}]
+  const links = [{title: "Profile", href: "/user/setting",}, {title: "History", href: "/user/history"}] 
 
   const handleLogout = async () => {
     try {
@@ -105,34 +103,38 @@ const RightSideHeader = () => {
       </Menu.Trigger>
       <Portal>
         <Menu.Positioner>
-          <Menu.Content>
-          {links.map((link) => (
-              <Menu.Item
-              key={link.href}
-              value={link.title}
-              _hover={{ bg: "gray.300" }}
-              _focus={{ bg: "gray.300" }}
-            >
-              <a href={link.href} target="_blank" rel="noreferrer">
-                {link.title}
-              </a>
-            </Menu.Item>            
-            ))}
-<Menu.Item
-  onClick={handleLogout} // This is the Radix way to handle click
-  _hover={{ bg: "gray.300" }}
-  _focus={{ bg: "gray.300" }}
-  color="red"
->
-  <Flex justify="space-between" align="center" w="full">
-    <Text>Logout</Text>
-    <Menu.ItemCommand>
-      <LogOut size="16px" />
-    </Menu.ItemCommand>
-  </Flex>
-</Menu.Item>
+        <Menu.Content>
+  {links.map((link) => (
+    <Menu.Item
+      as="a"
+      href={link.href}
+      key={link.href}
+      _hover={{ bg: "gray.300", cursor: "pointer" }}
+      _focus={{ bg: "gray.300" }}
+      px={3}
+      py={2}
+      borderRadius="md"
+      display="block"
+      fontWeight="medium"
 
-          </Menu.Content>
+    >
+      {link.title}
+    </Menu.Item>
+  ))}
+  <Menu.Item
+    onClick={handleLogout}
+    _hover={{ bg: "gray.300", cursor: "pointer" }}
+    _focus={{ bg: "gray.300" }}
+    color="red"
+    px={3}
+    py={2}
+    borderRadius="md"
+    fontWeight="medium"
+  >
+    Logout <Menu.ItemCommand><LogOut size="16px"/></Menu.ItemCommand>
+  </Menu.Item>
+</Menu.Content>
+
         </Menu.Positioner>
       </Portal>
     </Menu.Root>

@@ -16,6 +16,8 @@ export const useUserStore = create((set) => ({
     if (!user) return;
     set({ user });
   }
+
+
 }));
 
 // TODO: Implement the axios interceptors for refreshing access token

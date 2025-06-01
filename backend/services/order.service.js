@@ -12,6 +12,7 @@ export const getOrdersByUser = async (userId) => {
         o.payment_method,
         o.paid_at,
         o.created_at,
+        o.order_code,
         p.id as product_id,
         p.name,
         oi.quantity,
@@ -36,6 +37,7 @@ export const getOrdersByUser = async (userId) => {
           payment_method: row.payment_method,
           paid_at: row.paid_at,
           created_at: row.created_at,
+          order_code: row.order_code,
           items: [],
         });
       }

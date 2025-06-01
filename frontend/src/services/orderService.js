@@ -21,5 +21,20 @@ export async function createOrder(order) {
     } catch (error) {
       console.error("Error processing purchase", error);
     }
+}
+
+export async function fetchOrder() {
+  try {
+    const res = await axios.get(`${BASE_URL}/api/order`, {withCredentials: true})
+    
+    if (res.status === 401) {
+      return 
+    }
+
+    console.log(res.data)
+    return res.data
+
+  } catch (error) {
+    console.error("Error fetching history", error)
   }
-  
+}
