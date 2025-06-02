@@ -1,12 +1,19 @@
 import Navbar from '@/components/ui/Navbar'
-import { Container, Table } from '@chakra-ui/react'
+import { Badge, Button, Container, Dialog, Portal, Table, useDialog } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
-import { RouterProvider } from 'react-router-dom';
 import axios from 'axios';
+import AddProductModal from '@/components/ui/AddProductModal';
 
 const HistoryPage = () => {
 
   const [orders, setOrders] = useState([]);
+  const dialog = useDialog();
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  function openModalWithOrder(order) {
+    setSelectedOrder(order);
+  }
+
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -20,9 +27,6 @@ const HistoryPage = () => {
     };
     fetchOrders(); // Call the async function
   }, []);
-
-  
-
 
   function historyTable() {
     return (
@@ -49,10 +53,10 @@ const HistoryPage = () => {
               currency: "IDR",
               minimumFractionDigits: 0,
             }).format(order.total_price)}</Table.Cell>
-            <Table.Cell>{order.status}</Table.Cell>
+            <Table.Cell><Badge colorPalette={order.status === "pending" ? "yellow" : order.status === "failed" ? "red" : "green"}>{order.status}</Badge> </Table.Cell>
             <Table.Cell>N/A</Table.Cell>
             <Table.Cell>{order.shipping_address}</Table.Cell>
-            <Table.Cell>N/A</Table.Cell>
+            <Table.Cell><AddProductModal/></Table.Cell>
           </Table.Row>
           ))}
           
@@ -65,6 +69,7 @@ const HistoryPage = () => {
     <Navbar/>
     <Container p="4px">
         {historyTable()}
+
     </Container>
     </>
   )

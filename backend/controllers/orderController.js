@@ -12,6 +12,7 @@ export const getOrder = async (req, res) => {
   try {
     const user = req.session.user;
     const orderHistory = await getOrdersByUser(user.id);
+    console.log(orderHistory)
 
     return res.status(200).json({
       success: true,

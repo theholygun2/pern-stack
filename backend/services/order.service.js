@@ -1,4 +1,5 @@
 import { sql } from "../config/db.js"
+import { deductProductStock } from "./inventory.service.js";
 
 export const getOrdersByUser = async (userId) => {
   try {
@@ -54,4 +55,9 @@ export const getOrdersByUser = async (userId) => {
     console.error(error);
     throw new Error("Failed to fetch orders");
   }
+};
+
+export const markOrderAsPaid = async (orderId, client) => {
+  await client.query(`UPDATE orders SET status = 'paid' WHERE id = $1`, [orderId]);
+  await deductProductStock(orderId, client);
 };

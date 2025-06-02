@@ -6,12 +6,12 @@ function ProductCard({ product, category }) {
   return (
     <Link to={`/product/${product.slug}`}>
       <Card.Root
-        maxW="sm"
-        overflow="hidden"
-        transition="all 0.2s"
-        _hover={{ transform: "scale(1.02)", boxShadow: "lg", cursor: "pointer" }}
+      w="100%"
+      overflow="hidden"
+      transition="all 0.2s"
+      _hover={{ transform: "scale(1.02)", boxShadow: "lg", cursor: "pointer" }}
       >
-        <Box h="250px" overflow="hidden">
+        <Box aspectRatio="1" overflow="hidden">
           <Image
             src={product.image}
             alt={product.name}

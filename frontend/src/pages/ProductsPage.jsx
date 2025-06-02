@@ -36,7 +36,7 @@ const ProductsPage = () => {
   return (
     <Container py="10px">
       <AddProductModal />
-      <SimpleGrid columns={3} gap="40px" >
+      <SimpleGrid columns={{ base: 2, md: 5 }} spacing="4">
         {products.map((product) => {
           const category = categories.find(c => c.id === product.category_id)?.name || "uncagetorized"
           return (
