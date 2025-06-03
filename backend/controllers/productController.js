@@ -3,7 +3,7 @@ import { handleNotFound, handleServerError } from "../utils/response.js";
 import slugify from "slugify";
 
 export const getProducts = async (req, res) => {
-  const { category_slug, name, max_price, min_price, slug } = req.query;
+  const { category_slug, name, max_price, min_price, slug, page = 1, limit = 10 } = req.query;
 
   try {
     let baseQuery = sql`
@@ -27,15 +27,59 @@ export const getProducts = async (req, res) => {
     if (max_price) {
       baseQuery = sql`${baseQuery} AND p.price <= ${max_price}`;
     }
+
     if (slug) {
       baseQuery = sql`${baseQuery} AND p.name ILIKE ${'%' + slug + '%'}`;
     }
 
-    baseQuery = sql`${baseQuery} ORDER BY p.created_at DESC`;
+    const offset = (parseInt(page) - 1) * parseInt(limit)
 
-    const products = await baseQuery;
+    // Count total matching records
+    const countQuery = sql`
+      SELECT COUNT(*) FROM products p
+      JOIN categories c ON p.category_id = c.id
+      WHERE true
+    `;
 
-    res.status(200).json({ success: true, data: products });
+    let filteredCountQuery = countQuery;
+
+    if (category_slug) {
+      filteredCountQuery = sql`${filteredCountQuery} AND c.slug = ${category_slug}`;
+    }
+
+    if (name) {
+      filteredCountQuery = sql`${filteredCountQuery} AND p.name ILIKE ${'%' + name + '%'}`;
+    }
+
+    if (min_price) {
+      filteredCountQuery = sql`${filteredCountQuery} AND p.price >= ${min_price}`;
+    }
+
+    if (max_price) {
+      filteredCountQuery = sql`${filteredCountQuery} AND p.price <= ${max_price}`;
+    }
+
+    if (slug) {
+      filteredCountQuery = sql`${filteredCountQuery} AND p.name ILIKE ${'%' + slug + '%'}`;
+    }
+
+    baseQuery = sql`${baseQuery} ORDER BY p.created_at DESC LIMIT ${limit} OFFSET ${offset}`;
+
+    const [products, totalCount] = await Promise.all([
+      baseQuery,
+      filteredCountQuery.then((r) => parseInt(r[0].count))
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: products,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limit)
+      }
+    });
   } catch (error) {
     console.error("Error in getProducts function", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });

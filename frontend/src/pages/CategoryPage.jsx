@@ -40,7 +40,7 @@ const CategoryPage = () => {
     <Image mb={4} src={sadDog} alt="No products" boxSize="200px" opacity={0.7} objectFit="contain"/>
     <Text fontSize="xl" fontWeight="medium">Oops! No products in this category.</Text>
   </Center>) 
-        : (<SimpleGrid columns={3} gap="40px" >
+        : (<SimpleGrid columns={{ base: 2, md: 5 }} spacing="4">
         {products.map((product) => {
           const category = categories.find(c => c.id === product.category_id)?.name || "uncagetorized"
           return (

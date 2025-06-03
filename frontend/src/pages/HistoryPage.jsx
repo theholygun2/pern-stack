@@ -47,7 +47,11 @@ const HistoryPage = () => {
           {orders.map((order) => (
             <Table.Row key={order.order_code}>
             <Table.Cell>{order.order_code}</Table.Cell>
-            <Table.Cell>{order.created_at}</Table.Cell>
+            <Table.Cell>{new Date(order.created_at).toLocaleDateString("en-GB", {
+  day: "numeric",
+  month: "long",
+  year: "numeric"
+})}</Table.Cell>
             <Table.Cell>{new Intl.NumberFormat("id-ID", {
               style: "currency",
               currency: "IDR",
