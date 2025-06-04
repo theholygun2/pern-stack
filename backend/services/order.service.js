@@ -16,6 +16,9 @@ export const getOrdersByUser = async (userId) => {
         o.order_code,
         p.id as product_id,
         p.name,
+        p.slug,
+        p.image,
+        p.price,
         oi.quantity,
         oi.subtotal
       FROM order_items oi
@@ -45,8 +48,11 @@ export const getOrdersByUser = async (userId) => {
       orderMap.get(row.order_id).items.push({
         product_id: row.product_id,
         name: row.name,
+        slug: row.slug,
         quantity: row.quantity,
         subtotal: row.subtotal,
+        image: row.image,
+        price: row.price
       });
     }
 

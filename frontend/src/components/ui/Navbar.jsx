@@ -87,7 +87,6 @@ const CategoryPopover = () => {
                     size="sm"
                     justifyContent="flex-start"
                     onClick={() => navigate(`/category/${cat.slug}`)}
-                    _hover={{ bg: "gray.100" }}
                   >
                     {cat.name}
                   </Button>

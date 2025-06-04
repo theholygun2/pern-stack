@@ -32,7 +32,6 @@ const items = [
     function profileForm() {
         return (
             <Flex
-            bg="white"
             boxShadow="md"
             borderRadius="lg"
             p={8}
@@ -50,10 +49,10 @@ const items = [
             borderRadius="full"
             objectFit="cover"
           />
-          <Button size="sm" colorScheme="gray">
+          <Button size="sm">
             Pilih Foto
           </Button>
-          <Text fontSize="xs" color="gray.500" textAlign="center">
+          <Text fontSize="xs" textAlign="center">
             Maksimal 10MB. JPG, JPEG, PNG.
           </Text>
         </Stack>
@@ -95,7 +94,7 @@ const items = [
         <>
         <Navbar/>
         <Center minH="100vh">
-            <Box w="full" maxW="xl" bg="gray.300">
+            <Box w="full" maxW="xl">
                 <Tabs.Root defaultValue="profile">
                 {/* "line", "subtle", "enclosed", "outline", "plain"  */}
                     <Tabs.List>

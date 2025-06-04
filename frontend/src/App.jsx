@@ -54,13 +54,13 @@ function App() {
           <Route path="/product/:slug" element={<ProductPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/user/history" element={<HistoryPage/>} />
         </Route>
 
         {/* Routes that use PlainLayout (no navbar/category) */}
         <Route element={<PlainLayout />}>
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/user/setting" element={<UserPage/>} />
-          <Route path="/user/history" element={<HistoryPage/>} />
         </Route>
       </Routes>
     </>
