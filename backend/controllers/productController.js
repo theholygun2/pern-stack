@@ -3,7 +3,7 @@ import { handleNotFound, handleServerError } from "../utils/response.js";
 import slugify from "slugify";
 
 export const getProducts = async (req, res) => {
-  const { category_slug, name, max_price, min_price, slug, page = 1, limit = 10 } = req.query;
+  const { category_slug, name, max_price, min_price, slug, page = 1, limit = 15 } = req.query;
 
   try {
     let baseQuery = sql`
@@ -202,18 +202,51 @@ export const deleteProduct = async (req,res) => {
     }
 }
 export const getProductByCategory = async (req, res) => {
-  const { slug } = req.params;
+  const { slug } = req.params
+  const { page = 1, limit = 15 } = req.query;
+  const offset = (page - 1) * limit;
 
   try {
-    const products = await sql`
-      SELECT p.* 
-      FROM products p
-      JOIN categories c ON c.id = p.category_id
-      WHERE c.slug = ${slug}
+    // Step 1: Get the category by slug
+    const categoryResult = await sql`
+      SELECT * FROM categories WHERE slug = ${slug}
     `;
 
-    console.log("Fetched products: ", products);
-    res.status(200).json({ success: true, data: products });
+    if (categoryResult.length === 0) {
+      console.log(slug)
+      console.log(categoryResult)
+      return res.status(404).json({ success: false, message: "Category not found" });
+    }
+
+    const category = categoryResult[0];
+
+    // Step 2: Count total products by category_id
+    const totalResult = await sql`
+      SELECT COUNT(*) AS count
+      FROM products
+      WHERE category_id = ${category.id}
+    `;
+    const totalCount = parseInt(totalResult[0].count);
+
+    // Step 3: Get products by category_id
+    const products = await sql`
+      SELECT *
+      FROM products
+      WHERE category_id = ${category.id}
+      LIMIT ${limit} OFFSET ${offset}
+    `;
+
+    res.status(200).json({
+      success: true,
+      data: products,
+      category, // optional: return category info
+      pagination: {
+        page,
+        limit,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+      },
+    });
   } catch (error) {
     console.error("Error in getProductByCategory:", error);
     return res.status(500).json({ error: "Internal server error" });

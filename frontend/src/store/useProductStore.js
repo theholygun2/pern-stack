@@ -6,10 +6,12 @@ const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000
 export const useProductStore = create((set, get) => ({
   // products state
   products: [],
+  pagination: null,
   currentProduct: null,
   loadingProducts: false,
 
   setProducts: (products) => set({ products }),
+  setPagination: (pagination) => set({ pagination }),
   setCurrentProduct: (currentProduct) => set({currentProduct}),
   setLoadingProducts: (loadingProducts) => set({ loadingProducts }),
   setErrorProducts: (errorProducts) => set({errorProducts}),

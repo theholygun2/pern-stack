@@ -2,6 +2,7 @@ import {
   Text,
   Box,
   Button,
+  IconButton,
   Flex,
   HStack,
   Link as ChakraLink,
@@ -10,15 +11,21 @@ import {
   Heading,
   Menu,
   Portal,
-  Spacer
+  Spacer,
+  Drawer,
+  Popover,
+  SimpleGrid
 } from "@chakra-ui/react";
-import { href, Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ColorModeButton } from "./color-mode";
-import { ShoppingCartIcon, ShoppingBagIcon } from "lucide-react";
+import { ShoppingCartIcon, ShoppingBagIcon, Menu as MenuIcon } from "lucide-react";
 import { logoutUser } from "@/services/authService";
 import { useCartStore } from "@/store/useCartStore";
 import { useUserStore } from "@/store/useUserStore";
 import { LogOut } from "lucide-react";
+import { useProductStore } from "@/store/useProductStore";
+import { useEffect } from "react";
+import { fetchCategories } from "@/store/productActions";
 
 function Navbar() {
   const { pathname } = useLocation();
@@ -34,6 +41,67 @@ function Navbar() {
   );
 }
 
+const CategoryPopover = () => {
+  const { categories } = useProductStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (categories.length === 0) {
+      fetchCategories();
+    }
+  }, [categories.length]);
+
+  return (
+    <Popover.Root>
+      <Popover.Trigger asChild>
+        <Button size="sm" variant="outline">
+          Categories
+        </Button>
+      </Popover.Trigger>
+      <Portal>
+        <Popover.Positioner
+          style={{
+            width: "100vw",
+            left: 0,
+            right: 0, 
+            position: "fixed",
+            zIndex: 1000,
+          }}
+        >
+          <Popover.Content
+            style={{
+              width: "100%",
+              padding: "1rem",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Popover.Body>
+              <Popover.Title fontWeight="medium" mb={4}>
+                Categories
+              </Popover.Title>
+              <SimpleGrid columns={{ base: 2, sm: 3, md: 4, lg: 6 }} spacing={4}>
+                {categories.map((cat) => (
+                  <Button
+                    key={cat.id}
+                    variant="ghost"
+                    size="sm"
+                    justifyContent="flex-start"
+                    onClick={() => navigate(`/category/${cat.slug}`)}
+                    _hover={{ bg: "gray.100" }}
+                  >
+                    {cat.name}
+                  </Button>
+                ))}
+              </SimpleGrid>
+            </Popover.Body>
+          </Popover.Content>
+        </Popover.Positioner>
+      </Portal>
+    </Popover.Root>
+  );
+};
+
+
 const NavLinks = () => (
   <HStack spacing={6} align="center">
     <ChakraLink as={Link} to="/" _hover={{ textDecoration: "none" }}>
@@ -43,9 +111,9 @@ const NavLinks = () => (
     <ChakraLink as={Link} to="/">
       <Text>All Products</Text>
     </ChakraLink>
-  </HStack>
+    <CategoryPopover/>
+  </HStack> 
 );
-
 
 const RightSideHeader = () => {
   const { user } = useUserStore();

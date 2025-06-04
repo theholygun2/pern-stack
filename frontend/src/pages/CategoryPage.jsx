@@ -1,7 +1,7 @@
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { useProductStore } from '@/store/useProductStore';
-import { useEffect } from 'react';
-import { Container, Center, Spinner, Text, SimpleGrid, VStack, Image } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { Button, Container, Center, Spinner, Text, SimpleGrid, VStack, Image, HStack } from '@chakra-ui/react';
 import ProductCard from '@/components/ui/ProductCard';
 import { fetchProductByCategory} from '@/store/productActions';
 import sadDog from '@/assets/saddog.svg'
@@ -10,7 +10,10 @@ import sadDog from '@/assets/saddog.svg'
 // localhost:5173/category/:slug
 const CategoryPage = () => {
     const { slug } = useParams()
-    const {products, categories, loadingProducts, loadingCategories, errorProducts, errorCategories} = useProductStore()
+    const {products, pagination, categories, loadingProducts, loadingCategories, errorProducts, errorCategories} = useProductStore()
+    const [ currentPage, setCurrentPage ] = useState("1")
+    const productsPerPage = 15
+    const totalPages = Math.ceil((pagination?.total || 0) / productsPerPage);
   
     useEffect(() => {
       fetchProductByCategory(slug)
@@ -51,6 +54,21 @@ const CategoryPage = () => {
         }
       )}
       </SimpleGrid>)}
+      <HStack mt={6} justify="center">
+        {Array.from({ length: totalPages }).map((_, index) => {
+          const page = index + 1;
+          return (
+            <Button
+              key={page}
+              variant={currentPage === page ? "solid" : "outline"}
+              colorScheme="yellow"
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </Button>
+          );
+        })}
+      </HStack>
     </Container>
     )
 }

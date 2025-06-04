@@ -47,7 +47,7 @@ function AddProductModal() {
                                       {/* product name */}
                                         <Field.Root>
                                             <Field.Label>Name</Field.Label>
-                                            <Input type="text" placeholder="Product name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})}/>
+                                            <Input  type="text" placeholder="Product name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})}/>
                                         </Field.Root>
 
                                         {/* Price */}

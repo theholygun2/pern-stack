@@ -37,6 +37,7 @@ export async function addProduct(e) {
 export async function fetchProducts(params = {}) {
   const {
     setLoadingProducts,
+    setPagination,
     setProducts,
     setErrorProducts,
   } = useProductStore.getState();
@@ -47,6 +48,7 @@ export async function fetchProducts(params = {}) {
     const query = new URLSearchParams(params).toString();
     const res = await axios.get(`${BASE_URL}/api/products?${query}`);
     setProducts(res.data.data);
+    setPagination(res.data.pagination) 
     setErrorProducts(null);
   } catch (err) {
     setErrorProducts("Failed to fetch products");
@@ -74,24 +76,28 @@ export async function fetchProduct(slug) {
     setLoadingProducts(false)
   }
 }
-export async function fetchProductByCategory(slug) {
-
+export async function fetchProductByCategory(slug, params = {}) { //for category page
   const {
-    setLoadingProducts, setErrorProducts, setProducts
+    setLoadingProducts, setErrorProducts, setProducts, setPagination
   } = useProductStore.getState();
 
-  setLoadingProducts(true)
+  setLoadingProducts(true);
+
+  const query = new URLSearchParams(params).toString();
+  const url = `${BASE_URL}/api/products/category/${slug}?${query}`;
 
   try {
-    const response = await axios.get(`${BASE_URL}/api/products/category/${slug}`)
-    setProducts(response.data.data)
+    const response = await axios.get(url);
+    setProducts(response.data.data);
+    setPagination(response.data.pagination) // You might also want to store pagination info if needed
   } catch (err) {
-    setErrorProducts("Failed to fetch products")
-    console.error(err)
+    setErrorProducts("Failed to fetch products");
+    console.error(err);
   } finally {
-    setLoadingProducts(false)
+    setLoadingProducts(false);
   }
 }
+
 export async function updateProduct() {
   const {
     formData, setLoadingProducts, setCurrentProduct

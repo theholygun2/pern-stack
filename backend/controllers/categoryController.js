@@ -110,12 +110,7 @@ export const getCategoryBySlug = async (req, res) => {
       if (!category.length) {
         return res.status(404).json({ message: "Category not found" });
       }
-  
-      // Fetch products by category ID
-      const products = await sql`
-        SELECT * FROM products WHERE category_id = ${category[0].id}
-      `;
-      res.json({ data: category[0], products });
+      res.json({ data: category[0]});
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Server error" });
