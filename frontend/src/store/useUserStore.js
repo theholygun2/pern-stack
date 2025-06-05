@@ -1,6 +1,8 @@
 // store/useUserStore.js
+import { fetchCart } from "@/services/cartService";
 import { fetchUser } from "@/services/userService";
 import { create } from "zustand";
+import { useCartStore } from "./useCartStore";
 
 export const useUserStore = create((set) => ({
   user: null,
@@ -10,15 +12,8 @@ export const useUserStore = create((set) => ({
   setUser: (user) => set({ user }),
   setLoading: (loading) => set({ loading }),
   setCheckingAuth: (checking) => set({ checkingAuth: checking }),
-
-  initUser: async () => {
-    const user = await fetchUser();
-    if (!user) return;
-    set({ user });
-  }
-
-
 }));
+
 
 // TODO: Implement the axios interceptors for refreshing access token
 

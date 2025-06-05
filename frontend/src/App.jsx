@@ -15,6 +15,8 @@ import { fetchCart } from './services/cartService'
 import { useCartStore } from './store/useCartStore'
 import { useUserStore } from './store/useUserStore'
 import ProtectedRoute from '@/components/ProtectedRoute'
+import { Spinner } from '@chakra-ui/react'
+import LoginPage from './pages/LoginPage'
 
 
 
@@ -25,25 +27,30 @@ function App() {
   // ✅ Pull setUser from user store and setCart from cart store
   const setUser = useUserStore((state) => state.setUser);
   const setCart = useCartStore((state) => state.setCart);
+  const setCheckingAuth = useUserStore((state) => state.setCheckingAuth)
+  const checkingAuth = useUserStore((state) => state.checkingAuth)
 
   useEffect(() => {
     const init = async () => {
-      try {
-        const user = await fetchUser(); // session-based fetch
-        if (user) {
-          console.log("YOU trigger a init in app.jsx",user)
-          setUser(user);
-          const cart = await fetchCart();
-          if (cart?.length) setCart(cart); // Only set if there's something
-        }
-      } catch (err) {
-        console.error("App init failed", err);
+      setCheckingAuth(true)
+    try {
+      const user = await fetchUser();
+      console.log("U Fetch", user)
+      if (user) {
+        setUser(user);
+        const cart = await fetchCart();
+        if (cart?.length) setCart(cart)
       }
-    };
-    init();
-  }, []);
-  
-  
+    } catch (error) {
+      console.error("Failed to init user:", error);
+    } finally {
+      setCheckingAuth(false)
+    }
+  };
+  init();
+  }, [setUser, setCart, setCheckingAuth]); 
+
+  if (checkingAuth) return <Spinner/>;
 
   return (
     <>
@@ -56,12 +63,12 @@ function App() {
           <Route path="/product/:slug" element={<ProductPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/user/history" element={<ProtectedRoute></ProtectedRoute>} />
+          <Route path="/user/history" element={<ProtectedRoute><HistoryPage/></ProtectedRoute>} />
         </Route>
 
         {/* Routes that use PlainLayout (no navbar/category) */}
         <Route element={<PlainLayout />}>
-          <Route path='/login' element={<div>Yogabagaba</div>}/>
+          <Route path='/login' element={<LoginPage/>}/>
           <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
           <Route path="/user/setting" element={<ProtectedRoute><UserPage/></ProtectedRoute> } />
         </Route>

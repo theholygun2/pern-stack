@@ -11,7 +11,6 @@ import {
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Navbar from "@/components/ui/Navbar";
 
 const HistoryPage = () => {
   const [orders, setOrders] = useState([]);

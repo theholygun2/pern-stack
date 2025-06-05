@@ -7,8 +7,8 @@ export default function ProtectedRoute({ children }) {
   const location = useLocation()
 
   if (!user) {
-    // Redirect to login, preserving the attempted path
-    return <Navigate to={`/login?redirect=${location.pathname}`} replace />
+    const redirect = encodeURIComponent(location.pathname)
+    return <Navigate to={`/login?redirect=${redirect}`} replace />
   }
 
   return children

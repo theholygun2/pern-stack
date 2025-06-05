@@ -9,9 +9,8 @@ import { parseIntentState } from "../utils/parseIntentState.js";
 export const handleGoogleCallback = async (req, res) => {
   const code = req.query.code;
   if (!code) return res.status(400).send("No code provided");
-
   const state = parseIntentState(req.query.state); // contains: { redirect: "/user/history" }
-
+  console.log("After parsing: ", state)
   try {
     const { tokens } = await oauth2Client.getToken(code);
     const userInfo = await getGoogleUserInfo(tokens);
@@ -22,9 +21,8 @@ export const handleGoogleCallback = async (req, res) => {
     req.session.cart = { id: cart.id };
 
     const redirectPath = state?.redirect || '/';
-    const redirectUrl = `http://localhost:5173${redirectPath}`;
-    
-    res.redirect(redirectUrl);
+    console.log("you'll be redirected to: ", redirectPath)
+    res.redirect(`http://localhost:5173${redirectPath}`);
   } catch (error) {
     console.error("OAuth callback error:", error);
     res.status(500).send("Authentication failed");
