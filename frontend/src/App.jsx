@@ -14,6 +14,8 @@ import { fetchUser } from './services/userService'
 import { fetchCart } from './services/cartService'
 import { useCartStore } from './store/useCartStore'
 import { useUserStore } from './store/useUserStore'
+import ProtectedRoute from '@/components/ProtectedRoute'
+
 
 
 function App() {
@@ -54,13 +56,14 @@ function App() {
           <Route path="/product/:slug" element={<ProductPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/user/history" element={<HistoryPage/>} />
+          <Route path="/user/history" element={<ProtectedRoute></ProtectedRoute>} />
         </Route>
 
         {/* Routes that use PlainLayout (no navbar/category) */}
         <Route element={<PlainLayout />}>
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/user/setting" element={<UserPage/>} />
+          <Route path='/login' element={<div>Yogabagaba</div>}/>
+          <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+          <Route path="/user/setting" element={<ProtectedRoute><UserPage/></ProtectedRoute> } />
         </Route>
       </Routes>
     </>
