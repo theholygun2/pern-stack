@@ -5,16 +5,13 @@ import {
   Heading,
   Image,
   Text,
-  VStack,
   Flex,
-  SimpleGrid,
-  Stack,
 } from "@chakra-ui/react";
 
 import { useEffect } from "react";
 import { fetchProduct } from "@/store/productActions";
 import { useProductStore } from "@/store/useProductStore";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useUserStore } from "@/store/useUserStore";
 import { addToCart } from "@/services/cartService";
 import { toaster } from "@/components/ui/toaster";
@@ -26,6 +23,7 @@ const ProductDetailsPage = () => {
   const { currentProduct } = useProductStore();
   const { slug } = useParams();
   const { setCart } = useCartStore();
+  const location = useLocation()
 
   useEffect(() => {
     fetchProduct(slug);
@@ -41,16 +39,10 @@ const ProductDetailsPage = () => {
 
   const handleAddToCart = async () => {
     if (!user) {
-      const redirectAction = encodeURIComponent(
-        JSON.stringify({
-          type: "addToCart",
-          product_id: currentProduct.id
-        })
-      );
-      // redirect to OAuth login with state
-      window.location.href = `http://localhost:3000/auth/google?state=${redirectAction};`
+      const redirect = encodeURIComponent(location.pathname + location.search);
+      navigate(`/login?redirect=${redirect}`);
       return;
-    }
+    }    
     // user is logged in: proceed to add to cart
     try {
       const updatedCart = await addToCart(currentProduct);

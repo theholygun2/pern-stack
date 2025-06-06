@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.get('/google', (req, res) => {
   const state = req.query.state; // Raw JSON string (encoded)
-
   const authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: scopes,
