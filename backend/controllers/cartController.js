@@ -33,7 +33,7 @@ export const addToCart = async (req, res) => {
 
 		// Get the product stock
 		const [product] = await sql`
-			SELECT quantity FROM products WHERE id = ${product_id};
+			SELECT stock FROM products WHERE id = ${product_id};
 		`;
 		if (!product) {
 			return res.status(404).json({ message: "Product not found" });
@@ -48,7 +48,7 @@ export const addToCart = async (req, res) => {
 		const currentQty = existingItem ? existingItem.quantity : 0;
 		const newQty = currentQty + 1;
 
-		if (newQty > product.quantity) {
+		if (newQty > product.stock) {
 			return res.status(400).json({ message: "Cannot add more than available stock." });
 		}
 
@@ -136,7 +136,7 @@ export const updateQuantity = async (req, res) => {
   
 	  // Fetch the updated cart items
 	  const updatedCart = await sql`
-		SELECT ci.id, ci.product_id, ci.quantity as cart_quantity, p.name, p.image, p.price, p.quantity
+		SELECT ci.id, ci.product_id, ci.quantity as cart_quantity, p.name, p.image, p.price, p.stock
 		FROM cart_items ci
 		JOIN products p ON ci.product_id = p.id
 		WHERE ci.cart_id = ${cart.id};

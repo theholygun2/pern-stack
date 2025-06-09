@@ -31,11 +31,11 @@ export const useProductStore = create((set, get) => ({
     price: "",
     image: "",
     category_id: "",
-    quantity: 1,
+    stock: 1,
     slug: ""
   },
   setFormData: (formData) => set({ formData }),
-  resetForm: () => set({ formData: { name: "", price: "", image: "", category_id: "", slug: "", quantity: 1 } }),
+  resetForm: () => set({ formData: { name: "", price: "", image: "", category_id: "", slug: "", stock: 1 } }),
 
   categories: [],
   categoryList: null,

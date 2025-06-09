@@ -1,74 +1,82 @@
 import { sql } from "../config/db.js";
+import { faker } from "@faker-js/faker";
+import dotenv from "dotenv";
+dotenv.config();
 
-const SAMPLE_PRODUCTS = [
-  {
-    name: "Premium Wireless Headphones",
-    price: 299.99,
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    name: "Mechanical Gaming Keyboard",
-    price: 159.99,
-    image:
-      "https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    name: "Smart Watch Pro",
-    price: 249.99,
-    image:
-      "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    name: "4K Ultra HD Camera",
-    price: 899.99,
-    image:
-      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    name: "Minimalist Backpack",
-    price: 79.99,
-    image:
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    name: "Wireless Gaming Mouse",
-    price: 89.99,
-    image:
-      "https://images.unsplash.com/photo-1527814050087-3793815479db?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    name: "Smart Home Speaker",
-    price: 159.99,
-    image:
-      "https://images.unsplash.com/photo-1589492477829-5e65395b66cc?w=800&auto=format&fit=crop&q=60",
-  },
-  {
-    name: "LED Gaming Monitor",
-    price: 449.99,
-    image:
-      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&auto=format&fit=crop&q=60",
-  },
+const CATEGORIES = [
+  "beauty",
+  "fragrances",
+  "furniture",
+  "groceries",
+  "home decoration",
+  "kitchen accessories",
+  "laptops",
+  "mens shirts",
+  "mens shoes",
+  "mens watches",
+  "mobile accessories",
+  "motorcycle",
+  "skin care",
+  "smartphones",
+  "sports accessories",
+  "sunglasses",
+  "tablets",
+  "tops",
+  "vehicle",
+  "womens bags",
+  "womens dresses",
+  "womens jewellery",
+  "womens shoes",
+  "womens watches",
 ];
+
+const NUM_PRODUCTS = 50;
+
+// Helper to slugify text
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "") // Remove non-alphanumeric
+    .trim()
+    .replace(/\s+/g, "-"); // Replace spaces with hyphens
+}
 
 async function seedDatabase() {
   try {
-    // first, clear existing data
-    await sql`TRUNCATE TABLE products RESTART IDENTITY`;
+    await sql`TRUNCATE TABLE products RESTART IDENTITY CASCADE`;
+    await sql`TRUNCATE TABLE categories RESTART IDENTITY CASCADE`;
 
-    // insert all products
-    for (const product of SAMPLE_PRODUCTS) {
+    const insertedCategories = [];
+
+    for (const category of CATEGORIES) {
+      const slug = slugify(category);
+      const [row] = await sql`
+        INSERT INTO categories (name, slug)
+        VALUES (${category}, ${slug})
+        RETURNING id
+      `;
+      insertedCategories.push(row.id);
+    }
+
+    for (let i = 0; i < NUM_PRODUCTS; i++) {
+      const name = faker.commerce.productName();
+      const slug = slugify(name);
+      const price = parseFloat(faker.commerce.price({ min: 10, max: 1000 }));
+      const stock = faker.number.int({ min: 0, max: 100 });
+      const image = faker.image.urlPicsumPhotos();
+      const category_id = faker.helpers.arrayElement(insertedCategories);
+
       await sql`
-        INSERT INTO products (name, price, image)
-        VALUES (${product.name}, ${product.price}, ${product.image})
+        INSERT INTO products (name, slug, price, stock, image, category_id)
+        VALUES (${name}, ${slug}, ${price}, ${stock}, ${image}, ${category_id})
       `;
     }
 
-    console.log("Database seeded successfully");
-    process.exit(0); // success code
-  } catch (error) {
-    console.error("Error seeding database:", error);
-    process.exit(1); // failure code
+    console.log("✅ Seeded categories and products with slugs successfully.");
+    process.exit(0);
+  } catch (err) {
+    console.error("❌ Seeding error:", err);
+    process.exit(1);
   }
 }
 

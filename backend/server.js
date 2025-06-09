@@ -115,7 +115,8 @@ async function initDB() {
         name VARCHAR(255) NOT NULL,
         image VARCHAR(255) NOT NULL,
         price NUMERIC(10, 2) NOT NULL,
-        quantity INTEGER NOT NULL,
+        stock INTEGER NOT NULL,
+        category_id INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;

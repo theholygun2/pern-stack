@@ -42,7 +42,7 @@ function increment() {
             <IconButton size="sm" onClick={decrement}><FaMinus /></IconButton>
             <Text>{quantity}</Text>
             <IconButton size="sm" onClick={increment}><FaPlus /></IconButton>
-            <Text fontSize="sm" color="gray.500">Stock: {item.quantity}</Text>
+            <Text fontSize="sm" color="gray.500">Stock: {item.stock}</Text>
           </HStack>
         </VStack>
       </HStack>

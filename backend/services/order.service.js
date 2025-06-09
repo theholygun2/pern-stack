@@ -63,7 +63,20 @@ export const getOrdersByUser = async (userId) => {
   }
 };
 
-export const markOrderAsPaid = async (orderId, client) => {
-  await client.query(`UPDATE orders SET status = 'paid' WHERE id = $1`, [orderId]);
+export const markOrderAsPaid = async (orderCode, client) => {
+  // Step 1: Get the real internal order ID
+  const { rows } = await client.query(
+    `SELECT id FROM orders WHERE order_code = $1`, [orderCode]
+  );
+  const orderId = rows[0]?.id;
+  if (!orderId) throw new Error("Order not found");
+
+  // Step 2: Update order status
+  await client.query(
+    `UPDATE orders SET status = 'paid' WHERE id = $1`, [orderId]
+  );
+
+  // Step 3: Deduct stock
   await deductProductStock(orderId, client);
 };
+

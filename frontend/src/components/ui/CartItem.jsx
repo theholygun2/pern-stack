@@ -17,7 +17,7 @@ const CartItem = ({id}) => {
           <Box>
             <Text fontWeight="semibold">{item.name}</Text>
             <Text fontSize="sm">
-              Stock: {item.quantity}
+              Stock: {item.stock}
             </Text>
           </Box>
         </HStack>
@@ -47,9 +47,9 @@ const CartItem = ({id}) => {
           <IconButton
             size="sm"
             onClick={() => {
-              if (quantity < item.quantity) updateQuantity(item.id, quantity + 1);
+              if (quantity < item.stock) updateQuantity(item.id, quantity + 1);
             }}
-            disabled={quantity === item.quantity}
+            disabled={quantity === item.stock}
             aria-label="Increase quantity"
           ><FaPlus /></IconButton>
           

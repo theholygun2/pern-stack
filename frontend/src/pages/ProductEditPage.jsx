@@ -155,14 +155,14 @@ function ProductEditPage() {
               </Select.Root>
 
               <Field.Root>
-                <Field.Label>Quantity</Field.Label>
+                <Field.Label>Stock</Field.Label>
                 <Input
                   type="number"
                   min="0"
                   placeholder="0"
-                  value={formData.quantity || 1}  // Default value of 1 if formData.quantity is falsy (undefined or null)
+                  value={formData.stock || 1}  // Default value of 1 if formData.quantity is falsy (undefined or null)
                   onChange={(e) =>
-                    setFormData({ ...formData, quantity: parseInt(e.target.value, 10) || 1 }) // Fallback to 1 if input is not a number
+                    setFormData({ ...formData, stock: parseInt(e.target.value, 10) || 1 }) // Fallback to 1 if input is not a number
                   }
                 />
               </Field.Root>

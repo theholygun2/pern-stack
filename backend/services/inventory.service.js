@@ -9,7 +9,7 @@ export const deductProductStock = async (id, client) => {
     for (const item of items) {
         await client.query(`
             UPDATE products
-            SET quantity = quantity - $1
+            SET stock = stock - $1
             WHERE id = $2`,
         [item.quantity, item.product_id])
     }

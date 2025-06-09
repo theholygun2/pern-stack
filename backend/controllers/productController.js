@@ -107,9 +107,9 @@ export const getProduct = async (req,res) => {
     }
 }
 export const createProduct = async (req,res) => {
-    const {name, price, image, category_id, quantity} = req.body
+    const {name, price, image, category_id, stock} = req.body
 
-    if(!name || !price || !image || !category_id || !quantity){
+    if(!name || !price || !image || !category_id || !stock){
         return res.status(400).json({ success: false, message: "All fields are required"})
     }
 
@@ -126,8 +126,8 @@ export const createProduct = async (req,res) => {
 
     try {
         const newProduct = await sql`
-        INSERT INTO products (name,price,image,category_id,slug, quantity)
-        VALUES (${name},${price},${image},${category_id},${slug}, ${quantity})
+        INSERT INTO products (name,price,image,category_id,slug, stock)
+        VALUES (${name},${price},${image},${category_id},${slug}, ${stock})
         RETURNING *`
 
         res.status(201).json({ success: true, data: newProduct[0]})
@@ -139,7 +139,7 @@ export const createProduct = async (req,res) => {
 }
 export const updateProduct = async (req, res) => {
   const { id } = req.params
-  const {name, price, image, category_id, quantity } = req.body;
+  const {name, price, image, category_id, stock } = req.body;
 
   const baseSlug = slugify(name, { lower: true, strict: true });
   let slug = baseSlug;
@@ -165,7 +165,7 @@ export const updateProduct = async (req, res) => {
           image = ${image},
           category_id = ${category_id},
           slug = ${slug},
-          quantity = ${quantity}
+          stock = ${stock}
       WHERE id = ${id}
       RETURNING *
     `;

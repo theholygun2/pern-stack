@@ -38,25 +38,27 @@ export const handleWebhook = async (req, res) => {
 
   // TODO: Verify the signature key to ensure authenticity
 
-  const { transaction_status, transaction_type, transaction_time, transaction_id, order_id } = notification; //order id can be order_code hmm
   const client = await pgPool.connect();
 
+  const { transaction_status, order_id: order_code } = req.body;
+
   try {
-    await client.query("BEGIN")
-
-    if(transaction_status === "settlement") {
-      await markOrderAsPaid(order_id, client);
+    await client.query("BEGIN");
+  
+    if (transaction_status === "settlement") {
+      await markOrderAsPaid(order_code, client); // clear and expressive
     } else if (["cancel", "expire", "deny"].includes(transaction_status)) {
-      await client.query(`UPDATE orders SET status  = 'failed' WHERE id = $1`, [order_id])
+      await client.query(`UPDATE orders SET status = 'failed' WHERE order_code = $1`, [order_code]);
     }
-
+  
     await client.query("COMMIT");
-    res.status(200).json({ success: true, message: `Order ${order_id} updated`});
+    res.status(200).json({ success: true, message: `Order ${order_code} updated` });
   } catch (error) {
     await client.query("ROLLBACK");
-    console.log(error)
+    console.error(error);
     res.status(500).json({ success: false, message: "Webhook error" });
   } finally {
-    await client.release();
+    client.release();
   }
+  
 };

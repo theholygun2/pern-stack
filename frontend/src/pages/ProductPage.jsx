@@ -104,7 +104,7 @@ const ProductDetailsPage = () => {
         <Box flex="2">
           <Heading fontSize="2xl" mb={2}>{currentProduct.name}</Heading>
           <Text fontSize="lg" mb={4}>
-            Stock: {currentProduct.quantity}
+            Stock: {currentProduct.stock}
           </Text>
           <Text mb={6}>
             {currentProduct.description || "No description available."}
