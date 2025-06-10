@@ -1,5 +1,5 @@
 import { Box, Button,  Container, Flex, Text, VStack, Heading, RadioCard, Input, Stack, Toaster} from "@chakra-ui/react"
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CartItem from "@/components/ui/CartItem";
 import { useCartStore } from "@/store/useCartStore";
 import { Link as ChakraLink } from "@chakra-ui/react";
@@ -36,6 +36,8 @@ function PaymentBox({ selectedPaymentMethod, setSelectedPaymentMethod }) {
 }
 
 const CheckoutPage = () => {
+
+  const navigate = useNavigate()
   
   const { cart, clearCart } = useCartStore()
   const totalPrice = cart.reduce((sum, product) => {return sum + product.price * (product.cart_quantity || 1);}, 0);
@@ -70,7 +72,7 @@ const CheckoutPage = () => {
       })
       clearCart();      
       console.log(cart)
-      // navigate("/order-success")
+      navigate("/user/history")
     }
   } catch (err) {
     console.log(err)

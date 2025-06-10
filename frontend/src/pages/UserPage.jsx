@@ -85,7 +85,7 @@ const items = [
     function addressForm(){
         return(
             <>
-            ADDRESS TABLE HERE MAN
+            Enter New address
             </>
         )
     }
@@ -102,7 +102,7 @@ const items = [
                         <Tabs.Trigger value="address">Address</Tabs.Trigger>
                     </Tabs.List>
                     <Tabs.Content value="profile">{profileForm()}</Tabs.Content>
-                    <Tabs.Content value="address">Manage your tasks for freelancers</Tabs.Content>
+                    <Tabs.Content value="address">{addressForm()}</Tabs.Content>
                 </Tabs.Root>
                 
             </Box>
