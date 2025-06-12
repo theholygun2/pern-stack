@@ -17,6 +17,7 @@ import { useUserStore } from './store/useUserStore'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import { Spinner } from '@chakra-ui/react'
 import LoginPage from './pages/LoginPage'
+import AdminLoginPage from './pages/AdminLoginPage'
 
 
 
@@ -69,6 +70,7 @@ function App() {
         {/* Routes that use PlainLayout (no navbar/category) */}
         <Route element={<PlainLayout />}>
           <Route path='/login' element={<LoginPage/>}/>
+          <Route path='/Admin' element={<AdminLoginPage/>}/>
           <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
           <Route path="/user/setting" element={<ProtectedRoute><UserPage/></ProtectedRoute> } />
         </Route>

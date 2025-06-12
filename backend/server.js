@@ -12,6 +12,7 @@ import orderRoutes from "./routes/orderRoutes.js"
 import cartRoutes from "./routes/cartRoutes.js"
 import paymentRoutes from "./routes/paymentRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
+import adminRoutes from "./routes/adminRoutes.js"
 
 import { sql } from "./config/db.js";
 import { aj } from "./lib/arcjet.js";
@@ -97,6 +98,7 @@ app.use("/api/order", orderRoutes)
 app.use("/api/cart", cartRoutes)
 app.use("/api/payment", paymentRoutes)
 app.use("/api/users", userRoutes)
+app.use("/auth/admin", adminRoutes)
 
 if (process.env.NODE_ENV === "production") {
   // server our react app
