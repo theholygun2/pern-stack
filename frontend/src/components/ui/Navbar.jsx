@@ -209,14 +209,14 @@ const RightSideHeader = () => {
         </>
       ) : (
         <Button
-          fontSize="sm"
-          fontWeight={400}
-          variant="solid"
-          as="a"
-          href="http://localhost:3000/auth/google"
-        >
-          Sign in
-        </Button>
+    fontSize="sm"
+    fontWeight={400}
+    variant="solid"
+    as="a"
+    href="/login"
+  >
+    Sign in
+  </Button>
       )}
 
     </HStack>

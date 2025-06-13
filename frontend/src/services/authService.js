@@ -14,3 +14,22 @@ export async function logoutUser() {
     throw error;
   }
 }
+
+export const loginUser = async (email, password) => {
+  try {
+    const response = await axios.post('http://localhost:3000/auth/login', {
+      email,
+      password,
+    }, { withCredentials: true });
+
+    return {
+      success: true,
+      user: response.data, // ← whatever you send back from backend
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || "Unknown error",
+    };
+  }
+};

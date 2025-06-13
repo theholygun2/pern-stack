@@ -14,3 +14,16 @@ export const getUserByID = async (req, res) => {
         res.status(500).json({ message: {error}})
     }
 }
+
+export const authMe = async (req, res) => { // this is for the user loges in wihtout the google oauth 2 brother
+    if (!req.session || !req.session.user) {
+      return res.status(200).json(null); // No error, just null user
+    }
+    console.log("session:", req.session.user);
+  
+    const [user] = await sql`
+      SELECT id, name, email, picture FROM users WHERE id = ${req.session.user.id}
+    `;
+    
+    return res.json(user);
+  };
