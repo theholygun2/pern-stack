@@ -10,7 +10,7 @@ export const authenticateUser = async (username, password) => {
 };
 
 export const authenticateAdmin = async (username, password) => {
-  const [admin] = await sql`SELECT * FROM admin_users WHERE email = ${username}`;
+  const [admin] = await sql`SELECT * FROM users WHERE email = ${username} AND role = 'admin'`;
   if (!admin) return null;
 
   const match = await bcrypt.compare(password, admin.password_hash);
