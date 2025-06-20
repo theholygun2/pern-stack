@@ -64,7 +64,7 @@ const LoginPage = () => {
           <Heading fontSize="2xl" mb={6}>Sign in to your account</Heading>
 
           <VStack spacing={4} align="stretch">
-            <Box>
+            {/* <Box>
               <Text mb={1}>Username</Text>
               <Input
                 placeholder="Enter your username"
@@ -85,7 +85,7 @@ const LoginPage = () => {
 
             <Button colorScheme="blue" onClick={() => handleLogin(email, password)} width="100%">
               Login
-            </Button>
+            </Button> */}
 
             {/* Google Sign-In */}
             <Box textAlign="center" mt={2}>
