@@ -12,7 +12,8 @@ function AddProductModal() {
           name.trim() !== "" &&
           price.trim() !== "" &&
           image.trim() !== "" &&
-          category_id !== ""
+          category_id !== "" &&
+          stock > 0
         );
       };
       

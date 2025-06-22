@@ -19,7 +19,7 @@ export const handleGoogleCallback = async (req, res) => {
     const user = await findOrCreateUserByGoogleInfo(userInfo);
     const cart = await findOrCreateCartByUserId(user);
 
-    req.session.user = { id: user.id };
+    req.session.user = { id: user.id, role: user.role };
     req.session.cart = { id: cart.id };
 
     const redirectPath = state?.redirect || "/";

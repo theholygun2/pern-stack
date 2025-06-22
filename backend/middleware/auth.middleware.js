@@ -8,10 +8,13 @@ export const protectRoute = (req, res, next) => {
 };
 
 export const isAdmin = (req, res, next) => {
-  if ( !req.session || !req.session.admin || !req.session.admin.id) {
-    return res.status(401).json({ message: "Unautorized - No session for admin"});
+  const user = req.session.user;
+  console.log(user.role)
+  if (!user || user.role !== 'admin') {
+    return res.status(403).json({ message: "Unauthorized - Admins only" });
   }
   next();
-}
+};
+
 // cart middleware
 //protecting routes and only routes i think

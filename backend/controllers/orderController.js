@@ -27,6 +27,106 @@ export const getOrder = async (req, res) => {
   }
 };
 
+export const getOrderByID = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const orderHistory = await getOrdersByUser(id); // this returns grouped
+
+    if (!orderHistory.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No orders found for this user",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Order history retrieved successfully",
+      data: { orderHistory },
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve order history",
+    });
+  }
+};
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const rows = await sql`
+      SELECT 
+        o.id as order_id,
+        o.user_id,
+        u.name as user_name,
+        u.email as user_email,
+        o.status,
+        o.total_price,
+        o.shipping_address,
+        o.payment_method,
+        o.paid_at,
+        o.created_at,
+        o.order_code,
+        p.id as product_id,
+        p.name,
+        p.slug,
+        p.image,
+        p.price,
+        oi.quantity,
+        oi.subtotal
+      FROM order_items oi
+      JOIN products p ON p.id = oi.product_id
+      JOIN orders o ON o.id = oi.order_id
+      JOIN users u ON u.id = o.user_id
+      ORDER BY o.created_at DESC
+    `;
+
+    // Group by order_id
+    const orderMap = new Map();
+    for (const row of rows) {
+      if (!orderMap.has(row.order_id)) {
+        orderMap.set(row.order_id, {
+          order_id: row.order_id,
+          user_id: row.user_id,
+          user_name: row.user_name,
+          user_email: row.user_email,
+          status: row.status,
+          total_price: row.total_price,
+          shipping_address: row.shipping_address,
+          payment_method: row.payment_method,
+          paid_at: row.paid_at,
+          created_at: row.created_at,
+          order_code: row.order_code,
+          items: [],
+        });
+      }
+      orderMap.get(row.order_id).items.push({
+        product_id: row.product_id,
+        name: row.name,
+        slug: row.slug,
+        quantity: row.quantity,
+        subtotal: row.subtotal,
+        image: row.image,
+        price: row.price,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "All orders retrieved successfully",
+      data: Array.from(orderMap.values()),
+    });
+  } catch (error) {
+    console.error("getAllOrders error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve orders",
+    });
+  }
+};
+
+
 
 export const addOrder = async (req, res) => {
   const user = req.session.user;

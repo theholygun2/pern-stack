@@ -106,7 +106,7 @@ export async function updateProduct() {
   setLoadingProducts(true)
 
   try {
-    const response = await axios.put(`${BASE_URL}/api/products/${formData.id}`, formData);
+    const response = await axios.put(`${BASE_URL}/api/admin/products/${formData.id}`, formData, {withCredentials: true});
     setCurrentProduct(response.data.data)
     return true
   } catch (error) {
@@ -124,20 +124,22 @@ export async function deleteProduct(id) {
     setErrorProducts,
   } = useProductStore.getState();
 
-  setLoadingProducts(true)
+  setLoadingProducts(true);
 
   try {
-    await axios.delete(`${BASE_URL}/api/products/${id}`)
-    const updatedProducts = products.filter((product) => product.id !== id)
-    setProducts(updatedProducts)
-    console.log("product deleted", updatedProducts)
+    const res = await axios.delete(`${BASE_URL}/api/admin/products/${id}`, {withCredentials: true});
+    const updatedProducts = products.filter((product) => product.id !== id);
+    setProducts(updatedProducts);
+    return { success: true, data: res.data };
   } catch (error) {
-    console.error("Error in delete Product function", error)
-    setErrorProducts("Error in deleting product")
+    console.error("Error in delete Product function", error);
+    setErrorProducts("Error in deleting product");
+    return { success: false, error };
   } finally {
-    setLoadingProducts(false)
+    setLoadingProducts(false);
   }
 }
+
 export async function fetchCategories() {
   const {
     setCategories, setCategoryList, setLoadingCategories, setErrorCategories, categories

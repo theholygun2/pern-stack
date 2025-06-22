@@ -3,7 +3,6 @@ import { fetchProducts} from "@/store/productActions";
 import { Button, Container, Text, Image,  SimpleGrid, Center, Spinner, HStack} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ProductCard from "@/components/ui/ProductCard";
-import AddProductModal from "@/components/ui/AddProductModal";
 import sadDog from '@/assets/saddog.svg'
 const ProductsPage = () => {
   
@@ -42,7 +41,6 @@ const ProductsPage = () => {
 
   return (
     <Container py="10px">
-      <AddProductModal />
       {products.length === 0 ? (<Center minH="60vh" flexDirection="column" textAlign="center">
           <Image mb={4} src={sadDog} alt="No products" boxSize="200px" opacity={0.7} objectFit="contain"/>
           <Text fontSize="xl" fontWeight="medium">Oops! No products in this category.</Text>

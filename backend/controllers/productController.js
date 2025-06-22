@@ -176,6 +176,7 @@ export const updateProduct = async (req, res) => {
 
     res.status(200).json({ success: true, data: updated[0] });
   } catch (error) {
+    console.log("error in updating product:ff", error)
     return handleServerError(res, error, "Failed to update product");
   }
 };
