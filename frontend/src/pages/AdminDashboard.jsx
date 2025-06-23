@@ -10,6 +10,7 @@ import AddProductModal from "@/components/ui/AddProductModal";
 import { useNavigate } from "react-router-dom";
 import { ColorModeButton } from "@/components/ui/color-mode";
 import { toaster } from "@/components/ui/toaster";
+import { SquarePen, Trash2 } from "lucide-react";
 
 
 const AdminDashboard = () => {
@@ -96,8 +97,18 @@ const AdminDashboard = () => {
 
   return (
     <Container py={6}>
-      <ColorModeButton/>
-      <AddProductModal/>
+        <Flex alignItems="center" gap={4}>
+  <ColorModeButton />
+  <AddProductModal />
+  <Button
+    size="sm"
+    onClick={() => navigate("/admin/history")}
+  >
+    History
+  </Button>
+</Flex>
+
+      
       <HStack mt={6} justify="center">
   {Array.from({ length: totalPages }).map((_, index) => {
     const page = index + 1;
@@ -154,20 +165,16 @@ const AdminDashboard = () => {
               <Table.Cell>{product.stock ?? "-"}</Table.Cell>
               <Table.Cell>
                 <Flex gap={2}>
-                  <Button
-                    size="sm"
-                    colorScheme="yellow"
-                    onClick={() => navigate(`/admin/product/${product.slug}`)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    colorScheme="red"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    Delete
-                  </Button>
+                <SquarePen
+  onClick={() => navigate(`/admin/product/${product.slug}`)}
+  style={{ cursor: "pointer", marginRight: "8px" }}
+/>
+
+<Trash2
+  onClick={() => handleDelete(product.id)}
+  style={{ cursor: "pointer", color: "red" }}
+/>
+
                 </Flex>
               </Table.Cell>
             </Table.Row>

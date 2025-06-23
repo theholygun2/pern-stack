@@ -20,6 +20,7 @@ import LoginPage from './pages/LoginPage'
 import AdminRoute from './components/AdminRoute'
 import AdminDashboard from './pages/AdminDashboard'
 import ProductEditPage from './pages/ProductEditPage'
+import AdminOrderHistory from './pages/AdminOrderHistory'
 
 
 
@@ -76,6 +77,7 @@ function App() {
           <Route path="/user/setting" element={<ProtectedRoute><UserPage/></ProtectedRoute> } />
           <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard/></AdminRoute>}/>
           <Route path="/admin/product/:slug" element={<AdminRoute><ProductEditPage/></AdminRoute>}/>
+          <Route path="/admin/history" element={<AdminRoute><AdminOrderHistory/></AdminRoute>}/>
         </Route>
       </Routes>
     </>
