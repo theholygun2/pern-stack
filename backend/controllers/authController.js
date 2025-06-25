@@ -22,8 +22,14 @@ export const handleGoogleCallback = async (req, res) => {
     req.session.user = { id: user.id, role: user.role };
     req.session.cart = { id: cart.id };
 
-    const redirectPath = state?.redirect || "/";
-    return res.redirect(`http://localhost:5173${redirectPath}`);
+    let redirectPath = "/";
+    if (user.role === "admin") {
+      redirectPath = "/admin/dashboard";
+    } else if (state?.redirect) {
+      redirectPath = state.redirect;
+    }
+
+    return res.redirect(`http://localhost:5173${redirectPath}`)
   } catch (error) {
     console.error("OAuth callback error:", error);
     res.status(500).send("Authentication failed");

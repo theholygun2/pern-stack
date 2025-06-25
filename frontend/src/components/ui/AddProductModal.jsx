@@ -1,11 +1,15 @@
-import { Button, Dialog, Stack, Input, NumberInput, InputGroup, Fieldset, Portal, Field, Select } from "@chakra-ui/react";
+import { Button, Box, Dialog, Float, Stack, Input, InputGroup, Fieldset, Portal, Field, Select, FileUpload, useFileUploadContext, Icon } from "@chakra-ui/react";
 import { useProductStore } from "@/store/useProductStore";
 import { addProduct } from "@/store/productActions";
 import { NumericFormat } from "react-number-format";
+import { LuFileImage, LuX, LuUpload } from "react-icons/lu"
+import { useEffect } from "react";
+import ImageUploader from "./ImageUploader";
 
 function AddProductModal() {
 
-    const { formData, setFormData, resetForm, loadingProducts, categoryList } = useProductStore()
+    const { formData, setFormData, resetForm, loadingProducts, categoryList } = useProductStore();
+    
     const isFormValid = () => {
         const { name, price, image, category_id, stock } = formData;
         return (
@@ -37,7 +41,6 @@ function AddProductModal() {
                     </Dialog.Header>
 
                     <Dialog.Body>
-                        <form>
                             <Fieldset.Root>
                                 <Fieldset.Legend>
                                     Product Details
@@ -81,8 +84,10 @@ function AddProductModal() {
                                         {/* Image Url */}
                                         <Field.Root>
                                             <Field.Label>Image URL</Field.Label>
-                                            <Input type="text" placeholder="https://example.com/image.jpg" value={formData.image} onChange={(e) => setFormData({...formData, image: e.target.value})}/>
+                                            {/* <Input type="text" placeholder="https://example.com/image.jpg" value={formData.image} onChange={(e) => setFormData({...formData, image: e.target.value})}/> */}
+                                            
                                         </Field.Root>
+
 
 
                                         {/* categories drop down */}
@@ -91,7 +96,6 @@ function AddProductModal() {
                                             collection={categoryList}
                                             onValueChange={(key) => {
                                               const selectedId = key.value[0];
-                                              console.log(selectedId);
                                               setFormData({ ...formData, category_id: selectedId });
                                             }}
                                           >
@@ -133,7 +137,6 @@ function AddProductModal() {
                                     </Stack>
                                 </Fieldset.Content>
                             </Fieldset.Root>
-                        </form>
                     </Dialog.Body>
 
                     <Dialog.Footer>
