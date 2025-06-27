@@ -1,25 +1,57 @@
-import { Button, Box, Dialog, Float, Stack, Input, InputGroup, Fieldset, Portal, Field, Select, FileUpload, useFileUploadContext, Icon } from "@chakra-ui/react";
+import { Button, Box, Dialog, Float, Stack, Input, InputGroup, Fieldset, Portal, Field, Select, FileUpload, useFileUploadContext, Icon, FileUploadList } from "@chakra-ui/react";
 import { useProductStore } from "@/store/useProductStore";
 import { addProduct } from "@/store/productActions";
 import { NumericFormat } from "react-number-format";
 import { LuFileImage, LuX, LuUpload } from "react-icons/lu"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ImageUploader from "./ImageUploader";
 
 function AddProductModal() {
 
     const { formData, setFormData, resetForm, loadingProducts, categoryList } = useProductStore();
+    const [ uploadedFile, setUploadedFile ] = useState(null);
+    
     
     const isFormValid = () => {
         const { name, price, image, category_id, stock } = formData;
         return (
           name.trim() !== "" &&
           price.trim() !== "" &&
-          image.trim() !== "" &&
+          // image.trim() !== "" &&
           category_id !== "" &&
           stock > 0
         );
       };
+
+const FileUploadList = () => {
+    const fileUpload = useFileUploadContext();
+    const files = fileUpload.acceptedFiles;
+
+    useEffect(() => {
+      if (files.length > 0) {
+        setUploadedFile(files[0]); // push file up to parent
+      } else {
+        setUploadedFile(null);
+      }
+    }, [files]);
+
+    if (files.length === 0) return null;
+
+    return (
+      <FileUpload.ItemGroup>
+        {files.map((file) => (
+          <FileUpload.Item key={file.name} file={file} boxSize="20" p="2">
+            <FileUpload.ItemPreviewImage />
+            <Float placement="top-end">
+              <FileUpload.ItemDeleteTrigger boxSize="4" layerStyle="fill.solid">
+                <LuX />
+              </FileUpload.ItemDeleteTrigger>
+            </Float>
+          </FileUpload.Item>
+        ))}
+      </FileUpload.ItemGroup>
+    );
+  };
       
   return (
     <Dialog.Root placement="center" >
@@ -84,7 +116,13 @@ function AddProductModal() {
                                         {/* Image Url */}
                                         <Field.Root>
                                             <Field.Label>Image URL</Field.Label>
-                                            {/* <Input type="text" placeholder="https://example.com/image.jpg" value={formData.image} onChange={(e) => setFormData({...formData, image: e.target.value})}/> */}
+                                            <FileUpload.Root>
+                                              <FileUpload.HiddenInput accept="image/*" />
+                                              <FileUpload.Trigger asChild>
+                                                <Button variant="outline" size="sm"><LuFileImage /> Upload Image</Button>
+                                              </FileUpload.Trigger>
+                                              <FileUploadList/>
+                                            </FileUpload.Root>
                                             
                                         </Field.Root>
 
@@ -145,7 +183,7 @@ function AddProductModal() {
                                 Cancel
                             </Button>
                         </Dialog.CloseTrigger>
-                        <Button onClick={addProduct} isLoading={loadingProducts} disabled={!isFormValid()}>
+                        <Button isLoading={loadingProducts} disabled={!isFormValid()}>
                             Upload Product
                         </Button>
                     </Dialog.Footer>
