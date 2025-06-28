@@ -5,35 +5,31 @@ import { createListCollection } from "@chakra-ui/react";
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
-export async function addProduct(e) {
-    e.preventDefault();
-    const {
-      formData, resetForm, setLoadingProducts, setErrorProducts, setProducts
-    } = useProductStore.getState();
-  
-    setLoadingProducts(true);
-  
-    try {
-      await axios.post(`${BASE_URL}/api/products`, formData);
-      const res = await axios.get(`${BASE_URL}/api/products`);
-      setProducts(res.data.data);
-      resetForm();
-  
-      toaster.success({
-        title: "Product Added",
-        description: "The product was successfully created.",
-      });
-    } catch (err) {
-      setErrorProducts("Failed to add product");
-      console.error(err);
-      toaster.error({
-        title: "Error",
-        description: "Failed to add product.",
-      });
-    } finally {
-      setLoadingProducts(false);
-    }
+export async function addProduct() {
+  const {
+    formData,
+    resetForm,
+    setLoadingProducts,
+    setErrorProducts,
+    setProducts
+  } = useProductStore.getState();
+
+  setLoadingProducts(true);
+
+  try {
+    await axios.post(`${BASE_URL}/api/products`, formData, {withCredentials: true});
+    const res = await axios.get(`${BASE_URL}/api/products`);
+    setProducts(res.data.data);
+    resetForm();
+  } catch (err) {
+    setErrorProducts("Failed to add product");
+    throw err; // Let component handle the UI feedback
+  } finally {
+    setLoadingProducts(false);
+  }
 }
+
+
 export async function fetchProducts(params = {}) {
   const {
     setLoadingProducts,

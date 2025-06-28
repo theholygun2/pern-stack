@@ -1,29 +1,13 @@
-import { Button, Box, Dialog, Float, Stack, Input, InputGroup, Fieldset, Portal, Field, Select, FileUpload, useFileUploadContext, Icon, FileUploadList } from "@chakra-ui/react";
+import { Button, Box, Dialog, Float, Stack, Input, InputGroup, Fieldset, Portal, Field, Select, FileUpload, useFileUploadContext, Icon } from "@chakra-ui/react";
 import { useProductStore } from "@/store/useProductStore";
 import { addProduct } from "@/store/productActions";
 import { NumericFormat } from "react-number-format";
 import { LuFileImage, LuX, LuUpload } from "react-icons/lu"
 import { useEffect, useState } from "react";
-import ImageUploader from "./ImageUploader";
+import { uploadImage } from "@/lib/uploadImage";
+import { toaster } from "./toaster";
 
-function AddProductModal() {
-
-    const { formData, setFormData, resetForm, loadingProducts, categoryList } = useProductStore();
-    const [ uploadedFile, setUploadedFile ] = useState(null);
-    
-    
-    const isFormValid = () => {
-        const { name, price, image, category_id, stock } = formData;
-        return (
-          name.trim() !== "" &&
-          price.trim() !== "" &&
-          // image.trim() !== "" &&
-          category_id !== "" &&
-          stock > 0
-        );
-      };
-
-const FileUploadList = () => {
+const FileUploadList = ({setUploadedFile}) => {
     const fileUpload = useFileUploadContext();
     const files = fileUpload.acceptedFiles;
 
@@ -33,7 +17,7 @@ const FileUploadList = () => {
       } else {
         setUploadedFile(null);
       }
-    }, [files]);
+    }, [files, setUploadedFile]);
 
     if (files.length === 0) return null;
 
@@ -52,7 +36,57 @@ const FileUploadList = () => {
       </FileUpload.ItemGroup>
     );
   };
-      
+
+
+
+function AddProductModal() {
+
+    const { formData, setFormData, resetForm, loadingProducts, categoryList } = useProductStore();
+    const [ uploadedFile, setUploadedFile ] = useState(null);
+    
+    
+    const isFormValid = () => {
+        const { name, price, category_id, stock } = formData;
+        return (
+          name.trim() !== "" &&
+          price.trim() !== "" &&
+          uploadedFile !== null &&
+          category_id !== "" &&
+          stock > 0
+        );
+      };
+    
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    if (!uploadedFile) {
+      toaster.error({
+        title: "Missing image",
+        description: "Please upload a product image.",
+      });
+      return;
+    }
+
+    const imageUrl = await uploadImage(uploadedFile);
+    setFormData({ ...formData, image: imageUrl });
+
+    await addProduct();
+
+    toaster.success({
+      title: "Product Added",
+      description: "The product was successfully created.",
+    });
+  } catch (err) {
+    console.error(err);
+    toaster.error({
+      title: "Error",
+      description: "Product could not be added.",
+    });
+  }
+};
+
+
   return (
     <Dialog.Root placement="center" >
         <Dialog.Trigger asChild>
@@ -121,7 +155,7 @@ const FileUploadList = () => {
                                               <FileUpload.Trigger asChild>
                                                 <Button variant="outline" size="sm"><LuFileImage /> Upload Image</Button>
                                               </FileUpload.Trigger>
-                                              <FileUploadList/>
+                                              <FileUploadList setUploadedFile={setUploadedFile}/>
                                             </FileUpload.Root>
                                             
                                         </Field.Root>
@@ -183,7 +217,7 @@ const FileUploadList = () => {
                                 Cancel
                             </Button>
                         </Dialog.CloseTrigger>
-                        <Button isLoading={loadingProducts} disabled={!isFormValid()}>
+                        <Button onClick={handleSubmit} isLoading={loadingProducts} disabled={!isFormValid()}>
                             Upload Product
                         </Button>
                     </Dialog.Footer>
