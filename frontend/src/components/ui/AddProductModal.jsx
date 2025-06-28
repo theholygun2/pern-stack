@@ -41,9 +41,7 @@ const FileUploadList = ({setUploadedFile}) => {
 
 function AddProductModal() {
 
-    const { formData, setFormData, resetForm, loadingProducts, categoryList } = useProductStore();
-    const [ uploadedFile, setUploadedFile ] = useState(null);
-    
+    const { formData, setFormData, resetForm, loadingProducts, categoryList, uploadedFile, setUploadedFile } = useProductStore();
     
     const isFormValid = () => {
         const { name, price, category_id, stock } = formData;

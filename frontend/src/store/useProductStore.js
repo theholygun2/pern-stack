@@ -9,12 +9,18 @@ export const useProductStore = create((set, get) => ({
   pagination: null,
   currentProduct: null,
   loadingProducts: false,
+  uploadedFile: null,
+
+
 
   setProducts: (products) => set({ products }),
   setPagination: (pagination) => set({ pagination }),
   setCurrentProduct: (currentProduct) => set({currentProduct}),
   setLoadingProducts: (loadingProducts) => set({ loadingProducts }),
   setErrorProducts: (errorProducts) => set({errorProducts}),
+  setUploadedFile: (file) => set({ uploadedFile: file }),
+  
+  
 
   // user state
   user: null,

@@ -57,7 +57,7 @@ import { Badge } from "@chakra-ui/react";
         </Table.Header>
         <Table.Body>
           {orders.map((order) => (
-            <Table.Row key={order._id}>
+            <Table.Row key={order.order_code}>
               <Table.Cell>{order.order_code}</Table.Cell>
               <Table.Cell>{order.user?.email || "N/A"}</Table.Cell>
               <Table.Cell>

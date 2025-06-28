@@ -17,7 +17,7 @@ export async function addProduct() {
   setLoadingProducts(true);
 
   try {
-    await axios.post(`${BASE_URL}/api/products`, formData, {withCredentials: true});
+    await axios.post(`${BASE_URL}/api/admin/products`, formData, {withCredentials: true});
     const res = await axios.get(`${BASE_URL}/api/products`);
     setProducts(res.data.data);
     resetForm();
