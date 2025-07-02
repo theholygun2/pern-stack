@@ -12,8 +12,9 @@ import {
   GridItem,
   Heading,
   Text,
+  FileUpload
 } from '@chakra-ui/react';
-import { ArrowLeftIcon, SaveIcon, Trash2Icon } from 'lucide-react';
+import { ArrowLeftIcon, FileUp, SaveIcon, Trash2Icon } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -24,6 +25,7 @@ import {
 } from '@/store/productActions';
 import { NumericFormat } from 'react-number-format';
 import { toaster } from '@/components/ui/toaster';
+import { uploadImage } from '@/lib/uploadImage';
 
 function ProductEditPage() {
   const {
@@ -31,23 +33,40 @@ function ProductEditPage() {
     formData,
     categoryList,
     setFormData,
+    setUploadedFile,
     loadingProducts,
     errorProducts,
     loadingCategories,
+    resetForm
   } = useProductStore();
 
   const navigate = useNavigate();
   const { slug } = useParams();
 
+  // Fetch product when slug changes
   useEffect(() => {
-    fetchProduct(slug);
+    if (slug) {
+      resetForm();
+      fetchProduct(slug);
+    }
   }, [slug]);
 
+  // Fetch categories on first render
   useEffect(() => {
     if (!categoryList || categoryList.items.length === 0) {
       fetchCategories();
     }
   }, []);
+
+  // Clean up preview URL when image changes
+  useEffect(() => {
+    return () => {
+      if (formData.image?.startsWith('blob:')) {
+        URL.revokeObjectURL(formData.image);
+      }
+    };
+  }, [formData.image]);
+
 
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this product?')) {
@@ -57,22 +76,29 @@ function ProductEditPage() {
   };
 
   const handleUpdate = async (e) => {
-    e.preventDefault();
-    const success = await updateProduct(formData);
-  
-    if (success) {
-      toaster.success({
-        title: "Product Edited",
-        description: "The product was successfully edited.",
-      });
-      navigate("/admin/dashboard");
-    } else {
-      toaster.error({
-        title: "Update Failed",
-        description: "There was a problem updating the product. Please try again.",
-      });
+  e.preventDefault();
+
+  const hasChanges = Object.entries(formData).some(
+    ([key, value]) => value !== currentProduct[key]
+  );
+
+  const imageChanged = formData.image?.startsWith("blob:") || formData.image !== currentProduct.image;
+
+  if (hasChanges || imageChanged) {
+    console.log("Changes detected");
+    if (imageChanged) {
+      console.log("Image Changed");
+      uploadImage
+      // upload new image and update image URL in formData here
     }
-  };
+
+    // continue with updateProduct() call
+  } else {
+    console.log("Data not changed");
+    // maybe disable the update button or show a message
+  }
+};
+
   
 
   if (loadingProducts || loadingCategories) {
@@ -131,8 +157,8 @@ function ProductEditPage() {
   shadow="md"
 >
   <Image
-    src={currentProduct.image}
-    alt={currentProduct.name}
+    src={formData.image}
+    alt={formData.name}
     objectFit="cover"
     position="absolute"
     top={0}
@@ -147,7 +173,7 @@ function ProductEditPage() {
         {/* FORM */}
         <GridItem>
           <Box shadow="md" rounded="lg" p={6}>
-            <form onSubmit={handleUpdate}>
+            <form>
               {/* Product Name */}
               <Box mb={4}>
                 <Text fontWeight="semibold" mb={1}>
@@ -184,17 +210,22 @@ function ProductEditPage() {
 
               {/* Image URL */}
               <Box mb={4}>
-                <Text fontWeight="semibold" mb={1}>
-                  Image URL
-                </Text>
-                <Input
-                  type="text"
-                  value={formData.image}
-                  onChange={(e) =>
-                    setFormData({ ...formData, image: e.target.value })
-                  }
-                  placeholder="https://example.com/image.jpg"
-                />
+                <FileUpload.Root>
+                  <FileUpload.HiddenInput accept="image/*" onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    setUploadedFile(file);
+                    console.log('file', file)
+
+                    const previewURL = URL.createObjectURL(file);
+                    console.log("previewURL: ", previewURL)
+                    setFormData((prev) => ({ ...prev, image: previewURL}));
+                  }}/>
+                  <FileUpload.Trigger asChild>
+                    <Button variant="outline" mb={4} fontWeight="bold">Change Image</Button>
+                  </FileUpload.Trigger>
+                </FileUpload.Root>
               </Box>
 
               {/* Category */}
@@ -264,6 +295,7 @@ function ProductEditPage() {
                     !formData.image ||
                     !formData.category_id
                   }
+                  onClick={(e) => handleUpdate(e)}
                 >
                   {loadingProducts ? (
                     <Spinner size="sm" />

@@ -40,7 +40,13 @@ export const useProductStore = create((set, get) => ({
     stock: 1,
     slug: ""
   },
-  setFormData: (formData) => set({ formData }),
+  setFormData: (updater) =>
+  set((state) => ({
+    formData:
+      typeof updater === "function"
+        ? updater(state.formData)
+        : updater,
+  })),
   resetForm: () => set({ formData: { name: "", price: "", image: "", category_id: "", slug: "", stock: 1 } }),
 
   categories: [],
