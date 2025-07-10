@@ -24,4 +24,4 @@ export async function uploadImage(file) {
     .getPublicUrl(fileName);
 
   return publicUrlData.publicUrl;
-}
+};
