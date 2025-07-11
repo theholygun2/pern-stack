@@ -15,7 +15,7 @@ import { fetchCart } from './services/cartService'
 import { useCartStore } from './store/useCartStore'
 import { useUserStore } from './store/useUserStore'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import { Spinner } from '@chakra-ui/react'
+import { Center, Spinner } from '@chakra-ui/react'
 import LoginPage from './pages/LoginPage'
 import AdminRoute from './components/AdminRoute'
 import AdminDashboard from './pages/AdminDashboard'
@@ -54,7 +54,7 @@ function App() {
   init();
   }, [setUser, setCart, setCheckingAuth]); 
 
-  if (checkingAuth) return <Spinner/>;
+  if (checkingAuth) return <Center minH="60vh"><Spinner/></Center>;
 
   return (
     <>

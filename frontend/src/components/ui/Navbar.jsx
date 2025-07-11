@@ -2,7 +2,6 @@ import {
   Text,
   Box,
   Button,
-  IconButton,
   Flex,
   HStack,
   Link as ChakraLink,
@@ -12,7 +11,6 @@ import {
   Menu,
   Portal,
   Spacer,
-  Drawer,
   Popover,
   SimpleGrid
 } from "@chakra-ui/react";

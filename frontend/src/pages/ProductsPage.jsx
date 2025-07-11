@@ -25,7 +25,7 @@ const ProductsPage = () => {
 
   if (loadingProducts) {
     return (
-      <Center minH="60vh">
+      <Center>
         <Spinner />
       </Center>
     );

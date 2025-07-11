@@ -88,7 +88,7 @@ function ProductEditPage() {
     console.log("Changes detected");
     if (imageChanged) {
       console.log("Image Changed");
-      uploadImage
+      uploadImage(currentProduct.slug, );
       // upload new image and update image URL in formData here
     }
 
