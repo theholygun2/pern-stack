@@ -24,6 +24,8 @@ import { LogOut } from "lucide-react";
 import { useProductStore } from "@/store/useProductStore";
 import { useEffect } from "react";
 import { fetchCategories } from "@/store/productActions";
+import { MdOutlineSpaceDashboard } from "react-icons/md";
+
 
 function Navbar() {
   const { pathname } = useLocation();
@@ -132,6 +134,16 @@ const RightSideHeader = () => {
 
   return (
     <HStack spacing={4} align="center">
+      {user?.role === "admin" && (
+    <Button
+      size="sm"
+      variant="solid"
+      onClick={() => navigate("/admin/dashboard")}
+    >
+      Admin Dashboard 
+      <MdOutlineSpaceDashboard/>
+    </Button>
+  )}
       <ColorModeButton />
       <ChakraLink as={Link} to="/cart">
       <Box position="relative" mr="4px">
@@ -199,7 +211,6 @@ const RightSideHeader = () => {
     Logout <Menu.ItemCommand><LogOut size="16px"/></Menu.ItemCommand>
   </Menu.Item>
 </Menu.Content>
-
         </Menu.Positioner>
       </Portal>
     </Menu.Root>

@@ -106,6 +106,9 @@ const AdminDashboard = () => {
   >
     History
   </Button>
+  <Button onClick={() => navigate("/")}>
+    Client View
+  </Button>
 </Flex>
 
       
@@ -165,15 +168,9 @@ const AdminDashboard = () => {
               <Table.Cell>{product.stock ?? "-"}</Table.Cell>
               <Table.Cell>
                 <Flex gap={2}>
-                <SquarePen
-  onClick={() => navigate(`/admin/product/${product.slug}`)}
-  style={{ cursor: "pointer", marginRight: "8px" }}
-/>
+                <SquarePen onClick={() => navigate(`/admin/product/${product.slug}`)}style={{ cursor: "pointer", marginRight: "8px" }}/>
 
-<Trash2
-  onClick={() => handleDelete(product.id)}
-  style={{ cursor: "pointer", color: "red" }}
-/>
+<Trash2 onClick={() => handleDelete(product.id)} style={{ cursor: "pointer", color: "red" }} />
 
                 </Flex>
               </Table.Cell>

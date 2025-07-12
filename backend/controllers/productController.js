@@ -109,7 +109,7 @@ export const getProduct = async (req,res) => {
 export const createProduct = async (req,res) => {
     const {name, price, image, category_id, stock} = req.body
 
-    if(!name || !price || !image || !category_id || !stock){
+    if(!name || !price || !category_id || !stock){
         return res.status(400).json({ success: false, message: "All fields are required"})
     }
 

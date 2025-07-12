@@ -3,7 +3,8 @@ import { fetchProducts} from "@/store/productActions";
 import { Button, Container, Text, Image,  SimpleGrid, Center, Spinner, HStack} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ProductCard from "@/components/ui/ProductCard";
-import sadDog from '@/assets/saddog.svg'
+import sadDog from '@/assets/saddog.svg';
+
 const ProductsPage = () => {
   
   const {

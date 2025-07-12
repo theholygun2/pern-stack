@@ -1,6 +1,6 @@
 import { Button, Box, Dialog, Float, Stack, Input, InputGroup, Fieldset, Portal, Field, Select, FileUpload, useFileUploadContext, Icon } from "@chakra-ui/react";
 import { useProductStore } from "@/store/useProductStore";
-import { addProduct } from "@/store/productActions";
+import { addProduct, deleteProduct } from "@/store/productActions";
 import { NumericFormat } from "react-number-format";
 import { LuFileImage, LuX, LuUpload } from "react-icons/lu"
 import { useEffect, useState } from "react";
@@ -66,17 +66,20 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    const imageUrl = await uploadImage(uploadedFile);
-    setFormData({ ...formData, image: imageUrl });
+    const createdProduct = await addProduct({ ...formData, image: "" });
+    console.log("Created Product: ", createdProduct)
+    const imageUrl = await uploadImage(`${createdProduct.id}.jpg`, uploadedFile);
+    console.log("Url From supabase: ", imageUrl)
+    await updateProduct({...createdProduct, image: imageUrl});
 
-    await addProduct();
-
+    setFormData((prev) => ({ ...prev, image: imageUrl }));
     toaster.success({
       title: "Product Added",
       description: "The product was successfully created.",
     });
   } catch (err) {
     console.error(err);
+    await deleteProduct(createdProduct.id)
     toaster.error({
       title: "Error",
       description: "Product could not be added.",

@@ -4,30 +4,7 @@ import { useProductStore } from "./useProductStore";
 import { createListCollection } from "@chakra-ui/react";
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
-
-export async function addProduct() {
-  const {
-    formData,
-    resetForm,
-    setLoadingProducts,
-    setErrorProducts,
-    setProducts
-  } = useProductStore.getState();
-
-  setLoadingProducts(true);
-
-  try {
-    await axios.post(`${BASE_URL}/api/admin/products`, formData, {withCredentials: true});
-    const res = await axios.get(`${BASE_URL}/api/products`);
-    setProducts(res.data.data);
-    resetForm();
-  } catch (err) {
-    setErrorProducts("Failed to add product");
-    throw err; // Let component handle the UI feedback
-  } finally {
-    setLoadingProducts(false);
-  }
-}
+const store = useProductStore.getState();
 
 
 export async function fetchProducts(params = {}) {
@@ -52,7 +29,8 @@ export async function fetchProducts(params = {}) {
   } finally {
     setLoadingProducts(false);
   }
-}
+};
+
 export async function fetchProduct(slug) {
   const {
     formData, setFormData, setErrorProducts, setLoadingProducts, setCurrentProduct,
@@ -71,7 +49,8 @@ export async function fetchProduct(slug) {
   } finally {
     setLoadingProducts(false)
   }
-}
+};
+
 export async function fetchProductByCategory(slug, params = {}) { //for category page
   const {
     setLoadingProducts, setErrorProducts, setProducts, setPagination
@@ -92,11 +71,32 @@ export async function fetchProductByCategory(slug, params = {}) { //for category
   } finally {
     setLoadingProducts(false);
   }
-}
+};
 
-export async function updateProduct() {
-  const {
-    formData, setLoadingProducts, setCurrentProduct
+export async function addProduct(formData) {
+  const { resetForm, setLoadingProducts, setErrorProducts, setProducts } = useProductStore.getState();
+
+  setLoadingProducts(true);
+
+  try {
+    const response = await axios.post(`${BASE_URL}/api/admin/products`, formData, { withCredentials: true });
+    const createdProduct = response.data.data;
+
+    const res = await axios.get(`${BASE_URL}/api/products`);
+    setProducts(res.data.data);
+    resetForm();
+
+    return createdProduct; // ✅ Return it!
+  } catch (err) {
+    setErrorProducts("Failed to add product");
+    throw err;
+  } finally {
+    setLoadingProducts(false);
+  }
+};
+
+export async function updateProduct(formData) {
+  const { setLoadingProducts, setCurrentProduct
   } = useProductStore.getState()
   
   setLoadingProducts(true)
@@ -111,7 +111,8 @@ export async function updateProduct() {
   } finally {
     setLoadingProducts(false)
   }
-}
+};
+
 export async function deleteProduct(id) {
   const {
     products,
@@ -134,7 +135,7 @@ export async function deleteProduct(id) {
   } finally {
     setLoadingProducts(false);
   }
-}
+};
 
 export async function fetchCategories() {
   const {
@@ -166,5 +167,5 @@ export async function fetchCategories() {
     setLoadingCategories(false)
   }
 
-}
+};
 // Add similar wrappers for fetchProduct, updateProduct, addProduct, etc.

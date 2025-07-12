@@ -75,29 +75,47 @@ function ProductEditPage() {
     }
   };
 
-  const handleUpdate = async (e) => {
+const handleUpdate = async (e) => {
   e.preventDefault();
+
+  const { uploadedFile } = useProductStore.getState();
+  let imageChanged = formData.image?.startsWith("blob:");
 
   const hasChanges = Object.entries(formData).some(
     ([key, value]) => value !== currentProduct[key]
   );
 
-  const imageChanged = formData.image?.startsWith("blob:") || formData.image !== currentProduct.image;
+  if (!hasChanges && !imageChanged) {
+    toaster({ title: "Nothing changed!" });
+    return;
+  }
 
-  if (hasChanges || imageChanged) {
-    console.log("Changes detected");
-    if (imageChanged) {
-      console.log("Image Changed");
-      uploadImage(currentProduct.slug, );
-      // upload new image and update image URL in formData here
+  try {
+    let finalImageUrl = formData.image;
+
+    if (imageChanged && uploadedFile) {
+
+      const newUrl = await uploadImage(currentProduct.id, uploadedFile);
+      finalImageUrl = newUrl;
+
+      // update formData with new image URL
+      setFormData(prev => ({ ...prev, image: newUrl }));
     }
 
-    // continue with updateProduct() call
-  } else {
-    console.log("Data not changed");
-    // maybe disable the update button or show a message
+    // Now call the backend update
+    await updateProduct({
+      ...formData,
+      image: finalImageUrl, // make sure it's not a blob:
+    });
+
+    toaster.success({ title: "Product updated!" });
+    navigate('/admin/dashboard'); // or wherever
+  } catch (err) {
+    console.error(err);
+    toaster({ title: "Update failed", variant: "destructive" });
   }
 };
+
 
   
 
@@ -172,7 +190,7 @@ function ProductEditPage() {
 
         {/* FORM */}
         <GridItem>
-          <Box shadow="md" rounded="lg" p={6}>
+          <Box shadow="md" rounded="lg" p={6} bgColor="red.100" borderColor="black" borderWidth="1px">
             <form>
               {/* Product Name */}
               <Box mb={4}>
@@ -182,6 +200,7 @@ function ProductEditPage() {
                 <Input
                   type="text"
                   value={formData.name}
+                  variant="filled"
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
@@ -195,6 +214,7 @@ function ProductEditPage() {
                   Price (IDR)
                 </Text>
                 <NumericFormat
+                  variant="filled"
                   customInput={Input}
                   thousandSeparator="."
                   decimalSeparator=","
@@ -223,7 +243,7 @@ function ProductEditPage() {
                     setFormData((prev) => ({ ...prev, image: previewURL}));
                   }}/>
                   <FileUpload.Trigger asChild>
-                    <Button variant="outline" mb={4} fontWeight="bold">Change Image</Button>
+                    <Button >Change Image</Button>
                   </FileUpload.Trigger>
                 </FileUpload.Root>
               </Box>
@@ -260,6 +280,7 @@ function ProductEditPage() {
                   Stock
                 </Text>
                 <Input
+                  variant="filled"
                   type="number"
                   min="0"
                   value={formData.stock || 1}

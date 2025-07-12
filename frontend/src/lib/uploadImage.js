@@ -2,10 +2,8 @@ import supabase from './supabaseClient';
 
 const BUCKET_NAME = import.meta.env.VITE_SUPABASE_BUCKET_NAME;
 
-export async function uploadImage(slug, file) {
-
-  const fileName = `${slug}.jpg`; // e.g., 1751149362423-bb.jpg
-
+export async function uploadImage(filename, file) {
+  // e.g., 1751149362423-bb.jpg
   const { data, error } = await supabase
     .storage
     .from(BUCKET_NAME) // make sure this is "product-images"
