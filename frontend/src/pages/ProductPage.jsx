@@ -17,7 +17,7 @@ import { addToCart } from "@/services/cartService";
 import { toaster } from "@/components/ui/toaster";
 import { useCartStore } from "@/store/useCartStore";
 
-const ProductDetailsPage = () => {
+const ProductPage = () => {
   const navigate = useNavigate();
   const { user } = useUserStore();
   const { currentProduct } = useProductStore();
@@ -36,6 +36,8 @@ const ProductDetailsPage = () => {
       </Container>
     );
   }
+
+  
 
   const handleAddToCart = async () => {
     if (!user) {
@@ -87,7 +89,7 @@ const ProductDetailsPage = () => {
 
   return (
     <Container maxW="7xl" py={10}>
-      <Flex direction={{ base: "column", lg: "row" }} gap={10}>
+      <Flex direction={{ base: "column", lg: "row" }} gap={10} opacity={currentProduct.deleted ? 0.4 : 1} pointerEvents={currentProduct.deleted ? "none" : "auto"}>
         {/* Left: Product Image */}
         <Box flex="1" maxW="400px">
           <Image
@@ -136,11 +138,18 @@ const ProductDetailsPage = () => {
               minimumFractionDigits: 0,
             }).format(currentProduct.price)}
           </Text>
+          {currentProduct.deleted && (
+  <Text mt={2} fontSize="sm" color="red.500" fontWeight="bolder">
+    This product cannot be purchased.
+  </Text>
+)}
+
           <Button
             colorScheme="green"
             size="lg"
             width="100%"
             onClick={handleAddToCart}
+            isDisabled={currentProduct.deleted}
           >
             Add to Cart
           </Button>
@@ -149,6 +158,7 @@ const ProductDetailsPage = () => {
             size="lg"
             width="100%"
             onClick={handleBuyNow}
+            isDisabled={currentProduct.deleted}
           >
             Buy Now
           </Button>
@@ -158,4 +168,4 @@ const ProductDetailsPage = () => {
   );
 };
 
-export default ProductDetailsPage;
+export default ProductPage;

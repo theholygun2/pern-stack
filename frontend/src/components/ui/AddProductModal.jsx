@@ -1,6 +1,6 @@
 import { Button, Box, Dialog, Float, Stack, Input, InputGroup, Fieldset, Portal, Field, Select, FileUpload, useFileUploadContext, Icon } from "@chakra-ui/react";
 import { useProductStore } from "@/store/useProductStore";
-import { addProduct, deleteProduct } from "@/store/productActions";
+import { addProduct, deleteProduct, updateProduct } from "@/store/productActions";
 import { NumericFormat } from "react-number-format";
 import { LuFileImage, LuX, LuUpload } from "react-icons/lu"
 import { useEffect, useState } from "react";
@@ -39,7 +39,7 @@ const FileUploadList = ({setUploadedFile}) => {
 
 
 
-function AddProductModal() {
+function AddProductModal({ onProductAdded }) {
 
     const { formData, setFormData, resetForm, loadingProducts, categoryList, uploadedFile, setUploadedFile } = useProductStore();
     
@@ -57,35 +57,50 @@ function AddProductModal() {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
+  if (!uploadedFile) {
+    toaster.error({
+      title: "Missing image",
+      description: "Please upload a product image.",
+    });
+    return;
+  }
+
+  let createdProduct;
+
   try {
-    if (!uploadedFile) {
-      toaster.error({
-        title: "Missing image",
-        description: "Please upload a product image.",
-      });
-      return;
+    // 1. Create product without image
+    createdProduct = await addProduct({ ...formData, image: "" });
+
+    // 2. Upload image using new ID
+    const imageUrl = await uploadImage(`${createdProduct.id}.jpg`, uploadedFile);
+
+    // 3. Update product with image
+    await updateProduct({ ...createdProduct, image: imageUrl });
+
+    // 4. Sync local state
+    setFormData(prev => ({ ...prev, image: imageUrl }));
+
+    if (onProductAdded) {
+        onProductAdded();
     }
 
-    const createdProduct = await addProduct({ ...formData, image: "" });
-    console.log("Created Product: ", createdProduct)
-    const imageUrl = await uploadImage(`${createdProduct.id}.jpg`, uploadedFile);
-    console.log("Url From supabase: ", imageUrl)
-    await updateProduct({...createdProduct, image: imageUrl});
-
-    setFormData((prev) => ({ ...prev, image: imageUrl }));
     toaster.success({
       title: "Product Added",
       description: "The product was successfully created.",
     });
+
   } catch (err) {
     console.error(err);
-    await deleteProduct(createdProduct.id)
+    if (createdProduct?.id) {
+      await deleteProduct(createdProduct.id); // Clean up if partially created
+    }
     toaster.error({
       title: "Error",
       description: "Product could not be added.",
     });
   }
 };
+
 
 
   return (

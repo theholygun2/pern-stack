@@ -21,7 +21,7 @@ const ProductsPage = () => {
 
 
   useEffect(() => {
-    fetchProducts({ page: currentPage, limit: productsPerPage })
+    fetchProducts({ page: currentPage, limit: productsPerPage, deleted: "false" })
   }, [currentPage]);
 
   if (loadingProducts) {

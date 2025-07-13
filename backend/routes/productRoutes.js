@@ -9,6 +9,6 @@ const router = express.Router();
 
 router.get("/category/:slug", getProductByCategory) //THIS IS FOR REQUEST TO THE BACKEND /api/products/category
 router.get("/", getProducts); // Supports filtering: ?category_slug=books&name=Clean&min_price=10
-router.get("/:slug", getProduct);
+router.get("/:slugOrId", getProduct);
 
 export default router;

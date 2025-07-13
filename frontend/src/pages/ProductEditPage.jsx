@@ -79,7 +79,7 @@ const handleUpdate = async (e) => {
   e.preventDefault();
 
   const { uploadedFile } = useProductStore.getState();
-  let imageChanged = formData.image?.startsWith("blob:");
+  const imageChanged = formData.image?.startsWith("blob:");
 
   const hasChanges = Object.entries(formData).some(
     ([key, value]) => value !== currentProduct[key]
@@ -94,30 +94,20 @@ const handleUpdate = async (e) => {
     let finalImageUrl = formData.image;
 
     if (imageChanged && uploadedFile) {
-
-      const newUrl = await uploadImage(currentProduct.id, uploadedFile);
-      finalImageUrl = newUrl;
-
-      // update formData with new image URL
+      const newUrl = await uploadImage(`${currentProduct.id}.jpg`, uploadedFile);
+      finalImageUrl = `${newUrl}?t=${Date.now()}`;
       setFormData(prev => ({ ...prev, image: newUrl }));
     }
 
-    // Now call the backend update
-    await updateProduct({
-      ...formData,
-      image: finalImageUrl, // make sure it's not a blob:
-    });
+    await updateProduct({ ...formData, image: finalImageUrl });
 
     toaster.success({ title: "Product updated!" });
-    navigate('/admin/dashboard'); // or wherever
+    navigate('/admin/dashboard');
   } catch (err) {
     console.error(err);
-    toaster({ title: "Update failed", variant: "destructive" });
+    toaster.error({ title: "Update failed", variant: "destructive" });
   }
 };
-
-
-  
 
   if (loadingProducts || loadingCategories) {
     return (

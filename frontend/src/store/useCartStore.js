@@ -19,20 +19,26 @@ export const useCartStore = create((set, get) => ({
   },
 
   updateQuantity: async (product_id, quantity) => {
-    if (quantity === 0) {
-      await get().removeFromCart(product_id);
-      return;
-    }
-    const updatedCart = await cartService.updateQuantity(product_id, quantity);
-    console.log(updatedCart)
-    // set({ cart: updatedCart});
+  // 🟢 1. Optimistically update UI immediately
+  set((state) => ({
+    cart: state.cart.map((item) =>
+      item.id === product_id
+        ? { ...item, cart_quantity: quantity }
+        : item
+    ),
+  }));
 
-    set((state) => ({
-      cart: state.cart.map((item) =>
-        item.id === product_id ? { ...item, cart_quantity: quantity } : item
-      ),
-    }));
-  },
+  try {
+    // 🟡 2. Make the API call
+    await cartService.updateQuantity(product_id, quantity);
+  } catch (err) {
+    console.error("Quantity update failed, rolling back");
+
+    // 🔴 3. Roll back (or refetch whole cart)
+    const cart = await cartService.fetchCart(); // <-- or however you refetch
+    set({ cart });
+  }
+},
 
   removeFromCart: async (product_id) => {
     const updatedCart = await cartService.removeFromCart(product_id); // <- await and capture

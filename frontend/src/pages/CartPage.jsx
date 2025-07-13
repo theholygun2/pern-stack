@@ -2,9 +2,11 @@ import { Box, Heading, Flex, Container, Image, VStack, Text, FileUploadItemDelet
 import { useCartStore } from "@/store/useCartStore";
 import CartItem from "@/components/ui/CartItem";
 import { useNavigate } from "react-router-dom";
+import { useValidateCart } from "@/hooks/useValidateCart";
 
   const CartPage = () => {
     const { cart = [] } = useCartStore();
+    useValidateCart();
     const navigate = useNavigate()
 
     const handleCheckout = async () => {
@@ -13,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 
     const totalQuantity = cart.reduce((sum, item) => sum + item.cart_quantity, 0);
     const totalPrice = cart.reduce((sum, item) => sum + item.price * item.cart_quantity, 0);
+    const hasDeletedItems = cart.some((item) => item.deleted);
 
     return (
     <Container p="4" maxW="container.xl">
@@ -33,9 +36,14 @@ import { useNavigate } from "react-router-dom";
         <Heading size="md" mb={4}>Order Summary</Heading>
         <Text>Total Items: {totalQuantity}</Text>
         <Text>Total Price: {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, }).format(totalPrice)} </Text>
+        {hasDeletedItems && (
+  <Box mt={3} p={3} bg="red.50" border="1px solid" borderColor="red.200" borderRadius="md">
+    <Text color="red.600" fontSize="sm">
+      Some items in your cart are no longer available.
+    </Text></Box>)}
         {/* You can add total price, checkout button, etc. here */}
         
-        <Button mt={4} width="100%" onClick={handleCheckout} disabled={cart.length === 0}>Checkout</Button>
+        <Button mt={4} width="100%" onClick={handleCheckout} disabled={cart.length === 0 || hasDeletedItems}>Checkout</Button>
       </Box>
     </Flex>
     </Container>

@@ -45,7 +45,7 @@ app.use(
     saveUninitialized: false, // ← don't create empty sessions
     cookie: {
       secure: false, // set to true if using HTTPS in production
-      maxAge: 1000 * 60 * 60, // 1 hour
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     },
   })
 );

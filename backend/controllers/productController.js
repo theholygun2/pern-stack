@@ -2,15 +2,21 @@ import { sql } from "../config/db.js"
 import { handleNotFound, handleServerError } from "../utils/response.js";
 import slugify from "slugify";
 
+
 export const getProducts = async (req, res) => {
-  const { category_slug, name, max_price, min_price, slug, page = 1, limit = 15 } = req.query;
+  const { category_slug, name, max_price, min_price, slug, page = 1, limit = 15, deleted } = req.query;
 
   try {
     let baseQuery = sql`
       SELECT p.* FROM products p
       JOIN categories c ON p.category_id = c.id
-      WHERE true
+      WHERE TRUE
     `;
+
+    if (deleted === "true") 
+      { baseQuery = sql`${baseQuery} AND p.deleted = TRUE`;
+    } else if (deleted === "false") { baseQuery = sql`${baseQuery} AND p.deleted = FALSE`;
+}
 
     if (category_slug) {
       baseQuery = sql`${baseQuery} AND c.slug = ${category_slug}`;
@@ -38,7 +44,7 @@ export const getProducts = async (req, res) => {
     const countQuery = sql`
       SELECT COUNT(*) FROM products p
       JOIN categories c ON p.category_id = c.id
-      WHERE true
+      WHERE p.deleted = FALSE
     `;
 
     let filteredCountQuery = countQuery;
@@ -85,27 +91,29 @@ export const getProducts = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
-export const getProduct = async (req,res) => {
-    const { slug } = req.params
 
-    try {
-        const product = await sql`
-        SELECT * FROM products
-        WHERE slug = ${slug}`
+export const getProduct = async (req, res) => {
+  const { slugOrId } = req.params;
 
-        if (product.length === 0) {
-            // Product not found
-            return res
-              .status(404)
-              .json({ success: false, message: "Product not found" });
-          }
+  try {
+    const product = await sql`
+      SELECT * FROM products
+      WHERE slug = ${slugOrId} OR id::text = ${slugOrId}
+      LIMIT 1;
+    `;
 
-        res.status(200).json({ success:true, data: product[0]})
-    } catch (error) {
-        console.log("Error in getProduct function", error)
-        res.status(500).json({ success: false, message: "Internal Server Error"})
+    if (product.length === 0) {
+      return res.status(404).json({ success: false, message: "Product not found" });
     }
-}
+
+    res.status(200).json({ success: true, data: product[0] });
+  } catch (error) {
+    console.log("Error in getProduct function", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+
 export const createProduct = async (req,res) => {
     const {name, price, image, category_id, stock} = req.body
 
@@ -180,28 +188,47 @@ export const updateProduct = async (req, res) => {
     return handleServerError(res, error, "Failed to update product");
   }
 };
-export const deleteProduct = async (req,res) => {
-    const { id } = req.params
 
-    try {
-        const deletedProduct = await sql`
-        DELETE FROM products
-        WHERE id=${id}
-        RETURNING *`;
+export const deleteProduct = async (req, res) => {
+  const { id } = req.params;
 
-        if (deletedProduct.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Product not found"
-            })
-        }
+  try {
+    const result = await sql`UPDATE products SET deleted = TRUE WHERE id = ${id} RETURNING *`;
 
-        res.status(200).json({ success: true, data: deletedProduct[0]})
-    } catch (error) {
-        console.log("Error in deleteProduct function", error)
-        res.status(500).json({ success: false, message: "Internal Server Error"})
+    if (result.length === 0) {
+      return res.status(404).json({ success: false, message: "Product not found!" });
     }
-}
+
+    res.status(200).json({ success: true, data: result[0] });
+  } catch (error) {
+    console.log("Error in softDeleteProduct", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+export const restoreProduct = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await sql`
+      UPDATE products
+      SET deleted = FALSE
+      WHERE id = ${id}
+      RETURNING *`;
+
+    if (result.length === 0) {
+      return res.status(404).json({ success: false, message: "Product not found" });
+    }
+
+    res.status(200).json({ success: true, data: result[0] });
+  } catch (error) {
+    console.log("Error in restoreProduct", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
+
+
 export const getProductByCategory = async (req, res) => {
   const { slug } = req.params
   const { page = 1, limit = 15 } = req.query;
@@ -225,7 +252,7 @@ export const getProductByCategory = async (req, res) => {
     const totalResult = await sql`
       SELECT COUNT(*) AS count
       FROM products
-      WHERE category_id = ${category.id}
+      WHERE category_id = ${category.id} AND products.deleted = FALSE
     `;
     const totalCount = parseInt(totalResult[0].count);
 
@@ -233,7 +260,7 @@ export const getProductByCategory = async (req, res) => {
     const products = await sql`
       SELECT *
       FROM products
-      WHERE category_id = ${category.id}
+      WHERE category_id = ${category.id} AND products.deleted = FALSE
       LIMIT ${limit} OFFSET ${offset}
     `;
 

@@ -137,6 +137,20 @@ export async function deleteProduct(id) {
   }
 };
 
+// ✅ No need to touch useProductStore state here
+export async function restoreProduct(id) {
+  try {
+    const res = await axios.put(`${BASE_URL}/api/admin/products/${id}/restore`, {}, {
+      withCredentials: true,
+    });
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error("Error in restoreProduct function", error);
+    return { success: false, error };
+  }
+}
+
+
 export async function fetchCategories() {
   const {
     setCategories, setCategoryList, setLoadingCategories, setErrorCategories, categories

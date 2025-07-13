@@ -7,7 +7,7 @@ export async function uploadImage(filename, file) {
   const { data, error } = await supabase
     .storage
     .from(BUCKET_NAME) // make sure this is "product-images"
-    .upload(fileName, file, {
+    .upload(filename, file, {
       contentType: file.type, // e.g., "image/jpeg"
       upsert: true,
     });
@@ -20,7 +20,7 @@ export async function uploadImage(filename, file) {
   const { data: publicUrlData } = supabase
     .storage
     .from(BUCKET_NAME)
-    .getPublicUrl(fileName);
+    .getPublicUrl(filename);
 
   return publicUrlData.publicUrl;
 };
