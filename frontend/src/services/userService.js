@@ -1,8 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.MODE === "development" 
-  ? "http://localhost:3000" 
-  : ""; // or your production domain
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function fetchUser() {
   try {

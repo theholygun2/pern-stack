@@ -15,12 +15,13 @@ import {
 import cutecat from '@/assets/cutecat.webp';
 import { loginUser } from '@/services/authService';
 import { toaster } from '@/components/ui/toaster';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const location = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const searchParams = new URLSearchParams(location.search);
   const redirect = searchParams.get("redirect") || "/";
@@ -89,7 +90,7 @@ const LoginPage = () => {
 
             {/* Google Sign-In */}
             <Box textAlign="center" mt={2}>
-              <a href={`http://localhost:3000/auth/google?state=${encodeURIComponent(state)}`}>
+              <a href={`${BASE_URL}/auth/google?state=${encodeURIComponent(state)}`}>
                 <Image
                   src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png"
                   alt="Sign in with Google"

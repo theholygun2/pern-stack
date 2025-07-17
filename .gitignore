@@ -1,6 +1,8 @@
 # Ignore env files in both frontend and backend
 frontend/.env
+frontend/.env.production
 .env
+.env.production
 node_modules
 package-lock.json
 creds.json

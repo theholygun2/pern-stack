@@ -1,8 +1,7 @@
 // services/authService.js
-import { useRatingGroupItemContext } from "@chakra-ui/react";
 import axios from "axios";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function logoutUser() {
   try {
@@ -18,7 +17,7 @@ export async function logoutUser() {
 
 export const loginUser = async (email, password) => {
   try {
-    const response = await axios.post('http://localhost:3000/auth/login', {
+    const response = await axios.post(`${BASE_URL}/auth/login`, {
       email,
       password,
     }, { withCredentials: true });

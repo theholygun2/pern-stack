@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const HistoryPage = () => {
   const [orders, setOrders] = useState([]);
@@ -19,7 +20,7 @@ const HistoryPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/order", {
+        const res = await axios.get(`${BASE_URL}/api/order`, {
           withCredentials: true,
         });
         setOrders(res.data.data.orderHistory);
@@ -97,53 +98,24 @@ const HistoryPage = () => {
               {/* Collapsible row */}
               <Table.Row>
                 <Table.Cell colSpan={7} padding={0}>
-                  <Collapsible.Root
-                    open={expandedOrder === order.order_code}
-                    unmountOnExit
-                  >
-                    <Collapsible.Content>
-                    <Box p="4" borderTop="1px solid #E2E8F0">
-  <strong>Order Items:</strong>
-  <Box mt={3}>
-    {order.items.map((item) => (
-      <Flex
-        key={item.product_id}
-        p={2}
-        border="1px solid #EDF2F7"
-        borderRadius="md"
-        align="center"
-        gap={4}
-        mb={3}
-      >
-        <Image
-          boxSize="64px"
-          objectFit="cover"
-          src={item.image || "/placeholder.png"} // fallback image
-          alt={item.name}
-          borderRadius="md"
-        />
-        <Box flex="1">
-          <a href={`/product/${item.slug}`} style={{ fontWeight: "bold" }}>
-            {item.name}
-          </a>
-          <Box fontSize="sm">
-            Price:
-            {new Intl.NumberFormat("id-ID", {
-              style: "currency",
-              currency: "IDR",
-              minimumFractionDigits: 0,
-            }).format(item.price)}
-          </Box>
-          <Box fontSize="sm">
-            Quantity: {item.quantity}
-          </Box>
-        </Box>
-      </Flex>
-    ))}
-  </Box>
-</Box>
-
-                    </Collapsible.Content>
+                  <Collapsible.Root open={expandedOrder === order.order_code} unmountOnExit >
+                  <Collapsible.Content>
+                  <Box p="4" borderTop="1px solid #E2E8F0">
+                  <strong>Order Items:</strong>
+                  <Box mt={3}>
+                    {order.items.map((item) => (
+                      <Flex key={item.product_id} p={2} border="1px solid #EDF2F7" borderRadius="md" align="center" gap={4} mb={3}>
+                        <Image boxSize="64px" objectFit="cover" src={item.image || "/placeholder.png"} alt={item.name} borderRadius="md"/>
+                        <Box flex="1"> 
+                          <a href={`/product/${item.slug}`} style={{ fontWeight: "bold" }}> {item.name} </a>
+                          <Box fontSize="sm"> Price: {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, }).format(item.price)} </Box>
+                          <Box fontSize="sm"> Quantity: {item.quantity}</Box>
+                        </Box>
+                      </Flex>
+                    ))}
+                  </Box>
+                </Box>
+                  </Collapsible.Content>
                   </Collapsible.Root>
                 </Table.Cell>
               </Table.Row>

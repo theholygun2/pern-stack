@@ -39,7 +39,6 @@ function App() {
       setCheckingAuth(true)
     try {
       const user = await fetchUser();
-      console.log("U Fetch", user)
       if (user) {
         setUser(user);
         const cart = await fetchCart();

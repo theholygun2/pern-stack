@@ -10,9 +10,11 @@ export async function findOrCreateUserByGoogleInfo(userInfo) {
     return user;
   }
 
+  const role = userInfo.email === process.env.ADMIN_EMAIL ? 'admin' : 'user';
+
   const [newUser] = await sql`
-    INSERT INTO users (google_id, name, email, picture)
-    VALUES (${userInfo.id}, ${userInfo.name}, ${userInfo.email}, ${userInfo.picture})
+    INSERT INTO users (google_id, name, email, picture, role)
+    VALUES (${userInfo.id}, ${userInfo.name}, ${userInfo.email}, ${userInfo.picture}, ${role})
     RETURNING *
   `;
   return newUser;

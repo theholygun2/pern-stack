@@ -1,11 +1,8 @@
 import axios from "axios";
-import { toaster } from "@/components/ui/toaster";
 import { useProductStore } from "./useProductStore";
 import { createListCollection } from "@chakra-ui/react";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
-const store = useProductStore.getState();
-
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function fetchProducts(params = {}) {
   const {

@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { ColorModeButton } from "@/components/ui/color-mode";
 import { toaster } from "@/components/ui/toaster";
 import { SquarePen, ArchiveX, ArchiveRestore } from "lucide-react";
+import ManageCategoryModal from "@/components/ui/ManageCategoryModal";
 
 
 const AdminDashboard = () => {
@@ -43,7 +44,7 @@ const AdminDashboard = () => {
       if (categories.length === 0) {
         fetchCategories();
       }
-    }, [categories]);
+    }, []);
     
   
     if (loadingProducts) {
@@ -120,6 +121,7 @@ const handleRestore = async (id) => {
   <Button onClick={() => navigate("/")}>
     Client View
   </Button>
+  <ManageCategoryModal/>
 </Flex>
 
       
@@ -154,36 +156,16 @@ const handleRestore = async (id) => {
         <Table.Body>
           {products.map((product) => (
             
-            <Table.Row
-  key={product.id}
-  fontWeight="medium"
-  bg={product.deleted ? "gray.100" : "transparent"}
-  color={product.deleted ? "gray.300" : "inherit"}
->
-              <Table.Cell>
-                <Table.Cell>
-  <a href={`/product/${product.slug}`} target="_blank" rel="noopener noreferrer">
-    <Image
-      boxSize="96px"
-      objectFit="cover"
-      src={product.image || "/placeholder.png"}
-      alt={product.name}
-      borderRadius="md"
-      _hover={{ opacity: 0.8 }}
-    />
-  </a>
-</Table.Cell>
-
-              </Table.Cell>
+            <Table.Row key={product.id} fontWeight="medium" bg={product.deleted ? "gray.100" : "transparent"} color={product.deleted ? "gray.300" : "inherit"}>
+            <Table.Cell> 
+              <a href={`/product/${product.slug}`} target="_blank" rel="noopener noreferrer">
+              <Image boxSize="96px" objectFit="cover" src={product.image || "/placeholder.png"} alt={product.name} borderRadius="md" hover={{ opacity: 0.8 }}/></a>
+            </Table.Cell>
+              
               <Table.Cell fontWeight="semibold">
-  <a
-    href={`/product/${product.slug}`}
-    target="_blank"
-    rel="noopener noreferrer" >
-    {product.name}
-  </a>
-  {product.deleted && (<Badge ml={2} colorPalette="red">Archived</Badge>)}
-</Table.Cell>
+                <a href={`/product/${product.slug}`} target="_blank" rel="noopener noreferrer" > {product.name} </a> 
+                {product.deleted && (<Badge ml={2} colorPalette="red">Archived</Badge>)}
+              </Table.Cell>
 
               <Table.Cell>
                 {new Intl.NumberFormat("id-ID", {

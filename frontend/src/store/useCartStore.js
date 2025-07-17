@@ -1,7 +1,5 @@
 import { create } from "zustand";
 import * as cartService from "@/services/cartService";
-// base url will be dynamic depending on the environment
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 
 export const useCartStore = create((set, get) => ({
   

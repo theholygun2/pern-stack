@@ -1,8 +1,5 @@
 import { sql } from "../config/db.js";
-import axios from "axios";
 import categories from "./categories.json" assert { type: "json" };
-
-const API_URL = "http://localhost:3000/api/categories"; // replace if needed
 
 async function seedCategories() {
 

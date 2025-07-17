@@ -1,0 +1,14 @@
+# Build frontend
+FROM node:18-alpine as frontend-builder
+WORKDIR /app
+COPY frontend/ .
+RUN npm install
+RUN npm run build
+
+# Backend stage
+FROM node:18-alpine
+WORKDIR /app
+COPY backend/ .
+COPY --from=frontend-builder /app/dist ./frontend/dist
+RUN npm install
+CMD ["node", "src/index.js"]

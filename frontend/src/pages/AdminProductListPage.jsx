@@ -10,6 +10,7 @@ import {
   import React, { useEffect, useState } from "react";
   import axios from "axios";
   import { useNavigate } from "react-router-dom";
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
   const AdminProductListPage = () => {
     const [products, setProducts] = useState([]);
@@ -19,7 +20,7 @@ import {
     useEffect(() => {
       const fetchProducts = async () => {
         try {
-          const res = await axios.get("http://localhost:3000/api/product", {
+          const res = await axios.get(`${BASE_URL}/api/product`, {
             withCredentials: true,
           });
           setProducts(res.data.data.products || []);
@@ -38,7 +39,7 @@ import {
       if (!confirmDelete) return;
   
       try {
-        await axios.delete(`http://localhost:3000/api/product/${id}`, {
+        await axios.delete(`${BASE_URL}/api/product/${id}`, {
           withCredentials: true,
         });
         setProducts((prev) => prev.filter((p) => p.id !== id));

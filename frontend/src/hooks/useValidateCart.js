@@ -2,10 +2,7 @@ import { useCartStore } from "@/store/useCartStore";
 import axios from "axios";
 import { useEffect } from "react";
 
-const BASE_URL = import.meta.env.MODE === "development"
-  ? "http://localhost:3000"
-  : "";
-
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export const useValidateCart = () => {
   const { cart, setCart } = useCartStore();
 

@@ -192,7 +192,7 @@ const handleUpdate = async (e) => {
                   value={formData.name}
                   variant="filled"
                   onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
+                    setFormData((prev) => ({ ...prev, name: e.target.value }))
                   }
                   placeholder="Enter product name"
                 />
@@ -213,7 +213,7 @@ const handleUpdate = async (e) => {
                   placeholder="0"
                   value={formData.price}
                   onValueChange={(values) =>
-                    setFormData({ ...formData, price: values.value })
+                    setFormData((prev) => ({ ...prev, price: values.value }))
                   }
                 />
               </Box>
@@ -245,9 +245,7 @@ const handleUpdate = async (e) => {
                 </Text>
                 <select
                   value={formData.category_id}
-                  onChange={(e) =>
-                    setFormData({ ...formData, category_id: e.target.value })
-                  }
+                  onChange={(e) => setFormData((prev) => ({ ...prev, category_id: e.target.value }))}
                   style={{
                     width: '100%',
                     padding: '8px',
@@ -275,11 +273,7 @@ const handleUpdate = async (e) => {
                   min="0"
                   value={formData.stock || 1}
                   onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      stock: parseInt(e.target.value, 10) || 1,
-                    })
-                  }
+                    setFormData((prev) => ({ ...prev, stock: parseInt(e.target.value, 10) || 1 }))}
                   placeholder="Enter stock quantity"
                 />
               </Box>

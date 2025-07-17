@@ -24,6 +24,7 @@ const ProductPage = () => {
   const { slug } = useParams();
   const { setCart } = useCartStore();
   const location = useLocation()
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     fetchProduct(slug);
@@ -70,7 +71,7 @@ const ProductPage = () => {
           product_id: currentProduct.id,
         })
       );
-      window.location.href = `http://localhost:3000/auth/google?state=${redirectAction}`;
+      window.location.href = `${BASE_URL}/auth/google?state=${redirectAction}`;
       return;
     }
     try {
@@ -92,15 +93,17 @@ const ProductPage = () => {
       <Flex direction={{ base: "column", lg: "row" }} gap={10} opacity={currentProduct.deleted ? 0.4 : 1} pointerEvents={currentProduct.deleted ? "none" : "auto"}>
         {/* Left: Product Image */}
         <Box flex="1" maxW="400px">
-          <Image
-            src={currentProduct.image}
-            alt={currentProduct.name}
-            rounded="md"
-            w="100%"
-            h={{ base: "auto", lg: "350px" }}
-            objectFit="cover"
-          />
-        </Box>
+  <Image
+    src={currentProduct.image}
+    alt={currentProduct.name}
+    rounded="md"
+    w="100%"
+    h={{ base: "auto", lg: "350px" }}
+    objectFit="contain"
+    bg="gray.50"
+  />
+</Box>
+
 
         {/* Middle: Description and Info */}
         <Box flex="2">

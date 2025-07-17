@@ -5,13 +5,17 @@ import { sql } from "../config/db.js"
 import { findOrCreateCartByUserId } from "../services/cart.service.js";
 import { parseIntentState } from "../utils/parseIntentState.js";
 import bcrypt from 'bcrypt'
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: process.env.NODE_ENV === "production" ? ".env.production" : ".env",
+});
 
 export const handleGoogleCallback = async (req, res) => {
   const code = req.query.code;
   if (!code) return res.status(400).send("No code provided");
 
   const state = parseIntentState(req.query.state); // contains: { redirect: "/product/laptop-gada-merk" }
-  console.log("YOOOOOO:  ", state);
 
   try {
     const { tokens } = await oauth2Client.getToken(code);
@@ -29,7 +33,7 @@ export const handleGoogleCallback = async (req, res) => {
       redirectPath = state.redirect;
     }
 
-    return res.redirect(`http://localhost:5173${redirectPath}`)
+    return res.redirect(`${process.env.CLIENT_URL}${redirectPath}`)
   } catch (error) {
     console.error("OAuth callback error:", error);
     res.status(500).send("Authentication failed");

@@ -1,7 +1,7 @@
 // pages/AdminOrderHistory.jsx
 
-import { Button, Container, Heading, Table, Spinner, Text, Center, Box } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Button, Container, Heading, Table, Spinner, Text, Image, Flex, Center, Box, Collapsible } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ArrowLeftIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -12,12 +12,17 @@ import { Badge } from "@chakra-ui/react";
   const AdminOrderHistory = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [expandedOrder, setExpandedOrder] = useState(null);
     const navigate = useNavigate()
+
+    const toggleExpand = (orderId) => { setExpandedOrder((prev) => (prev === orderId ? null : orderId)); };
+
   
     useEffect(() => {
         const fetchOrders = async () => {
           try {
-            const res = await axios.get("http://localhost:3000/api/admin/orders", {
+            console.log(`${import.meta.env.VITE_API_BASE_URL}`)
+            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/admin/orders`, {
               withCredentials: true,
             });
             console.log("ADMIN ORDERS:", res.data.data); // should be array
@@ -57,9 +62,10 @@ import { Badge } from "@chakra-ui/react";
         </Table.Header>
         <Table.Body>
           {orders.map((order) => (
-            <Table.Row key={order.order_code}>
+            <React.Fragment key={order.order_code}>
+              <Table.Row key={order.order_code}>
               <Table.Cell>{order.order_code}</Table.Cell>
-              <Table.Cell>{order.user?.email || "N/A"}</Table.Cell>
+              <Table.Cell>{order.user_name|| "N/A"}</Table.Cell>
               <Table.Cell>
                 {new Intl.NumberFormat("id-ID", {
                   style: "currency",
@@ -79,7 +85,60 @@ import { Badge } from "@chakra-ui/react";
                   minute: "2-digit",
                 })}
               </Table.Cell>
+              <Table.Cell>
+                  <Button size="sm" onClick={() => toggleExpand(order.order_code)}>
+                    {expandedOrder === order.order_code ? "Hide" : "View"}
+                  </Button>
+                </Table.Cell>
             </Table.Row>
+
+             <Table.Row>
+                <Table.Cell colSpan={6} p={0}>
+                  <Collapsible.Root open={expandedOrder === order.order_code} unmountOnExit>
+                    <Collapsible.Content>
+                      <Box p={4} borderTop="1px solid #E2E8F0">
+                        <strong>Order Items:</strong>
+                        <Box mt={3}>
+                          {order.items?.map((item) => (
+                            <Flex
+                              key={item.product_id}
+                              p={2}
+                              border="1px solid #EDF2F7"
+                              borderRadius="md"
+                              align="center"
+                              gap={4}
+                              mb={3}
+                            >
+                              <Image
+                                boxSize="64px"
+                                objectFit="cover"
+                                src={item.image || "/placeholder.png"}
+                                alt={item.name}
+                                borderRadius="md"
+                              />
+                              <Box flex="1">
+                                <a href={`/product/${item.slug}`} style={{ fontWeight: "bold" }}>
+                                  {item.name}
+                                </a>
+                                <Box fontSize="sm">
+                                  Price:{" "}
+                                  {new Intl.NumberFormat("id-ID", {
+                                    style: "currency",
+                                    currency: "IDR",
+                                    minimumFractionDigits: 0,
+                                  }).format(item.price)}
+                                </Box>
+                                <Box fontSize="sm">Quantity: {item.quantity}</Box>
+                              </Box>
+                            </Flex>
+                          ))}
+                        </Box>
+                      </Box>
+                    </Collapsible.Content>
+                  </Collapsible.Root>
+                </Table.Cell>
+              </Table.Row>
+            </React.Fragment>     
           ))}
         </Table.Body>
         </Table.Root>

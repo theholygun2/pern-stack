@@ -3,7 +3,7 @@ import { useProductStore } from "@/store/useProductStore";
 import { addProduct, deleteProduct, updateProduct } from "@/store/productActions";
 import { NumericFormat } from "react-number-format";
 import { LuFileImage, LuX, LuUpload } from "react-icons/lu"
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { uploadImage } from "@/lib/uploadImage";
 import { toaster } from "./toaster";
 
@@ -41,7 +41,15 @@ const FileUploadList = ({setUploadedFile}) => {
 
 function AddProductModal({ onProductAdded }) {
 
-    const { formData, setFormData, resetForm, loadingProducts, categoryList, uploadedFile, setUploadedFile } = useProductStore();
+  //avoid lags
+    const formData = useProductStore(state => state.formData);
+    const setFormData = useProductStore(state => state.setFormData);
+    const uploadedFile = useProductStore(state => state.uploadedFile);
+    const setUploadedFile = useProductStore(state => state.setUploadedFile);
+    const resetForm = useProductStore(state => state.resetForm);
+    const loadingProducts = useProductStore(state => state.loadingProducts);
+    const categoryList = useProductStore(state => state.categoryList);
+
     
     const isFormValid = () => {
         const { name, price, category_id, stock } = formData;
@@ -101,8 +109,6 @@ const handleSubmit = async (e) => {
   }
 };
 
-
-
   return (
     <Dialog.Root placement="center" >
         <Dialog.Trigger asChild>
@@ -133,7 +139,7 @@ const handleSubmit = async (e) => {
                                       {/* product name */}
                                         <Field.Root>
                                             <Field.Label>Name</Field.Label>
-                                            <Input  type="text" placeholder="Product name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})}/>
+                                            <Input  type="text" placeholder="Product name" value={formData.name} onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}/>
                                         </Field.Root>
 
                                         {/* Price */}
@@ -141,15 +147,10 @@ const handleSubmit = async (e) => {
                                         <Field.Root>
                                           <Field.Label>Price</Field.Label>
                                           <InputGroup startElement="RP." endElement="IDR">
-                                          <NumericFormat
-                                            customInput={Input}
-                                            thousandSeparator="."
-                                            decimalSeparator=","
-                                            allowNegative={false}
-                                            allowLeadingZeros={false}
+                                          <NumericFormat customInput={Input} thousandSeparator="." decimalSeparator="," allowNegative={false} allowLeadingZeros={false}
                                             value={formData.price}
                                             onValueChange={(values) => {
-                                              setFormData({ ...formData, price: values.value }); // this gives raw number
+                                              setFormData((prev) => ({ ...prev, price: values.value })); // this gives raw number
                                             }}
                                             placeholder="0"
                                             inputMode="numeric"
@@ -184,7 +185,7 @@ const handleSubmit = async (e) => {
                                             collection={categoryList}
                                             onValueChange={(key) => {
                                               const selectedId = key.value[0];
-                                              setFormData({ ...formData, category_id: selectedId });
+                                              setFormData(prev => ({ ...prev, category_id: selectedId }));
                                             }}
                                           >
                                             <Select.HiddenSelect />
@@ -216,9 +217,7 @@ const handleSubmit = async (e) => {
                                             min="1"
                                             placeholder="1"
                                             value={formData.stock || 1}  // Default value of 1 if formData.quantity is falsy (undefined or null)
-                                            onChange={(e) =>
-                                              setFormData({ ...formData, stock: parseInt(e.target.value, 10) || 1 }) // Fallback to 1 if input is not a number
-                                            }
+                                           onChange={(e) => { const parsed = parseInt(e.target.value, 10); setFormData((prev) => ({ ...prev, stock: isNaN(parsed) ? 1 : parsed }));}}
                                           />
                                         </Field.Root>
 

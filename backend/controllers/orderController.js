@@ -3,6 +3,7 @@ import { pgPool } from "../config/pool.js";
 import { getCartTotal } from "../services/cart.service.js";
 import { getOrdersByUser } from "../services/order.service.js";
 import { handleNotFound, handleServerError } from "../utils/response.js";
+import { generateOrderCode } from "../utils/customAlphabet.js";
 
 // orderController.js
 
@@ -144,11 +145,14 @@ export const addOrder = async (req, res) => {
 
     const totalPrice = await getCartTotal(cart.id); // Assuming this still works with pg client
 
+    const orderCode = generateOrderCode();
+
     const { rows: [{ id: orderId }] } = await client.query(`
-      INSERT INTO orders (user_id, total_price, shipping_address, payment_method)
-      VALUES ($1, $2, $3, $4)
+      INSERT INTO orders (user_id, total_price, shipping_address, payment_method, order_code)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING id
-    `, [user.id, totalPrice, shippingAddress, paymentMethod]);
+    `, [user.id, totalPrice, shippingAddress, paymentMethod, orderCode]);
+
 
     const { rows: products } = await client.query(`
       SELECT p.id, p.name, ci.quantity, SUM(p.price * ci.quantity) AS subtotal

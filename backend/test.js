@@ -1,3 +1,5 @@
+import {sql} from './config/db.js';
+
 const postDataExample = {
   "transaction_time": "2020-01-09 18:27:19",
   "transaction_status": "capture",
@@ -38,3 +40,15 @@ const qrisExample = {
   "currency": "IDR",
   "acquirer": "gopay"
 }
+
+const resetDB = async () => {
+  try {
+    console.log("⚠️ Dropping all tables...");
+    await sql`DROP TABLE IF EXISTS order_items, orders, cart_items, cart, session, addresses, products, categories, users CASCADE;`;
+    console.log("✅ Tables dropped.");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+resetDB();

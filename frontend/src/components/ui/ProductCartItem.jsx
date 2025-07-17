@@ -11,6 +11,7 @@ const productIntent = {
     quantity,
   };
   const encodedState = encodeURIComponent(JSON.stringify(productIntent));
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function decrement() {
     if (quantity > 1 ) {
@@ -49,7 +50,7 @@ function increment() {
 
       <HStack mt={6} justify="flex-end">
         <Button variant="outline" as="a" 
-        href={`http://localhost:3000/auth/google?state=${encodedState}`}>Add to Cart</Button>
+        href={`${BASE_URL}/auth/google?state=${encodedState}`}>Add to Cart</Button>
         <Button colorScheme="blue">Buy Now</Button>
       </HStack>
     </Box>

@@ -1,74 +1,18 @@
 [
-  {
-    "name": "beauty"
-  },
-  {
-    "name": "fragrances"
-  },
-  {
-    "name": "furniture"
-  },
-  {
-    "name": "groceries"
-  },
-  {
-    "name": "home decoration"
-  },
-  {
-    "name": "kitchen accessories"
-  },
-  {
-    "name": "laptops"
-  },
-  {
-    "name": "mens shirts"
-  },
-  {
-    "name": "mens shoes"
-  },
-  {
-    "name": "mens watches"
-  },
-  {
-    "name": "mobile accessories"
-  },
-  {
-    "name": "motorcycle"
-  },
-  {
-    "name": "skin care"
-  },
-  {
-    "name": "smartphones"
-  },
-  {
-    "name": "sports accessories"
-  },
-  {
-    "name": "sunglasses"
-  },
-  {
-    "name": "tablets"
-  },
-  {
-    "name": "tops"
-  },
-  {
-    "name": "vehicle"
-  },
-  {
-    "name": "womens bags"
-  },
-  {
-    "name": "womens dresses"
-  },
-  {
-    "name": "womens jewellery"
-  },
-  {
-    "name": "womens shoes"
-  },
-  {
-    "name": "womens watches"
-  }
+  { "name": "Nature" },
+  { "name": "Urban" },
+  { "name": "Portraits" },
+  { "name": "Abstract" },
+  { "name": "Animals" },
+  { "name": "Travel" },
+  { "name": "Food" },
+  { "name": "Architecture" },
+  { "name": "Black and White" },
+  { "name": "Aerial" },
+  { "name": "Characters" },
+  { "name": "Movies & TV Shows" },
+  { "name": "Cartoons & Animation" },
+  { "name": "Pop Culture" },
+  { "name": "Fandom" },
+  { "name": "Nostalgia" }
 ]

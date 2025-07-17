@@ -1,8 +1,5 @@
 import { create } from "zustand";
 
-// base url will be dynamic depending on the environment
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
-
 export const useProductStore = create((set, get) => ({
   // products state
   products: [],

@@ -2,7 +2,7 @@
 
 import axios from "axios";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // services/cartService.js
 export async function fetchCart() {
