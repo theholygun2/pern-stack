@@ -20,7 +20,7 @@ import {
     useEffect(() => {
       const fetchProducts = async () => {
         try {
-          const res = await axios.get(`${BASE_URL}/api/product`, {
+          const res = await axios.get(`${BASE_URL}/api/products`, {
             withCredentials: true,
           });
           setProducts(res.data.data.products || []);
@@ -39,7 +39,7 @@ import {
       if (!confirmDelete) return;
   
       try {
-        await axios.delete(`${BASE_URL}/api/product/${id}`, {
+        await axios.delete(`${BASE_URL}/api/products/${id}`, {
           withCredentials: true,
         });
         setProducts((prev) => prev.filter((p) => p.id !== id));
@@ -90,7 +90,7 @@ import {
                   />
                 </Table.Cell>
                 <Table.Cell fontWeight="semibold">
-                  <a href={`/admin/products/${product.slug}`}>{product.name}</a>
+                  <a href={`/admin/product/${product.slug}`}>{product.name}</a>
                 </Table.Cell>
                 <Table.Cell>
                   {new Intl.NumberFormat("id-ID", {
@@ -107,7 +107,7 @@ import {
                       size="sm"
                       colorScheme="yellow"
                       onClick={() =>
-                        navigate(`/admin/products/${product.slug}`)
+                        navigate(`/admin/product/${product.slug}`)
                       }
                     >
                       Edit

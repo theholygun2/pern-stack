@@ -6,7 +6,7 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function createOrder(order) {
     try {
       const res = await axios.post(
-        `${BASE_URL}/api/order/checkout`,
+        `${BASE_URL}/api/orders/checkout`,
         order,
         { withCredentials: true }
       );
@@ -25,7 +25,7 @@ export async function createOrder(order) {
 
 export async function fetchOrder() {
   try {
-    const res = await axios.get(`${BASE_URL}/api/order`, {withCredentials: true})
+    const res = await axios.get(`${BASE_URL}/api/orders`, {withCredentials: true})
     
     if (res.status === 401) {
       return 

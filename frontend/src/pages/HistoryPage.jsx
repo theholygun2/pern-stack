@@ -20,7 +20,7 @@ const HistoryPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/api/order`, {
+        const res = await axios.get(`${BASE_URL}/api/orders`, {
           withCredentials: true,
         });
         setOrders(res.data.data.orderHistory);

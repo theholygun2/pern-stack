@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { ColorModeButton } from "@/components/ui/color-mode";
 import { toaster } from "@/components/ui/toaster";
 import { SquarePen, ArchiveX, ArchiveRestore } from "lucide-react";
-import ManageCategoryModal from "@/components/ui/ManageCategoryModal";
 
 
 const AdminDashboard = () => {
@@ -121,7 +120,6 @@ const handleRestore = async (id) => {
   <Button onClick={() => navigate("/")}>
     Client View
   </Button>
-  <ManageCategoryModal/>
 </Flex>
 
       

@@ -27,35 +27,36 @@ dotenv.config({
   path: process.env.NODE_ENV === "production" ? ".env.production" : ".env"
 });
 
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.ENABLE_CORS === "true") {
   app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true
   }));
-}
-;
+};
 
-app.use(express.json());
+app.use(express.json());  
 
 app.use(
   session({
     store: new PgSession({
       pool: pgPool,
-      tableName: "session", // optional, defaults to "session"
+      tableName: "session",
     }),
     secret: process.env.SESSION_SECRET || "some-secret-key",
     resave: false,
-    saveUninitialized: false, // ← don't create empty sessions
+    saveUninitialized: false,
     cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 1000 * 60 * 60 * 24 * 7,
+      secure: process.env.SESSION_COOKIE_SECURE === "true",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
+
 
 app.use(
   helmet({
@@ -66,7 +67,7 @@ app.use(morgan("dev")); // log the requests
 
 // apply arcjet rate-limit to all routes
 
-if( process.env.NODE_ENV === "production") {
+if( process.env.ENABLE_ARCJET === "true") {
   app.use(async (req, res, next) => {
     try {
       const decision = await aj.protect(req, {
@@ -98,25 +99,25 @@ if( process.env.NODE_ENV === "production") {
   });
 }
 
-app.use("/auth", authRoutes)
+app.use("/auth", authRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/categories", categoryRoutes)
-app.use("/api/order", orderRoutes)
-app.use("/api/cart", cartRoutes)
-app.use("/api/payment", paymentRoutes)
-app.use("/api/users", userRoutes)
-app.use("/api/admin", adminRoutes)
+app.use("/api/categories", categoryRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
 
 if (process.env.NODE_ENV === "production") {
   
   // server our react app
-  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+  console.log(path.join(__dirname, "frontend/dist"));
+  app.use(express.static(path.join(__dirname, "frontend/dist")));
 
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
   });
 }
-
 //Todo add Category here
 export async function initDB() {
   try {
@@ -265,5 +266,7 @@ export async function initDB() {
 initDB().then(() => {
   app.listen(PORT, () => {
     console.log("Server is running on port " + PORT);
+    console.log(process.env.NODE_ENV);
+    console.log(process.env.CLIENT_URL);
   });
 });
