@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import { dirname, join } from "path";
 
 import productRoutes from "./routes/productRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
@@ -23,82 +24,60 @@ import { readFile } from "fs/promises";
 
 const PgSession = pgSession(session)
 
-dotenv.config({
-  path: process.env.NODE_ENV === "production" ? ".env.production" : ".env"
-});
-
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 const __dirname = path.resolve();
 
+// --- Middlewares ---
 if (process.env.ENABLE_CORS === "true") {
   app.use(cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true
   }));
-};
+}
 
-app.use(express.json());  
+app.use(express.json());
 
-app.use(
-  session({
-    store: new PgSession({
-      pool: pgPool,
-      tableName: "session",
-    }),
-    secret: process.env.SESSION_SECRET || "some-secret-key",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.SESSION_COOKIE_SECURE === "true",
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    },
-  })
-);
+app.use(session({
+  store: new PgSession({ pool: pgPool, tableName: "session" }),
+  secret: process.env.SESSION_SECRET || "some-secret-key",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.SESSION_COOKIE_SECURE === "true",
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
+}));
 
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(morgan("dev"));
 
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-  })
-); // helmet is a security middleware that helps you protect your app by setting various HTTP headers
-app.use(morgan("dev")); // log the requests
-
-// apply arcjet rate-limit to all routes
-
-if( process.env.ENABLE_ARCJET === "true") {
+// --- Arcjet rate limiting ---
+if (process.env.ENABLE_ARCJET === "true") {
   app.use(async (req, res, next) => {
     try {
-      const decision = await aj.protect(req, {
-        requested: 1, // specifies that each request consumes 1 token
-      });
-  
+      const decision = await aj.protect(req, { requested: 1 });
       if (decision.isDenied()) {
-        if (decision.reason.isRateLimit()) {
-          res.status(429).json({ error: "Too Many Requests" });
-        } else if (decision.reason.isBot()) {
-          res.status(403).json({ error: "Bot access denied" });
-        } else {
-          res.status(403).json({ error: "Forbidden" });
-        }
-        return;
+        return res.status(decision.reason.isRateLimit() ? 429 : 403).json({
+          error: decision.reason.isRateLimit()
+            ? "Too Many Requests"
+            : decision.reason.isBot()
+              ? "Bot access denied"
+              : "Forbidden",
+        });
       }
-  
-      // check for spoofed bots
-      if (decision.results.some((result) => result.reason.isBot() && result.reason.isSpoofed())) {
-        res.status(403).json({ error: "Spoofed bot detected" });
-        return;
+      if (decision.results.some(r => r.reason.isBot() && r.reason.isSpoofed())) {
+        return res.status(403).json({ error: "Spoofed bot detected" });
       }
-  
       next();
-    } catch (error) {
-      console.log("Arcjet error", error);
-      next(error);
+    } catch (err) {
+      console.error("Arcjet error", err);
+      next(err);
     }
   });
 }
 
+// --- API Routes ---
 app.use("/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
@@ -108,16 +87,19 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 
-if (process.env.NODE_ENV === "production") {
-  
-  // server our react app
-  console.log(path.join(__dirname, "frontend/dist"));
-  app.use(express.static(path.join(__dirname, "frontend/dist")));
+// --- Serve frontend in production ---
+if (process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging") {
+  const distPath = join(__dirname, "frontend", "dist");
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+  console.log("✅ Serving static from:", distPath);
+  app.use(express.static(distPath));
+
+  // Catch-all route for SPA (React Router), Express 5 path syntax
+  app.all('/{*any}', (req, res) => {
+    res.sendFile(join(distPath, "index.html"));
   });
 }
+
 //Todo add Category here
 export async function initDB() {
   try {
@@ -265,8 +247,8 @@ export async function initDB() {
 
 initDB().then(() => {
   app.listen(PORT, () => {
-    console.log("Server is running on port " + PORT);
-    console.log(process.env.NODE_ENV);
-    console.log(process.env.CLIENT_URL);
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
+    console.log("🌐 ENV:", process.env.NODE_ENV);
+    console.log("🎯 CLIENT_URL:", process.env.CLIENT_URL);
   });
 });

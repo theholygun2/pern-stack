@@ -4,7 +4,12 @@ WORKDIR /app
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ .
-RUN npm run build
+
+# Add this line to define a build-time argument
+ARG VITE_ENV_MODE=production
+
+# Use the argument to tell Vite which mode to build for
+RUN npm run build -- --mode $VITE_ENV_MODE
 
 # Backend stage
 FROM node:22
